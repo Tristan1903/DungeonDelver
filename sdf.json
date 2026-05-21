@@ -1,0 +1,28 @@
+{
+  "name": "sdf",
+  "race": "",
+  "classLevels": [
+    {
+      "className": "Bard",
+      "level": 1
+    }
+  ],
+  "baseStats": {
+    "str": 15,
+    "dex": 12,
+    "con": 14,
+    "int": 10,
+    "wis": 13,
+    "cha": 8
+  },
+  "proficiencies": [],
+  "inventory": [],
+  "level": 1,
+  "xp": 0,
+  "levelingMode": "milestone",
+  "class": "Bard 1",
+  "hp": {
+    "current": 10,
+    "max": 10
+  }
+}

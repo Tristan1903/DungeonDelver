@@ -1,0 +1,505 @@
+📦data
+ ┣ 📂adventure
+ ┃ ┣ 📜adventure-aitfr-avt.json
+ ┃ ┣ 📜adventure-aitfr-dn.json
+ ┃ ┣ 📜adventure-aitfr-fcd.json
+ ┃ ┣ 📜adventure-aitfr-isf.json
+ ┃ ┣ 📜adventure-aitfr-thp.json
+ ┃ ┣ 📜adventure-azfyt.json
+ ┃ ┣ 📜adventure-bgdia.json
+ ┃ ┣ 📜adventure-bqgt.json
+ ┃ ┣ 📜adventure-cm.json
+ ┃ ┣ 📜adventure-coa.json
+ ┃ ┣ 📜adventure-cos.json
+ ┃ ┣ 📜adventure-crcotn.json
+ ┃ ┣ 📜adventure-dc.json
+ ┃ ┣ 📜adventure-dd.json
+ ┃ ┣ 📜adventure-dip.json
+ ┃ ┣ 📜adventure-ditlcot.json
+ ┃ ┣ 📜adventure-dosi.json
+ ┃ ┣ 📜adventure-drde-acfas.json
+ ┃ ┣ 📜adventure-drde-bd.json
+ ┃ ┣ 📜adventure-drde-bts.json
+ ┃ ┣ 📜adventure-drde-das.json
+ ┃ ┣ 📜adventure-drde-dotsc.json
+ ┃ ┣ 📜adventure-drde-fwtvc.json
+ ┃ ┣ 📜adventure-drde-sd.json
+ ┃ ┣ 📜adventure-drde-tdon.json
+ ┃ ┣ 📜adventure-drde-tfv.json
+ ┃ ┣ 📜adventure-drde-twoo.json
+ ┃ ┣ 📜adventure-dsotdq.json
+ ┃ ┣ 📜adventure-efr.json
+ ┃ ┣ 📜adventure-ffotr.json
+ ┃ ┣ 📜adventure-fraif-tllol.json
+ ┃ ┣ 📜adventure-fs.json
+ ┃ ┣ 📜adventure-gos.json
+ ┃ ┣ 📜adventure-gotsf.json
+ ┃ ┣ 📜adventure-hbtd.json
+ ┃ ┣ 📜adventure-hfstcm.json
+ ┃ ┣ 📜adventure-hftt.json
+ ┃ ┣ 📜adventure-hol.json
+ ┃ ┣ 📜adventure-hotb.json
+ ┃ ┣ 📜adventure-hotdq.json
+ ┃ ┣ 📜adventure-idrotf.json
+ ┃ ┣ 📜adventure-imr.json
+ ┃ ┣ 📜adventure-jttrc.json
+ ┃ ┣ 📜adventure-kftgv.json
+ ┃ ┣ 📜adventure-kkw.json
+ ┃ ┣ 📜adventure-lk.json
+ ┃ ┣ 📜adventure-llk.json
+ ┃ ┣ 📜adventure-lmop.json
+ ┃ ┣ 📜adventure-lox.json
+ ┃ ┣ 📜adventure-lr.json
+ ┃ ┣ 📜adventure-lrdt.json
+ ┃ ┣ 📜adventure-mot-nss.json
+ ┃ ┣ 📜adventure-nrh-ass.json
+ ┃ ┣ 📜adventure-nrh-at.json
+ ┃ ┣ 📜adventure-nrh-avitw.json
+ ┃ ┣ 📜adventure-nrh-awol.json
+ ┃ ┣ 📜adventure-nrh-coi.json
+ ┃ ┣ 📜adventure-nrh-tcmc.json
+ ┃ ┣ 📜adventure-nrh-tlt.json
+ ┃ ┣ 📜adventure-oota.json
+ ┃ ┣ 📜adventure-oow.json
+ ┃ ┣ 📜adventure-pabtso.json
+ ┃ ┣ 📜adventure-pip.json
+ ┃ ┣ 📜adventure-pota.json
+ ┃ ┣ 📜adventure-qftis.json
+ ┃ ┣ 📜adventure-rmbre.json
+ ┃ ┣ 📜adventure-rot.json
+ ┃ ┣ 📜adventure-rtg.json
+ ┃ ┣ 📜adventure-scc-arir.json
+ ┃ ┣ 📜adventure-scc-ck.json
+ ┃ ┣ 📜adventure-scc-hfmt.json
+ ┃ ┣ 📜adventure-scc-tmm.json
+ ┃ ┣ 📜adventure-scoee.json
+ ┃ ┣ 📜adventure-sdw.json
+ ┃ ┣ 📜adventure-sja.json
+ ┃ ┣ 📜adventure-skt.json
+ ┃ ┣ 📜adventure-slw.json
+ ┃ ┣ 📜adventure-tftyp-atg.json
+ ┃ ┣ 📜adventure-tftyp-dit.json
+ ┃ ┣ 📜adventure-tftyp-tfof.json
+ ┃ ┣ 📜adventure-tftyp-thsot.json
+ ┃ ┣ 📜adventure-tftyp-toh.json
+ ┃ ┣ 📜adventure-tftyp-tsc.json
+ ┃ ┣ 📜adventure-tftyp-wpm.json
+ ┃ ┣ 📜adventure-tlk.json
+ ┃ ┣ 📜adventure-toa.json
+ ┃ ┣ 📜adventure-tofw.json
+ ┃ ┣ 📜adventure-tor.json
+ ┃ ┣ 📜adventure-ttp.json
+ ┃ ┣ 📜adventure-us.json
+ ┃ ┣ 📜adventure-uthftlh.json
+ ┃ ┣ 📜adventure-veor.json
+ ┃ ┣ 📜adventure-vnotee.json
+ ┃ ┣ 📜adventure-wbtw.json
+ ┃ ┣ 📜adventure-wdh.json
+ ┃ ┣ 📜adventure-wdmm.json
+ ┃ ┣ 📜adventure-wtthc.json
+ ┃ ┗ 📜adventure-xmts.json
+ ┣ 📂bestiary
+ ┃ ┣ 📜bestiary-aatm.json
+ ┃ ┣ 📜bestiary-abh.json
+ ┃ ┣ 📜bestiary-ai.json
+ ┃ ┣ 📜bestiary-aitfr-dn.json
+ ┃ ┣ 📜bestiary-aitfr-fcd.json
+ ┃ ┣ 📜bestiary-aitfr-isf.json
+ ┃ ┣ 📜bestiary-aitfr-thp.json
+ ┃ ┣ 📜bestiary-awm.json
+ ┃ ┣ 📜bestiary-bam.json
+ ┃ ┣ 📜bestiary-bgdia.json
+ ┃ ┣ 📜bestiary-bgg.json
+ ┃ ┣ 📜bestiary-bmt.json
+ ┃ ┣ 📜bestiary-cm.json
+ ┃ ┣ 📜bestiary-coa.json
+ ┃ ┣ 📜bestiary-cos.json
+ ┃ ┣ 📜bestiary-crcotn.json
+ ┃ ┣ 📜bestiary-dc.json
+ ┃ ┣ 📜bestiary-dip.json
+ ┃ ┣ 📜bestiary-ditlcot.json
+ ┃ ┣ 📜bestiary-dmg.json
+ ┃ ┣ 📜bestiary-dod.json
+ ┃ ┣ 📜bestiary-dosi.json
+ ┃ ┣ 📜bestiary-dsotdq.json
+ ┃ ┣ 📜bestiary-efa.json
+ ┃ ┣ 📜bestiary-egw.json
+ ┃ ┣ 📜bestiary-erlw.json
+ ┃ ┣ 📜bestiary-esk.json
+ ┃ ┣ 📜bestiary-fraif.json
+ ┃ ┣ 📜bestiary-ftd.json
+ ┃ ┣ 📜bestiary-ggr.json
+ ┃ ┣ 📜bestiary-gos.json
+ ┃ ┣ 📜bestiary-gotsf.json
+ ┃ ┣ 📜bestiary-hat-tg.json
+ ┃ ┣ 📜bestiary-hftt.json
+ ┃ ┣ 📜bestiary-hol.json
+ ┃ ┣ 📜bestiary-hotb.json
+ ┃ ┣ 📜bestiary-hotdq.json
+ ┃ ┣ 📜bestiary-idrotf.json
+ ┃ ┣ 📜bestiary-imr.json
+ ┃ ┣ 📜bestiary-jttrc.json
+ ┃ ┣ 📜bestiary-kftgv.json
+ ┃ ┣ 📜bestiary-kkw.json
+ ┃ ┣ 📜bestiary-lfl.json
+ ┃ ┣ 📜bestiary-llk.json
+ ┃ ┣ 📜bestiary-lmop.json
+ ┃ ┣ 📜bestiary-lox.json
+ ┃ ┣ 📜bestiary-lr.json
+ ┃ ┣ 📜bestiary-lrdt.json
+ ┃ ┣ 📜bestiary-mabjov.json
+ ┃ ┣ 📜bestiary-mcv1sc.json
+ ┃ ┣ 📜bestiary-mcv2dc.json
+ ┃ ┣ 📜bestiary-mcv3mc.json
+ ┃ ┣ 📜bestiary-mcv4ec.json
+ ┃ ┣ 📜bestiary-mff.json
+ ┃ ┣ 📜bestiary-mgelft.json
+ ┃ ┣ 📜bestiary-mismv1.json
+ ┃ ┣ 📜bestiary-mm.json
+ ┃ ┣ 📜bestiary-mot.json
+ ┃ ┣ 📜bestiary-mpmm.json
+ ┃ ┣ 📜bestiary-mpp.json
+ ┃ ┣ 📜bestiary-mtf.json
+ ┃ ┣ 📜bestiary-nf.json
+ ┃ ┣ 📜bestiary-nrh-ass.json
+ ┃ ┣ 📜bestiary-nrh-at.json
+ ┃ ┣ 📜bestiary-nrh-avitw.json
+ ┃ ┣ 📜bestiary-nrh-awol.json
+ ┃ ┣ 📜bestiary-nrh-coi.json
+ ┃ ┣ 📜bestiary-nrh-tcmc.json
+ ┃ ┣ 📜bestiary-nrh-tlt.json
+ ┃ ┣ 📜bestiary-oota.json
+ ┃ ┣ 📜bestiary-oow.json
+ ┃ ┣ 📜bestiary-pabtso.json
+ ┃ ┣ 📜bestiary-phb.json
+ ┃ ┣ 📜bestiary-pota.json
+ ┃ ┣ 📜bestiary-ps-a.json
+ ┃ ┣ 📜bestiary-ps-d.json
+ ┃ ┣ 📜bestiary-ps-i.json
+ ┃ ┣ 📜bestiary-ps-k.json
+ ┃ ┣ 📜bestiary-ps-x.json
+ ┃ ┣ 📜bestiary-ps-z.json
+ ┃ ┣ 📜bestiary-qftis.json
+ ┃ ┣ 📜bestiary-rmbre.json
+ ┃ ┣ 📜bestiary-rot.json
+ ┃ ┣ 📜bestiary-rtg.json
+ ┃ ┣ 📜bestiary-sads.json
+ ┃ ┣ 📜bestiary-scc.json
+ ┃ ┣ 📜bestiary-sdw.json
+ ┃ ┣ 📜bestiary-skt.json
+ ┃ ┣ 📜bestiary-slw.json
+ ┃ ┣ 📜bestiary-tce.json
+ ┃ ┣ 📜bestiary-tftyp.json
+ ┃ ┣ 📜bestiary-toa.json
+ ┃ ┣ 📜bestiary-tofw.json
+ ┃ ┣ 📜bestiary-ttp.json
+ ┃ ┣ 📜bestiary-vd.json
+ ┃ ┣ 📜bestiary-veor.json
+ ┃ ┣ 📜bestiary-vgm.json
+ ┃ ┣ 📜bestiary-vrgr.json
+ ┃ ┣ 📜bestiary-wbtw.json
+ ┃ ┣ 📜bestiary-wdh.json
+ ┃ ┣ 📜bestiary-wdmm.json
+ ┃ ┣ 📜bestiary-wtthc.json
+ ┃ ┣ 📜bestiary-xdmg.json
+ ┃ ┣ 📜bestiary-xge.json
+ ┃ ┣ 📜bestiary-xmm.json
+ ┃ ┣ 📜bestiary-xphb.json
+ ┃ ┣ 📜fluff-bestiary-aatm.json
+ ┃ ┣ 📜fluff-bestiary-abh.json
+ ┃ ┣ 📜fluff-bestiary-ai.json
+ ┃ ┣ 📜fluff-bestiary-aitfr-dn.json
+ ┃ ┣ 📜fluff-bestiary-aitfr-fcd.json
+ ┃ ┣ 📜fluff-bestiary-aitfr-isf.json
+ ┃ ┣ 📜fluff-bestiary-aitfr-thp.json
+ ┃ ┣ 📜fluff-bestiary-awm.json
+ ┃ ┣ 📜fluff-bestiary-bam.json
+ ┃ ┣ 📜fluff-bestiary-bgdia.json
+ ┃ ┣ 📜fluff-bestiary-bgg.json
+ ┃ ┣ 📜fluff-bestiary-bmt.json
+ ┃ ┣ 📜fluff-bestiary-cm.json
+ ┃ ┣ 📜fluff-bestiary-coa.json
+ ┃ ┣ 📜fluff-bestiary-cos.json
+ ┃ ┣ 📜fluff-bestiary-crcotn.json
+ ┃ ┣ 📜fluff-bestiary-dc.json
+ ┃ ┣ 📜fluff-bestiary-dip.json
+ ┃ ┣ 📜fluff-bestiary-ditlcot.json
+ ┃ ┣ 📜fluff-bestiary-dmg.json
+ ┃ ┣ 📜fluff-bestiary-dod.json
+ ┃ ┣ 📜fluff-bestiary-dosi.json
+ ┃ ┣ 📜fluff-bestiary-dsotdq.json
+ ┃ ┣ 📜fluff-bestiary-efa.json
+ ┃ ┣ 📜fluff-bestiary-egw.json
+ ┃ ┣ 📜fluff-bestiary-erlw.json
+ ┃ ┣ 📜fluff-bestiary-fraif.json
+ ┃ ┣ 📜fluff-bestiary-ftd.json
+ ┃ ┣ 📜fluff-bestiary-ggr.json
+ ┃ ┣ 📜fluff-bestiary-gos.json
+ ┃ ┣ 📜fluff-bestiary-hat-tg.json
+ ┃ ┣ 📜fluff-bestiary-hftt.json
+ ┃ ┣ 📜fluff-bestiary-hotb.json
+ ┃ ┣ 📜fluff-bestiary-hotdq.json
+ ┃ ┣ 📜fluff-bestiary-idrotf.json
+ ┃ ┣ 📜fluff-bestiary-imr.json
+ ┃ ┣ 📜fluff-bestiary-jttrc.json
+ ┃ ┣ 📜fluff-bestiary-kftgv.json
+ ┃ ┣ 📜fluff-bestiary-kkw.json
+ ┃ ┣ 📜fluff-bestiary-lfl.json
+ ┃ ┣ 📜fluff-bestiary-llk.json
+ ┃ ┣ 📜fluff-bestiary-lmop.json
+ ┃ ┣ 📜fluff-bestiary-lox.json
+ ┃ ┣ 📜fluff-bestiary-lr.json
+ ┃ ┣ 📜fluff-bestiary-lrdt.json
+ ┃ ┣ 📜fluff-bestiary-mabjov.json
+ ┃ ┣ 📜fluff-bestiary-mcv1sc.json
+ ┃ ┣ 📜fluff-bestiary-mcv2dc.json
+ ┃ ┣ 📜fluff-bestiary-mcv3mc.json
+ ┃ ┣ 📜fluff-bestiary-mcv4ec.json
+ ┃ ┣ 📜fluff-bestiary-mff.json
+ ┃ ┣ 📜fluff-bestiary-mgelft.json
+ ┃ ┣ 📜fluff-bestiary-mismv1.json
+ ┃ ┣ 📜fluff-bestiary-mm.json
+ ┃ ┣ 📜fluff-bestiary-mot.json
+ ┃ ┣ 📜fluff-bestiary-mpmm.json
+ ┃ ┣ 📜fluff-bestiary-mpp.json
+ ┃ ┣ 📜fluff-bestiary-mtf.json
+ ┃ ┣ 📜fluff-bestiary-nf.json
+ ┃ ┣ 📜fluff-bestiary-oota.json
+ ┃ ┣ 📜fluff-bestiary-oow.json
+ ┃ ┣ 📜fluff-bestiary-pabtso.json
+ ┃ ┣ 📜fluff-bestiary-pota.json
+ ┃ ┣ 📜fluff-bestiary-ps-a.json
+ ┃ ┣ 📜fluff-bestiary-ps-d.json
+ ┃ ┣ 📜fluff-bestiary-ps-i.json
+ ┃ ┣ 📜fluff-bestiary-ps-k.json
+ ┃ ┣ 📜fluff-bestiary-ps-x.json
+ ┃ ┣ 📜fluff-bestiary-ps-z.json
+ ┃ ┣ 📜fluff-bestiary-qftis.json
+ ┃ ┣ 📜fluff-bestiary-rmbre.json
+ ┃ ┣ 📜fluff-bestiary-rot.json
+ ┃ ┣ 📜fluff-bestiary-sads.json
+ ┃ ┣ 📜fluff-bestiary-scc.json
+ ┃ ┣ 📜fluff-bestiary-sdw.json
+ ┃ ┣ 📜fluff-bestiary-skt.json
+ ┃ ┣ 📜fluff-bestiary-tce.json
+ ┃ ┣ 📜fluff-bestiary-tftyp.json
+ ┃ ┣ 📜fluff-bestiary-toa.json
+ ┃ ┣ 📜fluff-bestiary-tofw.json
+ ┃ ┣ 📜fluff-bestiary-ttp.json
+ ┃ ┣ 📜fluff-bestiary-vd.json
+ ┃ ┣ 📜fluff-bestiary-veor.json
+ ┃ ┣ 📜fluff-bestiary-vgm.json
+ ┃ ┣ 📜fluff-bestiary-vrgr.json
+ ┃ ┣ 📜fluff-bestiary-wbtw.json
+ ┃ ┣ 📜fluff-bestiary-wdh.json
+ ┃ ┣ 📜fluff-bestiary-wdmm.json
+ ┃ ┣ 📜fluff-bestiary-wtthc.json
+ ┃ ┣ 📜fluff-bestiary-xmm.json
+ ┃ ┣ 📜fluff-bestiary-xphb.json
+ ┃ ┣ 📜fluff-index.json
+ ┃ ┣ 📜foundry.json
+ ┃ ┣ 📜index.json
+ ┃ ┣ 📜legendarygroups.json
+ ┃ ┗ 📜template.json
+ ┣ 📂book
+ ┃ ┣ 📜book-aag.json
+ ┃ ┣ 📜book-aatm.json
+ ┃ ┣ 📜book-abh.json
+ ┃ ┣ 📜book-ai.json
+ ┃ ┣ 📜book-al.json
+ ┃ ┣ 📜book-awm.json
+ ┃ ┣ 📜book-bam.json
+ ┃ ┣ 📜book-bgg.json
+ ┃ ┣ 📜book-bmt.json
+ ┃ ┣ 📜book-cabomp.json
+ ┃ ┣ 📜book-dmg.json
+ ┃ ┣ 📜book-dmtcrg.json
+ ┃ ┣ 📜book-dod.json
+ ┃ ┣ 📜book-efa.json
+ ┃ ┣ 📜book-egw.json
+ ┃ ┣ 📜book-erlw.json
+ ┃ ┣ 📜book-fraif.json
+ ┃ ┣ 📜book-frhof.json
+ ┃ ┣ 📜book-ftd.json
+ ┃ ┣ 📜book-ggr.json
+ ┃ ┣ 📜book-hat-tg.json
+ ┃ ┣ 📜book-hf.json
+ ┃ ┣ 📜book-hffotm.json
+ ┃ ┣ 📜book-lfl.json
+ ┃ ┣ 📜book-mabjov.json
+ ┃ ┣ 📜book-mcv4ec.json
+ ┃ ┣ 📜book-mgelft.json
+ ┃ ┣ 📜book-mm.json
+ ┃ ┣ 📜book-mot.json
+ ┃ ┣ 📜book-mpmm.json
+ ┃ ┣ 📜book-mpp.json
+ ┃ ┣ 📜book-mtf.json
+ ┃ ┣ 📜book-nf.json
+ ┃ ┣ 📜book-oga.json
+ ┃ ┣ 📜book-paf.json
+ ┃ ┣ 📜book-phb.json
+ ┃ ┣ 📜book-ps-a.json
+ ┃ ┣ 📜book-ps-d.json
+ ┃ ┣ 📜book-ps-i.json
+ ┃ ┣ 📜book-ps-k.json
+ ┃ ┣ 📜book-ps-x.json
+ ┃ ┣ 📜book-ps-z.json
+ ┃ ┣ 📜book-rmr.json
+ ┃ ┣ 📜book-sac.json
+ ┃ ┣ 📜book-sato.json
+ ┃ ┣ 📜book-scag.json
+ ┃ ┣ 📜book-scc.json
+ ┃ ┣ 📜book-screen.json
+ ┃ ┣ 📜book-screendungeonkit.json
+ ┃ ┣ 📜book-screenspelljammer.json
+ ┃ ┣ 📜book-screenwildernesskit.json
+ ┃ ┣ 📜book-tce.json
+ ┃ ┣ 📜book-td.json
+ ┃ ┣ 📜book-vgm.json
+ ┃ ┣ 📜book-vrgr.json
+ ┃ ┣ 📜book-xdmg.json
+ ┃ ┣ 📜book-xge.json
+ ┃ ┣ 📜book-xmm.json
+ ┃ ┣ 📜book-xphb.json
+ ┃ ┣ 📜book-xsac.json
+ ┃ ┗ 📜book-xscreen.json
+ ┣ 📂class
+ ┃ ┣ 📜class-artificer.json
+ ┃ ┣ 📜class-barbarian.json
+ ┃ ┣ 📜class-bard.json
+ ┃ ┣ 📜class-cleric.json
+ ┃ ┣ 📜class-druid.json
+ ┃ ┣ 📜class-fighter.json
+ ┃ ┣ 📜class-monk.json
+ ┃ ┣ 📜class-mystic.json
+ ┃ ┣ 📜class-paladin.json
+ ┃ ┣ 📜class-ranger.json
+ ┃ ┣ 📜class-rogue.json
+ ┃ ┣ 📜class-sidekick.json
+ ┃ ┣ 📜class-sorcerer.json
+ ┃ ┣ 📜class-warlock.json
+ ┃ ┣ 📜class-wizard.json
+ ┃ ┣ 📜fluff-class-artificer.json
+ ┃ ┣ 📜fluff-class-barbarian.json
+ ┃ ┣ 📜fluff-class-bard.json
+ ┃ ┣ 📜fluff-class-cleric.json
+ ┃ ┣ 📜fluff-class-druid.json
+ ┃ ┣ 📜fluff-class-fighter.json
+ ┃ ┣ 📜fluff-class-monk.json
+ ┃ ┣ 📜fluff-class-mystic.json
+ ┃ ┣ 📜fluff-class-paladin.json
+ ┃ ┣ 📜fluff-class-ranger.json
+ ┃ ┣ 📜fluff-class-rogue.json
+ ┃ ┣ 📜fluff-class-sidekick.json
+ ┃ ┣ 📜fluff-class-sorcerer.json
+ ┃ ┣ 📜fluff-class-warlock.json
+ ┃ ┣ 📜fluff-class-wizard.json
+ ┃ ┣ 📜fluff-index.json
+ ┃ ┣ 📜foundry.json
+ ┃ ┗ 📜index.json
+ ┣ 📂generated
+ ┃ ┣ 📜bookref-dmscreen-index.json
+ ┃ ┣ 📜bookref-dmscreen.json
+ ┃ ┣ 📜bookref-quick.json
+ ┃ ┣ 📜gendata-maps.json
+ ┃ ┣ 📜gendata-nav-adventure-book-index.json
+ ┃ ┣ 📜gendata-spell-source-lookup.json
+ ┃ ┣ 📜gendata-subclass-lookup.json
+ ┃ ┣ 📜gendata-tables.json
+ ┃ ┣ 📜gendata-tag-redirects.json
+ ┃ ┣ 📜gendata-variantrules.json
+ ┃ ┗ 📜README.md
+ ┣ 📂spells
+ ┃ ┣ 📜fluff-index.json
+ ┃ ┣ 📜fluff-spells-aag.json
+ ┃ ┣ 📜fluff-spells-egw.json
+ ┃ ┣ 📜fluff-spells-frhof.json
+ ┃ ┣ 📜fluff-spells-ftd.json
+ ┃ ┣ 📜fluff-spells-ggr.json
+ ┃ ┣ 📜fluff-spells-phb.json
+ ┃ ┣ 📜fluff-spells-tce.json
+ ┃ ┣ 📜fluff-spells-xge.json
+ ┃ ┣ 📜fluff-spells-xphb.json
+ ┃ ┣ 📜foundry.json
+ ┃ ┣ 📜index.json
+ ┃ ┣ 📜sources.json
+ ┃ ┣ 📜spells-aag.json
+ ┃ ┣ 📜spells-ai.json
+ ┃ ┣ 📜spells-aitfr-avt.json
+ ┃ ┣ 📜spells-bmt.json
+ ┃ ┣ 📜spells-efa.json
+ ┃ ┣ 📜spells-egw.json
+ ┃ ┣ 📜spells-frhof.json
+ ┃ ┣ 📜spells-ftd.json
+ ┃ ┣ 📜spells-ggr.json
+ ┃ ┣ 📜spells-idrotf.json
+ ┃ ┣ 📜spells-llk.json
+ ┃ ┣ 📜spells-phb.json
+ ┃ ┣ 📜spells-sato.json
+ ┃ ┣ 📜spells-scc.json
+ ┃ ┣ 📜spells-tce.json
+ ┃ ┣ 📜spells-xge.json
+ ┃ ┗ 📜spells-xphb.json
+ ┣ 📜actions.json
+ ┣ 📜adventures.json
+ ┣ 📜backgrounds.json
+ ┣ 📜bastions.json
+ ┣ 📜books.json
+ ┣ 📜changelog.json
+ ┣ 📜charcreationoptions.json
+ ┣ 📜conditionsdiseases.json
+ ┣ 📜converter.json
+ ┣ 📜cultsboons.json
+ ┣ 📜decks.json
+ ┣ 📜deities.json
+ ┣ 📜encounterbuilder.json
+ ┣ 📜encounters.json
+ ┣ 📜feats.json
+ ┣ 📜fluff-backgrounds.json
+ ┣ 📜fluff-bastions.json
+ ┣ 📜fluff-charcreationoptions.json
+ ┣ 📜fluff-conditionsdiseases.json
+ ┣ 📜fluff-feats.json
+ ┣ 📜fluff-homecrafts.json
+ ┣ 📜fluff-items.json
+ ┣ 📜fluff-languages.json
+ ┣ 📜fluff-objects.json
+ ┣ 📜fluff-optionalfeatures.json
+ ┣ 📜fluff-races.json
+ ┣ 📜fluff-recipes.json
+ ┣ 📜fluff-rewards.json
+ ┣ 📜fluff-trapshazards.json
+ ┣ 📜fluff-vehicles.json
+ ┣ 📜foundry-actions.json
+ ┣ 📜foundry-feats.json
+ ┣ 📜foundry-items.json
+ ┣ 📜foundry-optionalfeatures.json
+ ┣ 📜foundry-psionics.json
+ ┣ 📜foundry-races.json
+ ┣ 📜foundry-rewards.json
+ ┣ 📜foundry-vehicles.json
+ ┣ 📜homecrafts.json
+ ┣ 📜items-base.json
+ ┣ 📜items.json
+ ┣ 📜languages.json
+ ┣ 📜life.json
+ ┣ 📜loot.json
+ ┣ 📜magicvariants.json
+ ┣ 📜makebrew-creature.json
+ ┣ 📜makecards.json
+ ┣ 📜monsterfeatures.json
+ ┣ 📜msbcr.json
+ ┣ 📜names.json
+ ┣ 📜objects.json
+ ┣ 📜optionalfeatures.json
+ ┣ 📜psionics.json
+ ┣ 📜races.json
+ ┣ 📜recipes.json
+ ┣ 📜renderdemo.json
+ ┣ 📜rewards.json
+ ┣ 📜senses.json
+ ┣ 📜skills.json
+ ┣ 📜tables.json
+ ┣ 📜trapshazards.json
+ ┣ 📜variantrules.json
+ ┗ 📜vehicles.json
