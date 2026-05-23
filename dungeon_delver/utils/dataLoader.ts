@@ -25,8 +25,17 @@ export const DataEngine = {
   },
 
   getItems: async () => {
-    const data = await DataEngine.loadLocalJson('data/items.json');
-    return data?.item || []; // 5e.tools usually uses the "item" key
+    // Load both the base items (mundane) and the main item list (magic)
+    const baseData = await DataEngine.loadLocalJson('data/items-base.json');
+    const magicData = await DataEngine.loadLocalJson('data/items.json');
+
+    const baseItems = baseData?.baseitem || [];
+    const magicItems = magicData?.item || [];
+
+    // Tag base items as mundane so our filter can find them easily
+    const processedBase = baseItems.map((i: any) => ({ ...i, rarity: 'none' }));
+
+    return [...processedBase, ...magicItems];
   },
 
   getRacesData: async () => {

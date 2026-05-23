@@ -180,6 +180,8 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
 
   // --- 1. STATE ---
 
+  const [equipmentMode, setEquipmentMode] = useState<'gear' | 'gold'>('gear');
+  const [rolledGold, setRolledGold] = useState(0);
   const [quickChoiceTask, setQuickChoiceTask] = useState<{ type: string, group: any[] } | null>(null);
   const [selectedClassData, setSelectedClassData] = useState<any>(null);
   const [rawSpecies, setRawSpecies] = useState<any[]>([]);
@@ -195,8 +197,31 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
     name: '', race: '', class: '', classLevels: [],
     hp: { current: 10, max: 10 },
     baseStats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
-    proficiencies: []
+    proficiencies: [],
+    inventory: [] // MUST be an empty array
   });
+  const [creationStage, setCreationStage] = useState<'hub' | 'equipment' | 'spells'>('hub');
+  const [equipmentChoices, setEquipmentChoices] = useState<any[]>([]);
+  const [allLibraryItems, setAllLibraryItems] = useState<any[]>([]);
+  const [activeEquipmentPicker, setActiveEquipmentPicker] = useState<{
+    groupIndex: number,
+    choiceKey: 'a' | 'b',
+    filter: string
+  } | null>(null);
+
+  const ALL_SKILLS = [
+    'athletics', 'acrobatics', 'sleightOfHand', 'stealth', 'arcana',
+    'history', 'investigation', 'nature', 'religion', 'animalHandling',
+    'insight', 'medicine', 'perception', 'survival', 'deception',
+    'intimidation', 'performance', 'persuasion'
+  ];
+
+  const normalizeSkillName = (name: string) => {
+    const clean = name.toLowerCase().trim();
+    if (clean === 'sleight of hand') return 'sleightOfHand';
+    if (clean === 'animal handling') return 'animalHandling';
+    return clean;
+  };
 
   // --- 2. DATA LOADING & MERGING ---
   // Inside CharacterWizard component at the top
@@ -214,8 +239,6 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
         }, {});
         setAllSpecies(Object.values(grouped));
       });
-
-      // Load subraces and backgrounds
       DataEngine.getRacesData().then(data => setAllSubraces(data.subraces || []));
       DataEngine.getMergedBackgrounds().then(mergedData => {
         const grouped = mergedData.reduce((acc: any, bg: any) => {
@@ -227,6 +250,7 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
         }, {});
         setAllBackgrounds(Object.values(grouped));
       });
+      DataEngine.getItems().then(setAllLibraryItems);
     }
   }, [isOpen]);
 
@@ -289,37 +313,48 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
     const classTheme = CLASS_THEMES[draft.class] || { color: '#b8860b' };
     // --- 1. SEARCHING THE JSON TREE (CRAWLER) ---
     const getCategorizedSkills = () => {
-      // Find the selected data objects
       const raceData = rawSpecies.find(s => s.name === draft.race) ||
         allSubraces.find(s => `${s.raceName} (${s.name})` === draft.race);
-
-      // Match the class from your fighter.json (handling info structure)
       const classData = selectedClassData?.info;
       const bgData = allBackgrounds.find(b => b.name === draft.background);
 
-      // A. BACKGROUND SKILLS (Usually Fixed)
-      const bgSkills = bgData?.skillProficiencies?.flatMap((obj: any) => Object.keys(obj)) || [];
+      // A. BACKGROUND SKILLS
+      const bgSkills = bgData?.skillProficiencies?.flatMap((obj: any) =>
+        Object.keys(obj).map(normalizeSkillName)
+      ) || [];
 
-      // B. SPECIES SKILLS (Fixed or Choice)
+      // B. SPECIES SKILLS
       let raceAuto: string[] = [];
       let raceChoice = { from: [] as string[], count: 0 };
       raceData?.skillProficiencies?.forEach((obj: any) => {
         if (obj.choose) {
-          raceChoice = { from: obj.choose.from, count: obj.choose.count || obj.choose.amount };
+          raceChoice = {
+            from: obj.choose.from.map(normalizeSkillName),
+            count: obj.choose.count || obj.choose.amount
+          };
         } else {
-          raceAuto.push(...Object.keys(obj));
+          raceAuto.push(...Object.keys(obj).map(normalizeSkillName));
         }
       });
 
-      // C. CLASS SKILLS (Choice - Matched to your fighter.txt)
+      // C. CLASS SKILLS (Bard & Rogue Fix)
       let classChoice = { from: [] as string[], count: 0 };
-      // The JSON path: startingProficiencies -> skills -> [0] -> choose
-      const classSkillObj = classData?.startingProficiencies?.skills?.[0]?.choose;
+      const classSkillObj = classData?.startingProficiencies?.skills?.[0];
+
       if (classSkillObj) {
-        classChoice = {
-          from: classSkillObj.from || [],
-          count: classSkillObj.count || classSkillObj.amount || 0
-        };
+        // Look for "any" (Bard/Rogue style) or "choose.from" (Fighter style)
+        if (classSkillObj.any) {
+          classChoice.from = ALL_SKILLS;
+          classChoice.count = classSkillObj.any;
+        } else if (classSkillObj.choose) {
+          classChoice.count = classSkillObj.choose.count || classSkillObj.choose.amount || 0;
+          // Handle if 'from' is just the word 'all'
+          if (classSkillObj.choose.from === 'all') {
+            classChoice.from = ALL_SKILLS;
+          } else {
+            classChoice.from = classSkillObj.choose.from.map(normalizeSkillName);
+          }
+        }
       }
 
       return { bgSkills, raceAuto, raceChoice, classChoice };
@@ -562,8 +597,6 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
       </div>
     </div>
   );
-
-
 
   // --- SUB-VIEW: DETAILED CLASS LOOK ---
   const DetailedClassView = ({ data }: { data: any }) => {
@@ -1042,6 +1075,244 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
     </div>
   );
 
+  const EquipmentSelectionView = () => {
+    const startingGear = selectedClassData?.info?.startingEquipment;
+    const choices = startingGear?.defaultData || [];
+
+    // --- 1. ROBUST LABEL GENERATOR ---
+    const generateGearLabel = (items: any[]) => {
+      if (!items || items.length === 0) return "Standard Gear";
+
+      const itemArray = Array.isArray(items) ? items : [items];
+
+      return itemArray.map(item => {
+        if (typeof item === 'string') return cleanString(item);
+
+        // Handle "any martial/simple weapon" from class JSON
+        if (item.equipmentType) {
+          // We check if the string contains "martial" anywhere (case insensitive)
+          const isMartial = item.equipmentType.toLowerCase().includes('martial');
+          return `Any ${isMartial ? 'Martial' : 'Simple'} Weapon`;
+        }
+
+        // Handle specific item objects
+        if (item.item) {
+          const name = cleanString(item.item);
+          return item.quantity && item.quantity > 1 ? `${item.quantity} ${name}s` : name;
+        }
+
+        if (item.contains) return cleanString(item.name || "Pack");
+
+        return "Special Item";
+      }).join(", ");
+    };
+
+    const handleChoiceClick = (index: number, key: 'a' | 'b', items: any) => {
+      if (!items) return;
+      const itemsArray = Array.isArray(items) ? items : [items];
+
+      const genericItem = itemsArray.find((i: any) => i.equipmentType);
+
+      if (genericItem) {
+        setActiveEquipmentPicker({
+          groupIndex: index,
+          choiceKey: key,
+          filter: genericItem.equipmentType
+        });
+      } else {
+        // 1. Mark the visual choice (Option A or B)
+        const newChoices = [...equipmentChoices];
+        newChoices[index] = key;
+        setEquipmentChoices(newChoices);
+
+        // 2. Map the actual items to our inventory format
+        const gearToAdd = itemsArray.map((i: any) => ({
+          id: `${Date.now()}-${Math.random()}`, // Unique ID
+          name: typeof i === 'string' ? cleanString(i) : cleanString(i.item || i.name),
+          equipped: true
+        }));
+
+        // 3. PERSISTENCE FIX: Always use the 'prev' state to avoid losing items
+        setDraft((prev: any) => {
+          // Filter out any old gear from this specific row index to allow "swapping" A and B
+          const otherGear = (prev.inventory || []).filter((invItem: any) => !invItem.id.startsWith(`row-${index}`));
+
+          // Tag these items so we can find/replace them if the user changes their mind
+          const taggedGear = gearToAdd.map(g => ({ ...g, id: `row-${index}-${g.name}` }));
+
+          return {
+            ...prev,
+            inventory: [...otherGear, ...taggedGear]
+          };
+        });
+      }
+    };
+
+    const goldFormula = startingGear?.goldAlternative || "4d4 x 10"; // Fallback
+
+    // HELPER: Handle Gold Rolling
+    const handleRollGold = () => {
+      // Simple parser for 5e.tools format: "5d4 x 10"
+      const cleanFormula = cleanString(goldFormula); // Strips {@dice ...}
+      const [dice, multiplier] = cleanFormula.toLowerCase().split('x');
+      const [count, sides] = dice.trim().split('d').map(Number);
+      const mult = Number(multiplier?.trim()) || 1;
+
+      let total = 0;
+      for (let i = 0; i < count; i++) {
+        total += Math.floor(Math.random() * sides) + 1;
+      }
+      setRolledGold(total * mult);
+    };
+
+    return (
+      <div style={subOverlayStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px' }}>
+          <div>
+            <div style={sectionLabelStyle}>PHASE 2: GEAR & INVENTORY</div>
+            <h1 style={{ fontSize: '3rem', margin: '10px 0', fontFamily: 'serif' }}>Equip your hero</h1>
+          </div>
+
+          {/* --- THE MODE TOGGLE --- */}
+          <div style={{ display: 'flex', background: '#1a202c', padding: '5px', borderRadius: '30px', border: '1px solid #4a5568' }}>
+            <button
+              onClick={() => setEquipmentMode('gear')}
+              style={{
+                ...pillBadgeStyle,
+                border: 'none',
+                background: equipmentMode === 'gear' ? '#b8860b' : 'transparent',
+                color: equipmentMode === 'gear' ? 'black' : 'white'
+              }}
+            >
+              CLASS GEAR
+            </button>
+            <button
+              onClick={() => setEquipmentMode('gold')}
+              style={{
+                ...pillBadgeStyle,
+                border: 'none',
+                background: equipmentMode === 'gold' ? '#b8860b' : 'transparent',
+                color: equipmentMode === 'gold' ? 'black' : 'white'
+              }}
+            >
+              STARTING GOLD
+            </button>
+          </div>
+        </div>
+
+        {equipmentMode === 'gear' ? (
+          /* --- EXISTING GEAR GRID --- */
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {choices.map((group: any, index: number) => {
+              const optA = group.a || group.A;
+              const optB = group.b || group.B;
+              return (
+                <div key={index} style={equipmentRowStyle}>
+                  <div
+                    onClick={() => handleChoiceClick(index, 'a', optA)}
+                    style={{ ...gearOptionStyle, border: `2px solid ${equipmentChoices[index] === 'a' ? '#b8860b' : 'transparent'}` }}
+                  >
+                    <div style={optionLabelStyle}>OPTION A</div>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{generateGearLabel(optA)}</div>
+                  </div>
+                  {optB && <div style={orDividerStyle}>OR</div>}
+                  {optB && (
+                    <div
+                      onClick={() => handleChoiceClick(index, 'b', optB)}
+                      style={{ ...gearOptionStyle, border: `2px solid ${equipmentChoices[index] === 'b' ? '#b8860b' : 'transparent'}` }}
+                    >
+                      <div style={optionLabelStyle}>OPTION B</div>
+                      <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{generateGearLabel(optB)}</div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          /* --- GOLD ALTERNATIVE VIEW --- */
+          <div style={{ background: '#2d3748', padding: '40px', borderRadius: '12px', border: '2px solid #b8860b', textAlign: 'center', maxWidth: '600px', margin: '0 auto' }}>
+            <h2 style={{ color: '#b8860b' }}>Wealthy Origins</h2>
+            <p style={{ color: '#cbd5e0' }}>You forgo your class gear for a pouch of gold coins.</p>
+
+            <div style={{ margin: '40px 0' }}>
+              <div style={{ fontSize: '0.8rem', color: '#a0aec0', marginBottom: '10px' }}>CLASS GOLD FORMULA: {cleanString(goldFormula)}</div>
+              <div style={{ fontSize: '4rem', fontWeight: '900', color: '#f6e05e' }}>{rolledGold} <span style={{ fontSize: '1.5rem' }}>GP</span></div>
+            </div>
+
+            <button
+              onClick={handleRollGold}
+              style={{ ...detailSelectButtonStyle, background: '#b8860b', color: 'black' }}
+            >
+              🎲 {rolledGold > 0 ? 'RE-ROLL GOLD' : 'ROLL FOR GOLD'}
+            </button>
+
+            <p style={{ marginTop: '20px', fontSize: '0.8rem', color: '#718096' }}>
+              Note: Selecting gold means you will start with no equipment in your inventory.
+            </p>
+          </div>
+        )}
+
+        {/* THE SUB-MENU PICKER MODAL */}
+        {activeEquipmentPicker && (
+          <div style={modalOverlayStyle}>
+            <div style={pickerContentStyle}>
+              <h2 style={{ color: '#b8860b', marginBottom: '15px' }}>
+                Select {activeEquipmentPicker.filter.toLowerCase().includes('martial') ? 'Martial' : 'Simple'} Weapon
+              </h2>
+
+              <div style={scrollableListStyle}>
+                {allLibraryItems
+                  .filter(item => {
+                    // 1. MUST BE MUNDANE
+                    const isMundane = !item.rarity || item.rarity === 'none';
+                    if (!isMundane) return false;
+
+                    // 2. CATEGORY FILTER (Fixing the Simple/Martial list issue)
+                    const isMartialSearch = activeEquipmentPicker.filter.toLowerCase().includes('martial');
+
+                    // Check against all possible 5e.tools keys for category
+                    const category = (item.weaponCategory || item.type || "").toLowerCase();
+
+                    if (isMartialSearch) {
+                      return category === 'martial' || category === 'm';
+                    } else {
+                      return category === 'simple' || category === 's';
+                    }
+                  })
+                  .reduce((acc: any[], current: any) => {
+                    if (!acc.find(i => i.name === current.name)) acc.push(current);
+                    return acc;
+                  }, [])
+                  .map((item, idx) => (
+                    <button
+                      key={`${item.name}-${idx}`}
+                      onClick={() => {
+                        const newChoices = [...equipmentChoices];
+                        newChoices[activeEquipmentPicker.groupIndex] = activeEquipmentPicker.choiceKey;
+                        setEquipmentChoices(newChoices);
+
+                        setDraft((prev: any) => ({
+                          ...prev,
+                          inventory: [...(prev.inventory || []), { id: `${item.name}-${Date.now()}`, name: item.name, equipped: true }]
+                        }));
+                        setActiveEquipmentPicker(null);
+                      }}
+                      style={pickerItemButtonStyle}
+                    >
+                      {item.name}
+                    </button>
+                  ))
+                }
+              </div>
+              <button onClick={() => setActiveEquipmentPicker(null)} style={closeButtonStyle}>CANCEL</button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // --- 6. MAIN HUB VIEW ---
   const HubView = () => (
     <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
@@ -1076,12 +1347,6 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
       </div>
     </div>
   );
-
-  const arrayNumStyle: any = {
-    width: '50px', height: '50px', display: 'flex', alignItems: 'center',
-    justifyContent: 'center', borderRadius: '8px', fontWeight: '900', fontSize: '1.2rem',
-    border: '1px solid rgba(255,255,255,0.1)', transition: '0.3s'
-  };
 
   const abilityCardStyle: any = {
     background: '#1a202c',
@@ -1186,44 +1451,76 @@ export default function CharacterWizard({ isOpen, onClose, onComplete }: any) {
     return `/img/backgrounds/${encodedName}.webp`;
   };
 
+
   return (
     <div style={overlayStyle}>
       <div style={containerStyle}>
-        {activeSection === 'abilities' ? <AbilitiesView /> :
-          activeSection === 'species' ? (
-            <SpeciesView />
-          ) : activeSection === 'class' ? (
-            <ClassView />
-          ) : activeSection === 'background' ? ( // ADD THIS
-            <BackgroundView />
-          ) : (
-            <HubView />
-          )}
+
+        {/* STAGE 1: THE HUB AND CHOICES */}
+        {creationStage === 'hub' && (
+          <>
+            {activeSection === 'species' ? <SpeciesView /> :
+              activeSection === 'class' ? <ClassView /> :
+                activeSection === 'background' ? <BackgroundView /> :
+                  activeSection === 'abilities' ? <AbilitiesView /> :
+                    <HubView />}
+          </>
+        )}
+
+        {/* STAGE 2: EQUIPMENT */}
+        {creationStage === 'equipment' && (
+          <EquipmentSelectionView />
+        )}
         {/* SIDEBAR ... */}
         <div style={sidebarStyle}>
           <button
-            style={{ ...createButtonStyle, background: (draft.name && draft.race && draft.class) ? '#b8860b' : '#4a5568' }}
+            style={{
+              ...createButtonStyle,
+              // 1. Visual feedback: if valid, make it Gold. If not, make it Grey.
+              background: (draft.name && draft.race && draft.class && Object.values(baseScores).every(v => v > 0))
+                ? '#b8860b' : '#2d3748',
+              color: 'white',
+              cursor: 'pointer',
+              opacity: (draft.name && draft.race && draft.class) ? 1 : 0.5
+            }}
             onClick={() => {
-              const finalCharacter = {
-                ...draft,
-                baseStats: baseScores,
-                // Calculate level based on class levels
-                level: draft.classLevels?.reduce((sum: number, cl: any) => sum + cl.level, 0) || 1,
-                // Final proficiencies from the Abilities step
-                proficiencies: draft.proficiencies || []
-              };
-              onComplete(finalCharacter);
+              // DEBUG: This will print to your console (F12) so you can see why it won't advance
+              console.log("Current Draft:", draft);
+              console.log("Current Scores:", baseScores);
+
+              const isIdentityValid = draft.name && draft.race && draft.class;
+              const areStatsValid = Object.values(baseScores).every(v => v > 0);
+
+              if (creationStage === 'hub') {
+                if (isIdentityValid && areStatsValid) {
+                  setCreationStage('equipment');
+                  window.scrollTo(0, 0); // Scroll to top for the new screen
+                } else {
+                  alert(`Missing Info: ${!draft.name ? 'Name, ' : ''}${!draft.race ? 'Race, ' : ''}${!draft.class ? 'Class, ' : ''}${!areStatsValid ? 'Ability Scores' : ''}`);
+                }
+              } else {
+                // Final Completion Logic
+                const finalCharacter = {
+                  ...draft,
+                  baseStats: baseScores,
+                  level: draft.classLevels?.reduce((sum: number, cl: any) => sum + cl.level, 0) || 1,
+                  inventory: draft.inventory || []
+                };
+                onComplete(finalCharacter);
+              }
             }}
           >
-            CREATE CHARACTER
+            {creationStage === 'hub' ? 'CONFIRM CORE IDENTITY' : 'FINISH CHARACTER'}
           </button>
-          <div style={portraitFrameStyle}><span style={{ color: '#b8860b' }}>PORTRAIT</span></div>
           <input placeholder="Name" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} style={nameInputStyle} />
         </div>
-        {/* SECONDARY OVERLAYS */}
-        {inspectingSpecies && <DetailedSpeciesView data={inspectingSpecies} />}
-        {inspectingClass && <DetailedClassView data={inspectingClass} />}
-        {inspectingBackground && <DetailedBackgroundView data={inspectingBackground} />} {/* USE THE NEW VIEW HERE */}
+        {creationStage === 'hub' && (
+          <>
+            {inspectingSpecies && <DetailedSpeciesView data={inspectingSpecies} />}
+            {inspectingClass && <DetailedClassView data={inspectingClass} />}
+            {inspectingBackground && <DetailedBackgroundView data={inspectingBackground} />}
+          </>
+        )}
       </div>
       <button onClick={onClose} style={cancelButtonStyle}>✕ CANCEL</button>
       {quickChoiceTask && (
@@ -1327,22 +1624,7 @@ const classIconOnBannerStyle: any = { height: '50px', opacity: 0.9 };
 
 const classCardContentStyle: any = { position: 'relative', zIndex: 3, padding: '30px', textAlign: 'left' };
 
-const pillBadgeStyle: any = {
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: '2px solid',        // Must be 2px to show the color properly
-  borderRadius: '30px',       // Fully rounded ends
-  padding: '2px 12px',        // Tight vertical padding
-  fontSize: '0.7rem',
-  fontWeight: '900',          // Extra thick text
-  letterSpacing: '0.2px',     // Tightened for that UI look
-  color: '#ffffff',
-  textTransform: 'uppercase',
-  fontFamily: 'sans-serif',
-  backdropFilter: 'blur(3px)',
-  marginRight: '8px',
-};
+const pillBadgeStyle: any = { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', border: '2px solid', borderRadius: '30px', padding: '2px 12px', fontSize: '0.7rem', fontWeight: '900', letterSpacing: '0.2px', color: '#ffffff', textTransform: 'uppercase', fontFamily: 'sans-serif', backdropFilter: 'blur(3px)', marginRight: '8px', };
 
 const learnMoreButtonStyle: any = { background: 'rgba(255,255,255,0.1)', border: '1px solid white', color: 'white', padding: '8px 20px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.8rem' };
 
@@ -1358,112 +1640,44 @@ const subclassCardStyle: any = { height: '200px', position: 'relative', borderRa
 
 const goldCornerTL: any = { position: 'absolute', top: 0, left: 0, width: '20px', height: '20px', borderTop: '2px solid #b8860b', borderLeft: '2px solid #b8860b', borderTopLeftRadius: '8px' };
 
-
 const gearBoxStyle: any = { border: '1px solid #b8860b', borderRadius: '8px', padding: '40px', display: 'flex', gap: '40px', alignItems: 'center' };
 
-const detailOverlayStyle: any = {
-  position: 'fixed',
-  inset: 0,
-  background: '#0a0d12',
-  zIndex: 1200,
-  overflowY: 'auto'
-};
+const detailOverlayStyle: any = { position: 'fixed', inset: 0, background: '#0a0d12', zIndex: 1200, overflowY: 'auto' };
 
-const detailNavStyle: any = {
-  position: 'sticky',
-  top: 0,
-  height: '70px',
-  background: 'rgba(10, 13, 18, 0.95)',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '0 40px',
-  zIndex: 100
-};
+const detailNavStyle: any = { position: 'sticky', top: 0, height: '70px', background: 'rgba(10, 13, 18, 0.95)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 40px', zIndex: 100 };
 
-const heroSectionStyle: any = {
-  height: '65vh', // Taller hero area
-  backgroundSize: 'cover',
-  backgroundPosition: 'center 20%',
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'flex-end'
-};
+const heroSectionStyle: any = { height: '65vh', backgroundSize: 'cover', backgroundPosition: 'center 20%', position: 'relative', display: 'flex', alignItems: 'flex-end' };
 
-const heroContentStyle: any = {
-  width: '100%',
-  maxWidth: '1200px',
-  margin: '0 auto',
-  padding: '0 40px 60px 40px',
-  zIndex: 2
-};
+const heroContentStyle: any = { width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '0 40px 60px 40px', zIndex: 2 };
 
-const infoGridContainerStyle: any = {
-  width: '100%',
-  maxWidth: '1200px',
-  margin: '0 auto',
-  padding: '40px'
-};
+const infoGridContainerStyle: any = { width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '40px' };
 
-const heroGradientStyle: any = {
-  position: 'absolute',
-  inset: 0,
-  background: 'linear-gradient(to top, #0a0d12 0%, rgba(10, 13, 18, 0.4) 50%, transparent 100%)',
-  zIndex: 1
-};
+const heroGradientStyle: any = { position: 'absolute', inset: 0, background: 'linear-gradient(to top, #0a0d12 0%, rgba(10, 13, 18, 0.4) 50%, transparent 100%)', zIndex: 1 };
 
-const sideRailStyle: any = {
-  position: 'fixed',
-  left: 0,
-  top: '70px', // Starts below the top nav
-  bottom: 0,
-  width: '70px',
-  background: '#12161d',
-  borderRight: '1px solid #2d3748',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  paddingTop: '20px',
-  zIndex: 1300, // Above the detail content
-  overflowY: 'auto'
-};
+const sideRailStyle: any = { position: 'fixed', left: 0, top: '70px', bottom: 0, width: '70px', background: '#12161d', borderRight: '1px solid #2d3748', display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: '20px', zIndex: 1300, overflowY: 'auto' };
 
-const sideRailIconContainer: any = {
-  width: '100%',
-  height: '60px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  cursor: 'pointer',
-  transition: '0.2s',
-  marginBottom: '5px'
-};
+const sideRailIconContainer: any = { width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: '0.2s', marginBottom: '5px' };
 
-const subOverlayStyle: any = {
-  flex: 1,
-  padding: '40px',
-  height: '100vh',     // Force it to be the height of the screen
-  overflowY: 'auto',   // Enable the scrollbar
-  position: 'relative'
-};
+const subOverlayStyle: any = { flex: 1, padding: '40px', height: '100vh', overflowY: 'auto', position: 'relative' };
 
-const statBonusBadgeStyle: any = {
-  padding: '2px 8px',
-  border: '1px solid #b8860b',
-  borderRadius: '4px',
-  fontSize: '0.75rem',
-  fontWeight: 'bold',
-  color: 'white',
-  background: 'rgba(184, 134, 11, 0.2)'
-};
+const statBonusBadgeStyle: any = { padding: '2px 8px', border: '1px solid #b8860b', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 'bold', color: 'white', background: 'rgba(184, 134, 11, 0.2)' };
 
-const versionTabStyle: any = {
-  padding: '6px 12px',
-  borderRadius: '4px',
-  border: '1px solid rgba(255,255,255,0.2)',
-  fontSize: '0.7rem',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-  transition: '0.2s'
-};
+const versionTabStyle: any = { padding: '6px 12px', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.2)', fontSize: '0.7rem', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' };
 
+const equipmentRowStyle: any = { display: 'flex', alignItems: 'center', gap: '15px', width: '100%', marginBottom: '10px' };
+
+const gearOptionStyle: any = { flex: 1, padding: '20px', background: 'rgba(45, 55, 72, 0.4)', borderRadius: '8px', cursor: 'pointer', transition: '0.2s', minHeight: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center' };
+
+const optionLabelStyle: any = { fontSize: '0.7rem', fontWeight: 'bold', color: '#b8860b', letterSpacing: '1px', marginBottom: '5px' };
+
+const orDividerStyle: any = { fontWeight: 'bold', color: '#4a5568', fontSize: '0.8rem' };
+
+const modalOverlayStyle: any = { position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4000 };
+
+const pickerContentStyle: any = { background: '#1a202c', padding: '30px', borderRadius: '12px', border: '2px solid #b8860b', width: '500px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' };
+
+const scrollableListStyle: any = { flex: 1, overflowY: 'auto', marginTop: '20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', paddingRight: '10px' };
+
+const pickerItemButtonStyle: any = { padding: '12px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '6px', cursor: 'pointer', textAlign: 'left', fontSize: '0.85rem', fontWeight: 'bold', transition: '0.2s' };
+
+const closeButtonStyle: any = { marginTop: '20px', padding: '12px', background: '#e53e3e', color: 'white', border: 'none', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' };

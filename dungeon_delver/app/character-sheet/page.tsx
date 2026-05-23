@@ -148,8 +148,8 @@ export default function CharacterSheet() {
                         opacity: 0.3,
                         // We use a template literal and force the first letter to be uppercase 
                         // and the rest lowercase to match standard filename conventions
-                        backgroundImage: `url(/img/classes/${char.classLevels[0].className.charAt(0).toUpperCase() + char.classLevels[0].className.slice(1).toLowerCase()}.png)`,
-                        backgroundSize: 'contain',
+                        backgroundImage: `url(/img/classes/Icons/${char.classLevels[0].className.charAt(0).toUpperCase() + char.classLevels[0].className.slice(1).toLowerCase()}.png)`,
+                        backgroundSize: '33%',
                         backgroundPosition: 'center',
                         backgroundRepeat: 'no-repeat',
                         pointerEvents: 'none',

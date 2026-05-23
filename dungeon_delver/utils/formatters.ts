@@ -26,50 +26,24 @@ export const formatEntries = (entries: any): string => {
 
 // utils/formatters.ts
 
+// utils/formatters.ts
+
 export const cleanString = (str: string): string => {
     if (!str || typeof str !== 'string') return str;
 
-    // Apply regex repeatedly to handle nested tags
-    let result = str;
-    let previousResult = '';
-    
-    // Keep applying the regex until no more changes (handles nested tags)
-    while (result !== previousResult) {
-        previousResult = result;
-        result = result.replace(/\{@(\w+)\s?([^}]+)?\}/g, (match, tag, content) => {
-            if (!content) return "";
+    // Remove the source/book info from items (e.g., "greataxe|phb" -> "greataxe")
+    let cleaned = str.split('|')[0];
 
-            const tagLower = tag.toLowerCase();
+    // Strip (a), (b), (c) prefixes with extra safety for leading spaces
+    cleaned = cleaned.replace(/^\s*\([a-z]\)\s*/i, '');
 
-            // 1. HIDDEN METADATA: Explicitly kill these tags
-            const tagsToHide = ['variantrule', 'note', 'info', 'book', 'link', '5etools', 'source', 'prerequisite'];
-            if (tagsToHide.includes(tagLower)) return "";
-
-            // 2. MECHANICAL SHORTHAND
-            if (tagLower === 'recharge') return `(Recharge ${content})`;
-            if (tagLower === 'dc') return `DC ${content}`;
-            if (tagLower === 'h') return "Hit: ";
-
-            // 3. PIPES (|): Fix for the 'p' has any type error
-            const parts = content.split('|');
-            if (parts.length > 1) {
-                const technicalKeywords = ['xphb', 'phb', 'mm', 'vgm', 'tce', 'xge', 'class=', 'item=', 'optfeature=', 'ability='];
-
-                // Note the (p: string) below - this fixes your TypeScript error
-                const cleanParts = parts.filter((p: string) =>
-                    !technicalKeywords.some(tk => p.toLowerCase().includes(tk))
-                );
-
-                return cleanParts.length > 0 ? cleanParts[0] : parts[0];
-            }
-
-            return content;
-        });
-    }
-    
-    return result
-        .replace(/\s\s+/g, ' ') // Remove double spaces
-        .trim();
+    // Handle the standard {@tag ...} patterns
+    return cleaned.replace(/\{@(\w+)\s?([^}]+)?\}/g, (match, tag, content) => {
+        if (!content) return "";
+        const parts = content.split('|');
+        // Always take the first part for items/names
+        return parts[0].replace(/.*=/, '').trim();
+    }).trim();
 };
 
 export const formatValue = (data: any): string => {
