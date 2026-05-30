@@ -1,0 +1,17 @@
+node_modules
+.next
+out
+.git
+.gitignore
+*.local
+.env*
+.vscode
+.idea
+src-tauri
+docs
+README.md
+AGENTS.md
+CLAUDE.md
+ROADMAP.md
+TESTING.md
+repomix-output.txt

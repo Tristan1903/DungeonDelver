@@ -1,8 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #1a202c;
+  --foreground: #e2e8f0;
+  --dungeon-bg: #1a202c;
+  --dungeon-bg-dark: #12161d;
+  --dungeon-bg-darker: #0a0d12;
+  --dungeon-sidebar: #0f1419;
+  --dungeon-panel: #2d3748;
+  --dungeon-panel-dark: #1a202c;
+  --dungeon-border: #4a5568;
+  --dungeon-gold: #b8860b;
+  --dungeon-gold-dark: #822000;
+  --dungeon-accent: #6366f1;
+  --dungeon-success: #48bb78;
+  --dungeon-danger: #e53e3e;
+  --dungeon-text: #e2e8f0;
+  --dungeon-text-muted: #a0aec0;
+  --dungeon-text-dim: #718096;
+  --dungeon-text-light: #cbd5e0;
+  --dungeon-radius-sm: 4px;
+  --dungeon-radius-md: 8px;
+  --dungeon-radius-lg: 12px;
+  --dungeon-radius-xl: 15px;
+  --dungeon-radius-full: 25px;
+  --dungeon-spacing-xs: 10px;
+  --dungeon-spacing-sm: 15px;
+  --dungeon-spacing-md: 20px;
+  --dungeon-spacing-lg: 30px;
+  --dungeon-spacing-xl: 40px;
+  --dungeon-transition: 0.2s;
 }
 
 @theme inline {
@@ -12,15 +39,63 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background: var(--dungeon-bg);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Touch-friendly targets */
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+@media (pointer: coarse) {
+  button,
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Responsive utilities */
+.responsive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--dungeon-bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--dungeon-border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dungeon-text-dim);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

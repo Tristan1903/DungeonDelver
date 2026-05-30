@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="836339d3-759c-4251-900b-16f3e4e00846" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/app/character-sheet/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/app/character-sheet/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/app/combat/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/app/combat/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/app/globals.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/app/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/comp.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/compare.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/components/CharacterWizard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/components/CharacterWizard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/components/StatPicker.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/components/StatPicker.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/lib/character.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/lib/character.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/AAG/Astral Drifter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/AAG/Wildspacer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/ABH/Vampire Devotee.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/AI/celebrity-adventurers-scion.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/AI/plaintiff-coin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/BGDIA/Baldur's Gate Criminal.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/BGG/Giant Foundling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/BGG/Rune Carver.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/BMT/Rewarded.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/BMT/Ruined.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/DSotDQ/Knight of Solamnia.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/DSotDQ/Mage of High Sorcery.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/Aberrant Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/Archaeologist.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Agent.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Cannith Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Deneith Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Ghallanda Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Jorasco Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Kundarak Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Lyrandar Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Medani Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Orien Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Phiarlan Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Sivis Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Tharashk Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Thuranni Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/House Vadalis Heir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EFA/Inquisitive.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EGW/Grinner.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/EGW/Volstrucker Agent.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Chondathan Freebooter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Dead Magic Dweller.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Dragon Cultist.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Emerald Enclave Caretaker.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Flaming Fist Mercenary.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Genie Touched.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Harper.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Ice Fisher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Knight of the Gauntlet.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Lords' Alliance Vassal.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Moonwell Pilgrim.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Mulhorandi Tomb Raider.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Mythalkeeper.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Purple Dragon Squire.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Rashemi Wanderer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Shadowmasters Exile.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Spellfire Initiate.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/FRHoF/Zhentarim Mercenary.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/LFL/Lorwyn Expert.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/LFL/Shadowmoor Expert.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/MOT/Athlete.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/PSA/Dissenter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/PSA/Initiate.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/PSA/Initiate2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/PSA/Vizier.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/PSI/Inquisitor.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/SCC/Prismari Student.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/SCC/Quandrix Student.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/SatO/Gate Warden.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/SatO/Planar Philosopher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/VRGR/Haunted One.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/VRGR/Investigator.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/WBtW/Feylost.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/WBtW/Witchlight Hand.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Acolyte.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Artisan.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Charlatan.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Criminal.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Entertainer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Farmer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Guard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Guide.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Hermit.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Merchant.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Noble.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Sage.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Sailor.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Scribe.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Soldier.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/backgrounds/XPHB/Wayfarer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/BGG/Giant Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/DMG/Death Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/DSotDQ/Lunar Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Alchemist Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Armorer Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Artillerist Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Battle Smith Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EFA/Cartographer Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EGW/Chronurgy Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EGW/Echo Knight Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/EGW/Graviturgy Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Banneret Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Bladesinger Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Genie Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Knowledge Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Moon Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Scion of the Three Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Spellfire Sorcerer 2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Spellfire Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FRHoF/Winter Walker Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FTD/Ascendant Dragon Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/FTD/Drakewarden Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Battle Master Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Totem Warrior Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Wild Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PHB/Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PSA/Ambition (PSA) Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PSA/Knowledge (PSA) Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PSA/Solidarity (PSA) Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PSA/Strength (PSA) Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/PSA/Zeal (PSA) Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/SCAG/Arcana Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/SCAG/Purple Dragon Knight (Banneret) Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Aberrant Mind Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Alchemist Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Armorer Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Artillerist Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Astral Self Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Battle Smith Artificer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Beast Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Bladesinging Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Clockwork Soul Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Creation Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Eloquence Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Expert Sidekick.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Fathomless Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Fey Wanderer Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Genie Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Glory Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Mercy Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Order Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Peace Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Phantom Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Psi Warrior Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Rune Knight Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Scribes Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Soulknife Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Spellcaster Sidekick.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Spores Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Stars Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Swarmkeeper Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Twilight Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Warrior Sidekick.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Watchers Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Wild Magic Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/TCE/Wildfire Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/VRGR/Spirits Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/VRGR/Undead Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Celestial Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Conquest Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Dreams Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Forge Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Grave Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Hexblade Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Redemption Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Shepherd Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Storm Herald Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Swords Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/War Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XGE/Whispers Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/039-03-015.barbarian-weapons.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/051-03-027.cleric-praying.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/057-03-033.druid-in-nature.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/060-03-036.wolf-form-druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/064-03-040.fighter-v-black-dragon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/093-04-008.ranger-and-deer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/099-04-014.cunning-rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/101-04-016.rogue-v-dragon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/104-04-019.sneak-attack.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/112-04-027.delina.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/114-04-029.skull-spiders.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/120-04-035.elf-queen-yolande.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/121-04-036.wizard-book.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/122-04-037.wizard-leomund.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Aberrant Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Abjurer Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Ancients Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Arcane Trickster Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Archfey Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Assassin Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Battle Master Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Beast Master Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Berserker Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Celestial Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Champion Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Clockwork Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Dance Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Devotion Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Diviner Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Draconic Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Eldritch Knight Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Elements Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Evoker Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Fey Wanderer Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Fiend Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Glamour Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Gloom Stalker Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Glory Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Great Old One Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Hunter Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Illusionist Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Land Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Life Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Light Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Lore Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Mercy Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Moon Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Open Hand Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Psi Warrior Fighter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Ranger.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Sea Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Shadow Monk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Soulknife Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Stars Druid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Thief Rogue.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Trickery Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Valor Bard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Vengeance Paladin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/War Cleric.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Warlock.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Wild Heart Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Wild Magic Sorcerer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Wizard.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/World Tree Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/classes/XPHB/Zealot Barbarian.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/BGG/Fury of the Frost Giant.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/DSotDQ/Mage of High Sorcery.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Detection.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Finding.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Making.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Passage.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Shadow.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Greater Mark of Storm.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Detection.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Finding.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Handling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Healing.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Hospitality.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Making.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Passage.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Scribing.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Sentinel.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Shadow.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Storm.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Mark of Warding.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Siberys Mark of Detection.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Siberys Mark of Making.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/EFA/Siberys Mark of Shadow.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/PHB/Inspiring Leader.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/PHB/Ritual Caster.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/PSK/Servo Crafting.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/SatO/Planar Wanderer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/TCE/Eldritch Adept.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/TCE/Telepathic.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Boon of Fate.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Boon of Skill.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Fey-Touched.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Healer.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Poisoner.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Ritual Caster.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Two-Weapon Fighting.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/feats/XPHB/Weapon Master.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Astral Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Autognome.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Giff.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Hadozee.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Plasmoid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AAG/Thri-kreen.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ABH/Dhampir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/AI/Verdan.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/DSotDQ/Kender.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EEPC/Aarakocra.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EEPC/Genasi.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EFA/Changeling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EFA/Kalashtar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EFA/Khoravar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EFA/Shifter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EFA/Warforged.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EGW/Dragonborn (Draconblood).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EGW/Dragonborn (Ravenite).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EGW/Elf (Pallid).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/EGW/Halfling (Lotusden).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Changeling 001.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Changeling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Goblinoids.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Kalashtar 001.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Kalashtar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Shifter (Wildhunt).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Shifter 001.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Warforged 001.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/ERLW/Warforged.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/FTD/Chromatic Dragonborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/FTD/Gem Dragonborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/FTD/Metallic Dragonborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/GGR/Centaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/GGR/Loxodon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/GGR/Minotaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/GGR/Simic Hybrid.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/GGR/Vedalken.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Boggart.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Changeling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Elf (Lorwyn).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Elf (Shadowmoor).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Faerie.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Flamekin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Kithkin (Shadowmoor).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LFL/Rimekin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/LR/Locathah.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Lagonna Band Centaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Leonin Matron.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Leonin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Minotaur 2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Minotaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Pheres Band Centaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Satyr 2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Satyr.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Triton 2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MOT/Triton.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Aarakocra.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Aasimar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Bugbear.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Centaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Changeling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Deep Gnome.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Duergar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Eladrin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Fairy.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Firbolg.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Genasi.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Githyanki.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Githzerai.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Goblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Goliath.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Harengon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Hobgoblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Kenku.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Kobold.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Lizardfolk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Minotaur.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Orc.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Satyr.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Sea Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Shadar-kai.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Shifter.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Tabaxi.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Tortle.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Triton.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MPMM/Yuan-ti.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/MTF/Githyanki.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/OGA/Grung.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Dragonborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Dwarf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Gnome.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Half-Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Half-Orc.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Halfling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Human.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PHB/Tiefling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Aven (Ibis-Headed).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Aven.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Aven2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Human (Amonkhet).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Human (Amonkhet)2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Khenra.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Khenra2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Minotaur (Amonkhet).webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Minotaur (Amonkhet)2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Naga.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSA/Naga2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSD/Aven.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSD/Keldon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSD/Keldon2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSI/Innistrad.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSI/Innistrad2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSI/Innistrad3.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Aetherborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Aetherborn2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Dwarf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Dwarf2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Elf2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Human.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Vedalken.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSK/Vedalken2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Goblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Goblin2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Human.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Human2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Human3.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Merfolk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Merfolk2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Orc.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Siren.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Vampire.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Vampire2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSX/Vampire3.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Elf2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Goblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Goblin2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Human.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Human2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Human3.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Human4.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Kor.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Kor2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Kor3.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Merfolk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Merfolk2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Vampire.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/PSZ/Vampire2.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/SCAG/Feral Tiefling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/SCC/Owlin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/TTP/Tortle.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Aasimar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Bugbear.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Firbolg.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Goblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Goliath.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Hobgoblin.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Kenku.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Kobold.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Lizardfolk.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Orc.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Tabaxi.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Triton.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VGM/Yuan-ti Pureblood.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VRGR/Dhampir.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VRGR/Hexblood.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/VRGR/Reborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/WBtW/Fairy.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/WBtW/Harengon.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/148-05-022.elf-city.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/156-05-029.infernal-chthonic-abyssal.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/157-05-028.armored-tiefling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Aasimar.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Dragonborn.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Dwarf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Elf.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Gnome.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Goliath.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Halfling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Human.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Orc.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/public/img/races/XPHB/Tiefling.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/utils/characterEngine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/utils/characterEngine.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/utils/dataLoader.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/utils/dataLoader.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dungeon_delver/utils/rollEngine.ts" beforeDir="false" afterPath="$PROJECT_DIR$/dungeon_delver/utils/rollEngine.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 4,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3E7E27eqprREk1XZVPqubMHt7fQ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/trist/OneDrive/Dokumente/GitHub/DungeonDelver",
+    "nodejs_package_manager_path": "npm",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-31caf2ab9e3c-JavaScript-WS-261.24374.125" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="836339d3-759c-4251-900b-16f3e4e00846" name="Changes" comment="" />
+      <created>1779520999853</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1779520999853</updated>
+      <workItem from="1779521001147" duration="34000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

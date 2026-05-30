@@ -1,0 +1,323 @@
+{
+  "name": "asdfg",
+  "expertise": [
+    "religion",
+    "insight"
+  ],
+  "race": "Aasimar (Protector)",
+  "class": "Bard",
+  "background": "Acolyte",
+  "classLevels": [
+    {
+      "className": "Bard",
+      "level": 1
+    }
+  ],
+  "totalLevel": 1,
+  "level": 1,
+  "xp": 0,
+  "levelingMode": "individual",
+  "baseStats": {
+    "str": 15,
+    "dex": 14,
+    "con": 12,
+    "int": 13,
+    "wis": 10,
+    "cha": 8
+  },
+  "hp": {
+    "current": 9,
+    "max": 9
+  },
+  "inventory": [
+    {
+      "id": "row-0-leather armor-0",
+      "name": "leather armor",
+      "equipped": true,
+      "quantity": 1,
+      "entries": [
+        "The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil. The rest of the armor is made of softer and more flexible materials."
+      ],
+      "weight": 10,
+      "type": "LA|XPHB",
+      "modifiers": {
+        "ac": 11
+      }
+    },
+    {
+      "id": "row-0-dagger-1",
+      "name": "dagger",
+      "equipped": true,
+      "quantity": 2,
+      "entries": [
+        "Simple weapon.",
+        "Damage: 1d4 P (20/60 ft).",
+        "Properties: F, L, T.",
+        "Mastery: Nick.",
+        "Weight: 1 lb.",
+        "Value: 2 gp."
+      ],
+      "weight": 1,
+      "type": "M|XPHB",
+      "dmg1": "1d4"
+    },
+    {
+      "id": "row-0-backpack-2",
+      "name": "backpack",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Backpack holds up to 30 pounds within 1 cubic foot. It can also serve as a saddlebag."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-bedroll-3",
+      "name": "bedroll",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Bedroll sleeps one Small or Medium creature. While in a Bedroll, you automatically succeed on saving throws against {@hazard extreme cold|XDMG} (see the {@book Dungeon Master's Guide|XDMG})."
+      ],
+      "weight": 7,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-bell-4",
+      "name": "bell",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "When rung as a {@action Utilize|XPHB} action, a Bell produces a sound that can be heard up to 60 feet away."
+      ],
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-bullseye lantern-5",
+      "name": "bullseye lantern",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Bullseye Lantern burns Oil as fuel to cast {@variantrule Bright Light|XPHB} in a 60-foot Cone and {@variantrule Dim Light|XPHB} for an additional 60 feet."
+      ],
+      "weight": 2,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-costume-6",
+      "name": "costume",
+      "equipped": false,
+      "quantity": 3,
+      "entries": [
+        "While wearing a Costume, you have {@variantrule Advantage|XPHB} on any ability check you make to impersonate the person or type of person it represents."
+      ],
+      "weight": 4,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-mirror-7",
+      "name": "mirror",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A handheld steel Mirror is useful for personal cosmetics but also for peeking around corners and reflecting light as a signal."
+      ],
+      "weight": 0.5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-oil-8",
+      "name": "oil",
+      "equipped": false,
+      "quantity": 8,
+      "entries": [
+        "You can douse a creature, object, or space with Oil or use it as fuel, as detailed below.",
+        {
+          "name": "Dousing a Creature or an Object",
+          "type": "entries",
+          "entries": [
+            "When you take the {@action Attack|XPHB} action, you can replace one of your attacks with throwing an Oil flask. Target one creature or object within 20 feet of yourself. The target must succeed on a Dexterity saving throw ({@dc 8} plus your Dexterity modifier and {@variantrule Proficiency|XPHB|Proficiency Bonus}) or be covered in oil. If the target takes Fire damage before the oil dries (after 1 minute), the target takes an extra 5 Fire damage from burning oil."
+          ]
+        },
+        {
+          "name": "Dousing a Space",
+          "type": "entries",
+          "entries": [
+            "You can take the {@action Utilize|XPHB} action to pour an Oil flask on level ground to cover a 5-foot-square area within 5 feet of yourself. If lit, the oil burns until the end of the turn 2 rounds from when the oil was lit (or 12 seconds) and deals 5 Fire damage to any creature that enters the area or ends its turn there. A creature can take this damage only once per turn."
+          ]
+        },
+        {
+          "name": "Fuel",
+          "type": "entries",
+          "entries": [
+            "Oil serves as fuel for Lamps and Lanterns. Once lit, a flask of Oil burns for 6 hours in a Lamp or Lantern. That duration doesn't need to be consecutive; you can extinguish the burning Oil (as a {@action Utilize|XPHB} action) and rekindle it again until it has burned for a total of 6 hours."
+          ]
+        }
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-rations-9",
+      "name": "rations",
+      "equipped": false,
+      "quantity": 9,
+      "entries": [
+        "Rations consist of travel-ready food, including jerky, dried fruit, hardtack, and nuts. See \"{@hazard Malnutrition|XPHB}\" for the risks of not eating."
+      ],
+      "weight": 2,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-tinderbox-10",
+      "name": "tinderbox",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Tinderbox is a small container holding flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a {@item Candle|XPHB}, {@item Lamp|XPHB}, {@item Hooded Lantern|XPHB|Lantern}, or {@item Torch|XPHB}—or anything else with exposed fuel—takes a {@variantrule Bonus Action|XPHB}. Lighting any other fire takes 1 minute."
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-waterskin-11",
+      "name": "waterskin",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Waterskin holds up to 4 pints. If you don't drink sufficient water, you risk dehydration."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "Dagger-1779688736407",
+      "name": "Dagger",
+      "equipped": false,
+      "entries": [
+        "Simple weapon.",
+        "Damage: 1d4 P (20/60 ft).",
+        "Properties: F, L, T.",
+        "Mastery: Nick.",
+        "Weight: 1 lb.",
+        "Value: 2 gp."
+      ],
+      "weight": 1,
+      "type": "M|XPHB",
+      "dmg1": "1d4"
+    }
+  ],
+  "proficiencies": [
+    "insight",
+    "religion",
+    "acrobatics",
+    "arcana"
+  ],
+  "features": [
+    {
+      "name": "Bardic Inspiration",
+      "level": 1,
+      "source": "Bard",
+      "entries": [
+        "You can inspire others through stirring words or music. To do so, you use a bonus action on your turn to choose one creature other than yourself within 60 feet of you who can hear you. That creature gains one Bardic Inspiration die, a {@dice d6}.",
+        "Once within the next 10 minutes, the creature can roll the die and add the number rolled to one ability check, attack roll, or saving throw it makes. The creature can wait until after it rolls the {@dice d20} before deciding to use the Bardic Inspiration die, but must decide before the DM says whether the roll succeeds or fails. Once the Bardic Inspiration die is rolled, it is lost. A creature can have only one Bardic Inspiration die at a time.",
+        "You can use this feature a number of times equal to your Charisma modifier (a minimum of once). You regain any expended uses when you finish a long rest.",
+        "Your Bardic Inspiration die changes when you reach certain levels in this class. The die becomes a {@dice d8} at 5th level, a {@dice d10} at 10th level, and a {@dice d12} at 15th level."
+      ]
+    },
+    {
+      "name": "Spellcasting",
+      "level": 1,
+      "source": "Bard",
+      "entries": [
+        "You have learned to untangle and reshape the fabric of reality in harmony with your wishes and music. Your spells are part of your vast repertoire, magic that you can tune to different situations. See {@book chapter 10|PHB|10} for the general rules of spellcasting and {@book chapter 11|PHB|11} for the {@filter bard spell list|spells|class=bard}.",
+        {
+          "type": "entries",
+          "name": "Cantrips",
+          "entries": [
+            "You know two cantrips of your choice from the bard spell list. You learn additional bard cantrips of your choice at higher levels, learning a 3rd cantrip at 4th level and a 4th at 10th level."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spell Slots",
+          "entries": [
+            "The Bard table shows how many spell slots you have to cast your {@filter bard spells|spells|class=bard} of 1st level and higher. To cast one of these spells, you must expend a slot of the spell's level or higher. You regain all expended spell slots when you finish a long rest.",
+            "For example, if you know the 1st-level spell {@spell cure wounds} and have a 1st-level and a 2nd-level spell slot available, you can cast {@spell cure wounds} using either slot."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spells Known of 1st Level and Higher",
+          "entries": [
+            "You know four 1st-level spells of your choice from the bard spell list.",
+            "You learn an additional bard spell of your choice at each level except 12th, 16th, 19th, and 20th. Each of these spells must be of a level for which you have spell slots. For instance, when you reach 3rd level in this class, you can learn one new spell of 1st or 2nd level.",
+            "Additionally, when you gain a level in this class, you can choose one of the bard spells you know and replace it with another spell from the bard spell list, which also must be of a level for which you have spell slots."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spellcasting Ability",
+          "entries": [
+            "Charisma is your spellcasting ability for your bard spells. Your magic comes from the heart and soul you pour into the performance of your music or oration. You use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a bard spell you cast and when making an attack roll with one.",
+            {
+              "type": "abilityDc",
+              "name": "Spell",
+              "attributes": [
+                "cha"
+              ]
+            },
+            {
+              "type": "abilityAttackMod",
+              "name": "Spell",
+              "attributes": [
+                "cha"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Ritual Casting",
+          "entries": [
+            "You can cast any bard spell you know as a ritual if that spell has the ritual tag."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spellcasting Focus",
+          "entries": [
+            "You can use a {@item musical instrument|PHB} as a spellcasting focus for your bard spells."
+          ]
+        }
+      ]
+    }
+  ],
+  "resources": {
+    "bardicInspiration": {
+      "current": 2,
+      "max": 2,
+      "label": "Bardic Inspiration",
+      "shortLabel": "BI",
+      "refreshOn": "long"
+    }
+  },
+  "classFeaturePicks": {},
+  "spells": {
+    "cantrips": [
+      "Dancing Lights",
+      "Mending"
+    ],
+    "known": [],
+    "prepared": []
+  },
+  "spellSlots": {
+    "1": {
+      "max": 2,
+      "used": 0
+    }
+  },
+  "concentratingOn": null,
+  "enabledModules": []
+}

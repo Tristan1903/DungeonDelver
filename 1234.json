@@ -1,0 +1,559 @@
+{
+  "name": "1234",
+  "expertise": [
+    "insight",
+    "religion"
+  ],
+  "race": "Aasimar (Fallen)",
+  "class": "Warlock",
+  "background": "Acolyte",
+  "classLevels": [
+    {
+      "className": "Warlock",
+      "level": 1
+    }
+  ],
+  "totalLevel": 1,
+  "level": 1,
+  "xp": 0,
+  "levelingMode": "individual",
+  "baseStats": {
+    "str": 15,
+    "dex": 8,
+    "con": 14,
+    "int": 10,
+    "wis": 13,
+    "cha": 12
+  },
+  "hp": {
+    "current": 10,
+    "max": 10
+  },
+  "inventory": [
+    {
+      "id": "row-0-leather armor-0",
+      "name": "leather armor",
+      "equipped": true,
+      "quantity": 1,
+      "entries": [
+        "The breastplate and shoulder protectors of this armor are made of leather that has been stiffened by being boiled in oil. The rest of the armor is made of softer and more flexible materials."
+      ],
+      "weight": 10,
+      "type": "LA|XPHB",
+      "modifiers": {
+        "ac": 11
+      },
+      "slot": "torso"
+    },
+    {
+      "id": "row-0-sickle-1",
+      "name": "sickle",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "Simple weapon.",
+        "Damage: 1d4 S .",
+        "Properties: L.",
+        "Mastery: Nick.",
+        "Weight: 2 lb.",
+        "Value: 1 gp."
+      ],
+      "weight": 2,
+      "type": "M|XPHB",
+      "dmg1": "1d4"
+    },
+    {
+      "id": "row-0-dagger-2",
+      "name": "dagger",
+      "equipped": true,
+      "quantity": 2,
+      "entries": [
+        "Simple weapon.",
+        "Damage: 1d4 P (20/60 ft).",
+        "Properties: F, L, T.",
+        "Mastery: Nick.",
+        "Weight: 1 lb.",
+        "Value: 2 gp."
+      ],
+      "weight": 1,
+      "type": "M|XPHB",
+      "dmg1": "1d4",
+      "slot": "mainHand"
+    },
+    {
+      "id": "row-0-orb-3",
+      "name": "orb",
+      "equipped": true,
+      "quantity": 1,
+      "entries": [
+        "Orb."
+      ],
+      "weight": 3,
+      "type": "SCF|XPHB",
+      "slot": "offHand"
+    },
+    {
+      "id": "row-0-book-4",
+      "name": "book",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Book contains fiction or nonfiction. If you consult an accurate nonfiction Book about its topic, you gain a +5 bonus to Intelligence ({@skill Arcana|XPHB}, {@skill History|XPHB}, {@skill Nature|XPHB}, or {@skill Religion|XPHB}) checks you make about that topic."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-backpack-5",
+      "name": "backpack",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Backpack holds up to 30 pounds within 1 cubic foot. It can also serve as a saddlebag."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-book-6",
+      "name": "book",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Book contains fiction or nonfiction. If you consult an accurate nonfiction Book about its topic, you gain a +5 bonus to Intelligence ({@skill Arcana|XPHB}, {@skill History|XPHB}, {@skill Nature|XPHB}, or {@skill Religion|XPHB}) checks you make about that topic."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-ink-7",
+      "name": "ink",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "Ink comes in a 1-ounce bottle, which provides enough ink to write about 500 pages."
+      ],
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-ink pen-8",
+      "name": "ink pen",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "Using {@item Ink|XPHB}, an Ink Pen is used to write or draw."
+      ],
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-lamp-9",
+      "name": "lamp",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Lamp burns {@item Oil|XPHB} as fuel to cast {@variantrule Bright Light|XPHB} in a 15-foot radius and {@variantrule Dim Light|XPHB} for an additional 30 feet."
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-oil-10",
+      "name": "oil",
+      "equipped": false,
+      "quantity": 10,
+      "entries": [
+        "You can douse a creature, object, or space with Oil or use it as fuel, as detailed below.",
+        {
+          "name": "Dousing a Creature or an Object",
+          "type": "entries",
+          "entries": [
+            "When you take the {@action Attack|XPHB} action, you can replace one of your attacks with throwing an Oil flask. Target one creature or object within 20 feet of yourself. The target must succeed on a Dexterity saving throw ({@dc 8} plus your Dexterity modifier and {@variantrule Proficiency|XPHB|Proficiency Bonus}) or be covered in oil. If the target takes Fire damage before the oil dries (after 1 minute), the target takes an extra 5 Fire damage from burning oil."
+          ]
+        },
+        {
+          "name": "Dousing a Space",
+          "type": "entries",
+          "entries": [
+            "You can take the {@action Utilize|XPHB} action to pour an Oil flask on level ground to cover a 5-foot-square area within 5 feet of yourself. If lit, the oil burns until the end of the turn 2 rounds from when the oil was lit (or 12 seconds) and deals 5 Fire damage to any creature that enters the area or ends its turn there. A creature can take this damage only once per turn."
+          ]
+        },
+        {
+          "name": "Fuel",
+          "type": "entries",
+          "entries": [
+            "Oil serves as fuel for Lamps and Lanterns. Once lit, a flask of Oil burns for 6 hours in a Lamp or Lantern. That duration doesn't need to be consecutive; you can extinguish the burning Oil (as a {@action Utilize|XPHB} action) and rekindle it again until it has burned for a total of 6 hours."
+          ]
+        }
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-parchment-11",
+      "name": "parchment",
+      "equipped": false,
+      "quantity": 10,
+      "entries": [
+        "One sheet of Parchment can hold about 250 handwritten words."
+      ],
+      "type": "G|XPHB"
+    },
+    {
+      "id": "row-0-tinderbox-12",
+      "name": "tinderbox",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Tinderbox is a small container holding flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a {@item Candle|XPHB}, {@item Lamp|XPHB}, {@item Hooded Lantern|XPHB|Lantern}, or {@item Torch|XPHB}—or anything else with exposed fuel—takes a {@variantrule Bonus Action|XPHB}. Lighting any other fire takes 1 minute."
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    }
+  ],
+  "proficiencies": [
+    "insight",
+    "religion",
+    "arcana",
+    "deception"
+  ],
+  "features": [
+    {
+      "name": "Otherworldly Patron",
+      "level": 1,
+      "source": "Warlock",
+      "entries": [
+        "At 1st level, you have struck a bargain with an otherworldly being chosen from the list of available patrons. Your choice grants you features at 1st level and again at 6th, 10th, and 14th level."
+      ]
+    },
+    {
+      "name": "Pact Magic",
+      "level": 1,
+      "source": "Warlock",
+      "entries": [
+        "Your arcane research and the magic bestowed on you by your patron have given you facility with spells. See {@book chapter 10|PHB|10} for the general rules of spellcasting and {@book chapter 11|PHB|11} for the {@filter warlock spell list|spells|class=warlock}.",
+        {
+          "type": "entries",
+          "name": "Cantrips",
+          "entries": [
+            "You know two cantrips of your choice from the warlock spell list. You learn additional warlock cantrips of your choice at higher levels, as shown in the Cantrips Known column of the Warlock table."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spell Slots",
+          "entries": [
+            "The Warlock table shows how many spell slots you have to cast your {@filter warlock spells|spells|class=warlock} of 1st through 5th level. The table also shows what the level of those slots is; all of your spell slots are the same level. To cast one of your warlock spells of 1st level or higher, you must expend a spell slot. You regain all expended spell slots when you finish a short or long rest.",
+            "For example, when you are 5th level, you have two 3rd-level spell slots. To cast the 1st-level spell {@spell witch bolt}, you must spend one of those slots, and you cast it as a 3rd-level spell."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spells Known of 1st Level and Higher",
+          "entries": [
+            "At 1st level, you know two 1st-level spells of your choice from the warlock spell list.",
+            "The Spells Known column of the Warlock table shows when you learn more warlock spells of your choice of 1st level and higher. A spell you choose must be of a level no higher than what's shown in the table's Slot Level column for your level. When you reach 6th level, for example, you learn a new warlock spell, which can be 1st, 2nd, or 3rd level.",
+            "Additionally, when you gain a level in this class, you can choose one of the warlock spells you know and replace it with another spell from the warlock spell list, which also must be of a level for which you have spell slots."
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spellcasting Ability",
+          "entries": [
+            "Charisma is your spellcasting ability for your warlock spells, so you use your Charisma whenever a spell refers to your spellcasting ability. In addition, you use your Charisma modifier when setting the saving throw DC for a warlock spell you cast and when making an attack roll with one.",
+            {
+              "type": "abilityDc",
+              "name": "Spell",
+              "attributes": [
+                "cha"
+              ]
+            },
+            {
+              "type": "abilityAttackMod",
+              "name": "Spell",
+              "attributes": [
+                "cha"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "entries",
+          "name": "Spellcasting Focus",
+          "entries": [
+            "You can use an {@item arcane focus|phb} as a spellcasting focus for your warlock spells."
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Eldritch Invocation Options",
+      "level": 1,
+      "source": "Warlock",
+      "entries": [
+        "Eldritch Invocation options appear in alphabetical order.",
+        {
+          "type": "options",
+          "count": 1,
+          "entries": [
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Agonizing Blast|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Armor of Shadows|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Ascendant Step|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Devil's Sight|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Devouring Blade|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Eldritch Mind|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Eldritch Smite|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Eldritch Spear|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Fiendish Vigor|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Gaze of Two Minds|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Gift of the Depths|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Gift of the Protectors|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Investment of the Chain Master|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Lessons of the First Ones|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Lifedrinker|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Mask of Many Faces|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Master of Myriad Forms|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Misty Visions|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "One with Shadows|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Otherworldly Leap|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Pact of the Blade|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Pact of the Chain|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Pact of the Tome|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Repelling Blast|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Thirsting Blade|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Visions of Distant Realms|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Whispers of the Grave|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            },
+            {
+              "type": "refOptionalfeature",
+              "optionalfeature": "Witch Sight|XPHB",
+              "preserve": {
+                "prerequisite": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Eldritch Invocations",
+      "level": 1,
+      "source": "Warlock",
+      "entries": [
+        "You have unearthed Eldritch Invocations, pieces of forbidden knowledge that imbue you with an abiding magical ability or other lessons. You gain one invocation of your choice, such as Pact of the Tome. Invocations are described in the \"{@filter Eldritch Invocation Options|optionalfeatures|feature type=EI|source=XPHB}\" section later in this class's description.",
+        {
+          "type": "entries",
+          "entries": [
+            {
+              "type": "entries",
+              "name": "Prerequisites",
+              "entries": [
+                "If an invocation has a prerequisite, you must meet it to learn that invocation. For example, if an invocation requires you to be a level 5+ Warlock, you can select the invocation once you reach Warlock level 5."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Replacing and Gaining Invocations",
+              "entries": [
+                "Whenever you gain a Warlock level, you can replace one of your invocations with another one for which you qualify. You can't replace an invocation if it's a prerequisite for another invocation that you have."
+              ]
+            }
+          ]
+        },
+        "When you gain certain Warlock levels, you gain more invocations of your choice, as shown in the Invocations column of the Warlock Features table.",
+        "You can't pick the same invocation more than once unless its description says otherwise."
+      ]
+    }
+  ],
+  "resources": {
+    "pactSlots": {
+      "current": 1,
+      "max": 1,
+      "label": "Pact Magic Slots",
+      "shortLabel": "Pact",
+      "refreshOn": "short"
+    }
+  },
+  "classFeaturePicks": {},
+  "spells": {
+    "cantrips": [
+      "Blade Ward",
+      "Mage Hand"
+    ],
+    "known": [
+      "Armor of Agathys",
+      "Arms of Hadar",
+      "Bane"
+    ],
+    "prepared": []
+  },
+  "spellSlots": {
+    "1": {
+      "max": 1,
+      "used": 0
+    }
+  },
+  "concentratingOn": null,
+  "enabledModules": [],
+  "id": "e6187577-3433-46b8-ae63-d87d99777bb3"
+}

@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:80"
+    depends_on:
+      - sync-server
+
+  sync-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.sync-server
+    ports:
+      - "3001:3001"
+    environment:
+      - WS_PORT=3001

@@ -8275,6 +8275,206 @@
 					"name": "Credits"
 				}
 			]
+		},
+		{
+			"name": "Grim Hollow: The Player's Guide (2014)",
+			"id": "GHPG",
+			"source": "GHPG",
+			"group": "third-party",
+			"published": "2014-05-07",
+			"author": "Cory Fuller, Mark Aragona",
+			"contents": [
+				{
+					"name": "Introduction"
+				},
+				{
+					"name": "Classes",
+					"headers": [
+						"Circle of Blood",
+						"Circle of Mutation",
+						"College of Adventurers",
+						"College of Requiems",
+						"Eldritch Domain",
+						"Oath of the Accursed",
+						"Path of the Fractured",
+						"Adventurer's Talents"
+					],
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 1
+					}
+				},
+				{
+					"name": "Races",
+					"headers": [
+						"Dreamer",
+						"Laneshi",
+						"Ogresh"
+					],
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 2
+					}
+				},
+				{
+					"name": "Backgrounds",
+					"headers": [
+						"Clan Member (Raider)",
+						"Clan Member (Shaman)",
+						"Clan Member (Tribesperson)",
+						"Academic",
+						"Aristocrat",
+						"Clergy",
+						"Common Folk",
+						"Criminal",
+						"Militarist",
+						"Outlander",
+						"Seafarer"
+					],
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 3
+					}
+				},
+				{
+					"name": "Transformations",
+					"headers": [
+						"Aberrant Horror",
+						"The Fiend",
+						"The Lich",
+						"The Lycanthrope",
+						"The Seraph",
+						"Vampire",
+						"Fey",
+						"Primordial",
+						"Specter"
+					],
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 4
+					}
+				},
+				{
+					"name": "Spells",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 5
+					}
+				},
+				{
+					"name": "Equipment",
+					"headers": [
+						"Weapons",
+						"Armor",
+						"Adventuring Gear",
+						"Alchemical Items"
+					],
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 6
+					}
+				},
+				{
+					"name": "Monsters",
+					"ordinal": {
+						"type": "appendix",
+						"identifier": "A"
+					}
+				},
+				{
+					"name": "Credits"
+				}
+			]
+		},
+		{
+			"name": "Grim Hollow: Monster Grimoire (2024)",
+			"id": "GHMG",
+			"source": "GrimHollowMG24",
+			"group": "third-party",
+			"published": "2025-10-02",
+			"author": "Ghostfire Gaming",
+			"contents": [
+				{
+					"name": "Monsters",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 1
+					}
+				},
+				{
+					"name": "Magic Items",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 2
+					}
+				},
+				{
+					"name": "Feats",
+					"ordinal": {
+						"type": "appendix",
+						"identifier": "A"
+					}
+				},
+				{
+					"name": "Credits"
+				}
+			]
+		},
+		{
+			"name": "Grim Hollow: Campaign Guide (2024)",
+			"id": "GHCG",
+			"source": "GrimHollowCG24",
+			"group": "third-party",
+			"published": "2024-08-15",
+			"author": "Ghostfire Gaming",
+			"contents": [
+				{
+					"name": "The World of Etharis",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 1
+					}
+				},
+				{
+					"name": "Character Options",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 2
+					}
+				},
+				{
+					"name": "Magic Items",
+					"ordinal": {
+						"type": "chapter",
+						"identifier": 3
+					}
+				},
+				{
+					"name": "Monsters",
+					"ordinal": {
+						"type": "appendix",
+						"identifier": "A"
+					}
+				},
+				{
+					"name": "Conditions",
+					"headers": ["Bleeding", "Corruption", "Dazed"],
+					"ordinal": {
+						"type": "appendix",
+						"identifier": "B"
+					}
+				},
+				{
+					"name": "Deities",
+					"ordinal": {
+						"type": "appendix",
+						"identifier": "C"
+					}
+				},
+				{
+					"name": "Credits"
+				}
+			]
 		}
 	]
 }
