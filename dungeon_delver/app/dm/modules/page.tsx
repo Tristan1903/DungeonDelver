@@ -2,7 +2,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import ModulePanel from '../../../components/modules/ModulePanel';
-import { loadCampaignConfig, saveCampaignConfig, clearCampaignConfig, ModuleConfigMap, ModuleId, CampaignConfig, MODULE_CONFIG_DEFAULTS } from '../../../utils/campaignEngine';
+import CampaignRacePresetSelector from '../../../components/modules/configs/CampaignRacePresetSelector';
+import { loadCampaignConfig, saveCampaignConfig, clearCampaignConfig, ModuleConfigMap, ModuleId, CampaignConfig, MODULE_CONFIG_DEFAULTS, type RacePresetId } from '../../../utils/campaignEngine';
 
 const PRESETS: Array<{ id: string; name: string; modules: ModuleId[]; description: string }> = [
   { id: 'classic-dmg', name: 'Classic DMG', modules: ['madness', 'honorSanity', 'grittyRealism', 'heroPoints'], description: 'Traditional optional rule stack for grittier campaigns.' },
@@ -22,7 +23,8 @@ function normalizeImportedCampaign(raw: any): CampaignConfig {
     Object.keys(defaults).forEach((k) => { if (Array.isArray(defaults[k]) && !Array.isArray(merged[k])) merged[k] = defaults[k]; });
     moduleConfig[moduleId] = merged as any;
   }
-  return { name: typeof raw?.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Default Campaign', enabledModules, moduleConfig, updatedAt: new Date().toISOString() };
+  const racePreset = typeof raw?.racePreset === 'string' && ['standard', 'phb', 'greyhawk', 'grimHollow', 'ravenloft', 'eberron', 'exandria', 'theros', 'ravnica', 'spelljammer', 'dragonlance', 'strixhaven', 'darkSun'].includes(raw.racePreset) ? raw.racePreset as RacePresetId : undefined;
+  return { name: typeof raw?.name === 'string' && raw.name.trim() ? raw.name.trim() : 'Default Campaign', enabledModules, moduleConfig, racePreset, updatedAt: new Date().toISOString() };
 }
 
 export default function ModulesPage() {
@@ -129,6 +131,8 @@ export default function ModulesPage() {
       <div style={{ marginBottom: '12px', color: '#a0aec0', fontSize: '0.82rem' }}>Enabled: {enabledModuleNames.length ? enabledModuleNames.join(', ') : 'No optional modules enabled'}</div>
 
       <ModulePanel enabled={config.enabledModules} onChange={handleModulesChange} moduleConfig={config.moduleConfig} onModuleConfigChange={handleModuleConfigChange} />
+
+      <CampaignRacePresetSelector value={config.racePreset} onChange={(preset) => persist({ ...config, racePreset: preset })} />
 
       <div style={{ marginTop: '16px', padding: '12px', background: '#2d3748', borderRadius: '8px' }}>
         <h3 style={{ color: '#b8860b', margin: '0 0 8px', fontSize: '1rem' }}>Campaign Linking</h3>

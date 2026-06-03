@@ -98,6 +98,7 @@ export interface ModuleData {
   shipMorale?: { role: string; shipName: string; morale: number };
   sidekicks?: { name: string; statBlockRef: string; level: number; hp: number; maxHp: number }[];
   transformations?: { type: string; tier: number }[];
+  isekai?: { type: string; bonuses?: string; skill?: string; language?: string; cantrip?: string; spell1?: string; asi?: Record<string, number> };
 }
 
 export interface Character {

@@ -9,6 +9,7 @@ import { isSpellcaster, buildSpellSlots, getPreparedCount, getSpellcastingAbilit
 import { getNewFeaturesAtLevel, getNewSubclassFeaturesAtLevel, getHPGainDisplay, isASLevel, getSubclassLevel, getNewCantripsKnown, getNewSpellsKnown, getNewPreparedCount, getNewSpellSlots } from '../utils/levelingEngine';
 import { getAvailablePicks } from '../utils/classResources';
 import { rollDice } from '../utils/rollEngine';
+import { loadCampaignConfig, filterRacesByPreset, type RacePresetId, CAMPAIGN_RACE_PRESETS } from '../utils/campaignEngine';
 
 // Multiclass prerequisites per 2024 rules (min ability score of 13)
 const MULTICLASS_PREREQS: Record<string, Record<string, number>> = {
@@ -281,8 +282,19 @@ export default function CharacterWizard({
   const [optionalFeatureLookup, setOptionalFeatureLookup] = useState<Record<string, any>>({});
   const [allFeats, setAllFeats] = useState<any[]>([]);
   const [featSearch, setFeatSearch] = useState('');
+  const [isekaiEnabled, setIsekaiEnabled] = useState(false);
+  const [isekaiConfig, setIsekaiConfig] = useState<any[]>([]);
+  const [showIsekaiPicker, setShowIsekaiPicker] = useState(false);
+  const [isekaiSpeciesMode, setIsekaiSpeciesMode] = useState(false);
+  const [allSpeciesUnfiltered, setAllSpeciesUnfiltered] = useState<any[]>([]);
   const [selectedFeat, setSelectedFeat] = useState<any | null>(null);
   const [viewingFeatureDetail, setViewingFeatureDetail] = useState<any | null>(null);
+
+  // Background traits & language states
+  const [showBackgroundTraits, setShowBackgroundTraits] = useState<any | null>(null);
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false);
+  const [pendingLanguageChoices, setPendingLanguageChoices] = useState<{ from: string[]; count: number; label: string }[]>([]);
+  const [languagePicks, setLanguagePicks] = useState<Record<number, string[]>>({});
 
   const ALL_SKILLS = [
     'athletics', 'acrobatics', 'sleightOfHand', 'stealth', 'arcana',
@@ -350,6 +362,8 @@ export default function CharacterWizard({
 
   useEffect(() => {
     if (isOpen) {
+      setIsekaiSpeciesMode(false);
+      setShowIsekaiPicker(false);
       DataEngine.getMergedRaces().then(mergedData => {
         // 1. Save EVERY SINGLE race into rawSpecies for lookup purposes
         setRawSpecies(mergedData);
@@ -360,7 +374,27 @@ export default function CharacterWizard({
           if (r.source === 'XPHB' || r.source === 'PHB') acc[r.name] = r;
           return acc;
         }, {});
-        setAllSpecies(Object.values(grouped));
+        let species = Object.values(grouped);
+
+        // 3. Load campaign config for race preset and isekai module
+        try {
+          const campaignId = existingChar?.campaignId || localStorage.getItem('dd-active-campaign') || undefined;
+          const campaignConfig = loadCampaignConfig(campaignId || undefined);
+          const isekaiOn = campaignConfig?.enabledModules?.includes('isekai');
+          setIsekaiEnabled(!!isekaiOn);
+          if (campaignConfig?.moduleConfig?.isekai) {
+            const cfg = campaignConfig.moduleConfig.isekai as any;
+            setIsekaiConfig(cfg.types || []);
+          }
+
+          if (campaignConfig?.racePreset && campaignConfig.racePreset !== 'standard') {
+            species = filterRacesByPreset(species, mergedData, campaignConfig.racePreset as RacePresetId);
+          }
+        } catch { /* noop */ }
+
+        setAllSpecies(species);
+        // Save unfiltered list for isekai species browsing
+        setAllSpeciesUnfiltered(Object.values(grouped));
       });
       DataEngine.getRacesData().then(data => setAllSubraces(data.subraces || []));
       DataEngine.getMergedBackgrounds().then(mergedData => {
@@ -446,6 +480,7 @@ export default function CharacterWizard({
         // Pre-load the racial ability bonuses into the draft if they exist
         baseStats: { ...draft.baseStats, ...(statData?.ability?.[0] || {}) }
       });
+
     }
     else if (type === 'background') {
       const bgSkills = (data.skillProficiencies || []).flatMap((entry: unknown) => {
@@ -463,6 +498,13 @@ export default function CharacterWizard({
         proficiencies: Array.from(new Set([...(draft.proficiencies || []), ...bgSkills])),
         expertise: Array.from(new Set([...(draft.expertise || []), ...expertiseFromOverlap])),
       });
+      // Show background traits picker after selection
+      setInspectingBackground(null);
+      setInspectingSpecies(null);
+      setSubracePickerFor(null);
+      setActiveSection(null);
+      setShowBackgroundTraits(data);
+      return;
     }
 
     // Close all overlays and go back to Hub
@@ -476,6 +518,203 @@ export default function CharacterWizard({
   const handleCreateSubclassSelect = (subName: string) => {
     setShowCreateSubclassPicker(false);
     setDraft({ ...draft, subclass: subName });
+  };
+
+  // --- Background Suggested Characteristics parsing ---
+  const parseBackgroundTraits = (bg: any) => {
+    const found: { personalityTrait: string[]; ideal: string[]; bond: string[]; flaw: string[] } = { personalityTrait: [], ideal: [], bond: [], flaw: [] };
+    const suggested = (bg.entries || []).find((e: any) => e.name === 'Suggested Characteristics');
+    if (!suggested?.entries) return found;
+    for (const entry of suggested.entries) {
+      if (entry.type === 'table' && entry.rows) {
+        const label = entry.colLabels?.[1] || '';
+        const options = entry.rows.map((r: string[]) => r[1]);
+        if (label.includes('Personality')) found.personalityTrait = options;
+        else if (label.includes('Ideal')) found.ideal = options;
+        else if (label.includes('Bond')) found.bond = options;
+        else if (label.includes('Flaw')) found.flaw = options;
+      }
+    }
+    return found;
+  };
+
+  // --- Language proficiency parsing ---
+  const LANGUAGE_STANDARD = ['Common', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 'Halfling', 'Orc'];
+  const LANGUAGE_EXOTIC = ['Abyssal', 'Celestial', 'Draconic', 'Deep Speech', 'Infernal', 'Primordial', 'Sylvan', 'Undercommon'];
+  const ALL_LANGS = [...LANGUAGE_STANDARD, ...LANGUAGE_EXOTIC, 'Telepathy'];
+
+  const parseLanguageProficiencies = (source: any): { auto: string[]; choices: { from: string[]; count: number; label: string }[] } => {
+    const auto: string[] = [];
+    const choices: { from: string[]; count: number; label: string }[] = [];
+    const profs = source?.languageProficiencies || [];
+    for (const entry of profs) {
+      if (typeof entry !== 'object') continue;
+      // Boolean entries like { common: true }
+      for (const [key, val] of Object.entries(entry)) {
+        if (val === true && key !== 'choose' && !['any', 'anyStandard', 'anyExotic'].includes(key)) {
+          auto.push(key.charAt(0).toUpperCase() + key.slice(1));
+        }
+      }
+      if (entry.anyStandard) {
+        choices.push({ from: LANGUAGE_STANDARD, count: entry.anyStandard, label: 'Standard Language' });
+      }
+      if (entry.any) {
+        choices.push({ from: ALL_LANGS, count: entry.any, label: 'Any Language' });
+      }
+      if (entry.anyExotic) {
+        choices.push({ from: LANGUAGE_EXOTIC, count: entry.anyExotic, label: 'Exotic Language' });
+      }
+      if (entry.choose?.from) {
+        const from = entry.choose.from.map((l: string) => l === 'other' ? 'Common' : l.charAt(0).toUpperCase() + l.slice(1));
+        choices.push({ from, count: entry.choose.count || 1, label: 'Language' });
+      }
+    }
+    return { auto, choices };
+  };
+
+  const getLanguageChoicesForCharacter = () => {
+    const bg = allBackgrounds.find((b: any) => b.name === draft.background);
+    const raceData = rawSpecies.find((s: any) => s.name === draft.race) ||
+      allSubraces.find((s: any) => `${s.raceName} (${s.name})` === draft.race);
+    const bgLang = bg ? parseLanguageProficiencies(bg) : { auto: [], choices: [] };
+    const raceLang = raceData ? parseLanguageProficiencies(raceData) : { auto: [], choices: [] };
+    const combined: { from: string[]; count: number; label: string }[] = [];
+    for (const c of [...bgLang.choices, ...raceLang.choices]) {
+      const existing = combined.find(x => JSON.stringify(x.from) === JSON.stringify(c.from));
+      if (existing) existing.count += c.count;
+      else combined.push({ ...c });
+    }
+    return { auto: [...bgLang.auto, ...raceLang.auto], choices: combined };
+  };
+
+  // --- Background Traits Picker ---
+  const BackgroundTraitsView = ({ bgData }: { bgData: any }) => {
+    const traits = parseBackgroundTraits(bgData);
+    const [pt, setPt] = useState('');
+    const [id, setId] = useState('');
+    const [bd, setBd] = useState('');
+    const [fl, setFl] = useState('');
+    const [bs, setBs] = useState('');
+    const roll = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)];
+
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', border: '2px solid #b8860b', width: '580px', maxHeight: '85vh', overflowY: 'auto' }}>
+          <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>Suggested Characteristics</h2>
+          <p style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16 }}>Choose or roll for each trait. These help define your character's personality.</p>
+
+          {traits.personalityTrait.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ color: '#f6e05e', fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: 4 }}>Personality Trait <button onClick={() => setPt(roll(traits.personalityTrait))} style={rollBtnStyle}>🎲</button></label>
+              {traits.personalityTrait.map((t, i) => (
+                <button key={i} onClick={() => setPt(t)} style={traitOptionStyle(pt === t)}><span style={{ color: '#718096', marginRight: 8 }}>{i + 1}.</span>{t}</button>
+              ))}
+            </div>
+          )}
+
+          {traits.ideal.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ color: '#f6e05e', fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: 4 }}>Ideal <button onClick={() => setId(roll(traits.ideal))} style={rollBtnStyle}>🎲</button></label>
+              {traits.ideal.map((t, i) => (
+                <button key={i} onClick={() => setId(t)} style={traitOptionStyle(id === t)}><span style={{ color: '#718096', marginRight: 8 }}>{i + 1}.</span>{t}</button>
+              ))}
+            </div>
+          )}
+
+          {traits.bond.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ color: '#f6e05e', fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: 4 }}>Bond <button onClick={() => setBd(roll(traits.bond))} style={rollBtnStyle}>🎲</button></label>
+              {traits.bond.map((t, i) => (
+                <button key={i} onClick={() => setBd(t)} style={traitOptionStyle(bd === t)}><span style={{ color: '#718096', marginRight: 8 }}>{i + 1}.</span>{t}</button>
+              ))}
+            </div>
+          )}
+
+          {traits.flaw.length > 0 && (
+            <div style={{ marginBottom: 14 }}>
+              <label style={{ color: '#f6e05e', fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: 4 }}>Flaw <button onClick={() => setFl(roll(traits.flaw))} style={rollBtnStyle}>🎲</button></label>
+              {traits.flaw.map((t, i) => (
+                <button key={i} onClick={() => setFl(t)} style={traitOptionStyle(fl === t)}><span style={{ color: '#718096', marginRight: 8 }}>{i + 1}.</span>{t}</button>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginBottom: 14 }}>
+            <label style={{ color: '#f6e05e', fontSize: '0.8rem', fontWeight: 'bold', display: 'block', marginBottom: 4 }}>Backstory <span style={{ color: '#718096', fontWeight: 'normal' }}>(optional)</span></label>
+            <textarea value={bs} onChange={e => setBs(e.target.value)} placeholder="Write a short backstory for your character..."
+              style={{ width: '100%', minHeight: '70px', padding: '8px', background: '#1a202c', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.8rem', resize: 'vertical' }} />
+          </div>
+
+          <button onClick={() => {
+            setDraft({ ...draft, personalityTraits: pt, ideals: id, bonds: bd, flaws: fl, backstory: bs });
+            setShowBackgroundTraits(null);
+            // Check if there are language choices to make
+            const langInfo = getLanguageChoicesForCharacter();
+            if (langInfo.choices.length > 0) {
+              setPendingLanguageChoices(langInfo.choices);
+              setShowLanguagePicker(true);
+            }
+          }}
+            style={{ width: '100%', padding: '12px', background: '#b8860b', border: 'none', color: 'white', borderRadius: '6px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}>
+            Save & Continue
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const traitOptionStyle = (active: boolean) => ({
+    display: 'block', width: '100%', padding: '8px 10px', marginBottom: 4, background: active ? '#3a4a5e' : '#1a202c',
+    border: active ? '1px solid #f6e05e' : '1px solid #2d3748', borderRadius: '4px', color: active ? '#f6e05e' : '#cbd5e0',
+    cursor: 'pointer', textAlign: 'left' as const, fontSize: '0.78rem', lineHeight: 1.35, transition: '0.1s'
+  });
+
+  const rollBtnStyle = { background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.9rem', padding: 0, marginLeft: 6, verticalAlign: 'middle' as const };
+
+  // --- Language Picker ---
+  const LanguagePickerView = () => {
+    const [picks, setPicks] = useState<Record<number, string[]>>({});
+    const totalSlots = pendingLanguageChoices.reduce((s, c) => s + c.count, 0);
+    const usedSlots = Object.values(picks).flat().length;
+    const allPicked = usedSlots === totalSlots;
+
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', border: '2px solid #b8860b', width: '480px' }}>
+          <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>Choose Languages</h2>
+          <p style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16 }}>Your race and background grant language proficiencies. Pick {totalSlots} language{totalSlots > 1 ? 's' : ''} ({usedSlots}/{totalSlots} chosen).</p>
+          {pendingLanguageChoices.map((group, gi) => (
+            <div key={gi} style={{ marginBottom: 12 }}>
+              <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 4 }}>{group.label} (choose {group.count})</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {group.from.map(lang => {
+                  const cur = picks[gi] || [];
+                  const selected = cur.includes(lang);
+                  const atLimit = cur.length >= group.count;
+                  const dim = !selected && atLimit;
+                  return (
+                    <button key={lang} onClick={() => {
+                      if (selected) setPicks({ ...picks, [gi]: cur.filter((x: string) => x !== lang) });
+                      else if (!atLimit) setPicks({ ...picks, [gi]: [...cur, lang] });
+                    }}
+                      style={{ padding: '6px 12px', background: selected ? '#6366f1' : atLimit ? '#1a202c' : '#2d3748', border: selected ? '2px solid #818cf8' : '1px solid #4a5568', borderRadius: '6px', color: dim ? '#4a5568' : 'white', cursor: dim ? 'not-allowed' : 'pointer', fontSize: '0.8rem' }}>
+                      {lang}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+          <button disabled={!allPicked} onClick={() => {
+            setLanguagePicks(picks);
+            setShowLanguagePicker(false);
+          }}
+            style={{ width: '100%', padding: '12px', background: allPicked ? '#b8860b' : '#4a5568', border: 'none', color: 'white', borderRadius: '6px', cursor: allPicked ? 'pointer' : 'not-allowed', fontSize: '0.9rem', fontWeight: 'bold' }}>
+            {allPicked ? `Done (${usedSlots} language${usedSlots > 1 ? 's' : ''})` : `Choose ${totalSlots - usedSlots} more...`}
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const finishWizard = async (spells?: Character['spells'], hpGainOverride?: number) => {
@@ -544,6 +783,40 @@ export default function CharacterWizard({
         entries: selectedFeat.entries,
       };
       finalChar.features = [...(finalChar.features || []), featEntry];
+    }
+    // Merge isekai bonus spells into final character
+    const isekai = draft.moduleData?.isekai || finalChar.moduleData?.isekai;
+    if (isekai?.cantrip || isekai?.spell1) {
+      const curSpells = finalChar.spells || { cantrips: [], known: [], prepared: [] };
+      finalChar.spells = {
+        cantrips: isekai.cantrip ? [...(curSpells.cantrips || []), isekai.cantrip] : (curSpells.cantrips || []),
+        known: isekai.spell1 ? [...(curSpells.known || []), isekai.spell1] : (curSpells.known || []),
+        prepared: curSpells.prepared || [],
+      };
+    }
+    // Pass through background personality traits and backstory
+    if (draft.personalityTraits) finalChar.personalityTraits = draft.personalityTraits;
+    if (draft.ideals) finalChar.ideals = draft.ideals;
+    if (draft.bonds) finalChar.bonds = draft.bonds;
+    if (draft.flaws) finalChar.flaws = draft.flaws;
+    if (draft.backstory) finalChar.backstory = draft.backstory;
+    // Auto-fill campaign info from active campaign
+    try {
+      const activeId = localStorage.getItem('dd-active-campaign');
+      if (activeId && activeId !== 'default') {
+        finalChar.campaignId = activeId;
+        const registry = JSON.parse(localStorage.getItem('dd-campaign-registry') || '[]');
+        const entry = registry.find((c: any) => c.id === activeId);
+        if (entry) finalChar.campaignName = entry.name;
+      }
+    } catch { /* localStorage may not be available */ }
+    // Merge language picks
+    if (Object.keys(languagePicks).length > 0) {
+      const allLangPicks: string[] = [];
+      for (const arr of Object.values(languagePicks)) allLangPicks.push(...arr);
+      const autoLangs = getLanguageChoicesForCharacter().auto;
+      const langList = [...new Set([...autoLangs, ...allLangPicks])];
+      if (langList.length > 0) (finalChar as any).languages = langList;
     }
     onComplete(finalChar);
   };
@@ -2232,18 +2505,213 @@ export default function CharacterWizard({
     );
   };
 
+  // --- Isekai picker ---
+  const STAT_ABBREV: Record<string, string> = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+  const ALL_LANGUAGES = ['Common', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 'Halfling', 'Orc', 'Abyssal', 'Celestial', 'Draconic', 'Deep Speech', 'Infernal', 'Primordial', 'Sylvan', 'Undercommon', 'Telepathy'];
+  const DEFAULT_ISEKAI_TYPES = [
+    { id: 'teleport', label: 'Teleported', description: 'You were physically transported from your original world. Your body and mind remain unchanged, but the transition has left you slightly altered.', bonuses: '+1 to any ability score, one skill proficiency of your choice' },
+    { id: 'summoned', label: 'Summoned', description: 'A powerful being called you here as a servant, champion, or pawn. Some of their magic lingers in your soul.', bonuses: 'One cantrip from any class spell list, one 1st-level spell you can cast once per long rest' },
+    { id: 'reincarnation', label: 'Reincarnated', description: 'Your soul was reborn into a new body in this world. You retain faint echoes of your past life.', bonuses: '+1 to any ability score, one additional language of your choice' },
+    { id: 'divineDeal', label: "Divine Deal", description: 'A deity or cosmic force plucked you from your world for a purpose. Their blessing empowers you.', bonuses: '+1 Charisma, you can cast Bless once per long rest without a spell slot' },
+  ];
+
+  const IsekaiPicker = () => {
+    const types = isekaiConfig.length > 0 ? isekaiConfig : DEFAULT_ISEKAI_TYPES;
+    const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
+    const [pok, setPok] = useState<'type' | 'bonus'>('type');
+    const [asiStat, setAsiStat] = useState<string | null>(null);
+    const [skill, setSkill] = useState('');
+    const [language, setLanguage] = useState('');
+    const [cantrip, setCantrip] = useState('');
+    const [spell1, setSpell1] = useState('');
+
+    const pick = selectedTypeId ? types.find(t => t.id === selectedTypeId) : null;
+    const apply = () => {
+      if (!selectedTypeId) return;
+      const bonusData: Record<string, any> = {};
+      const tid = selectedTypeId;
+      if (tid === 'teleport' && asiStat) bonusData.asi = { [asiStat]: 1 };
+      if (tid === 'reincarnation' && asiStat) bonusData.asi = { [asiStat]: 1 };
+      if (tid === 'divineDeal') bonusData.asi = { cha: 1 };
+      if (skill) bonusData.skill = skill;
+      if (language) bonusData.language = language;
+      if (cantrip) bonusData.cantrip = cantrip;
+      if (spell1) bonusData.spell1 = spell1;
+
+      const pk = types.find(t => t.id === tid);
+      const isekaiData = { type: tid, bonuses: pk?.bonuses || '', ...bonusData };
+      const newDraft = { ...draft, moduleData: { ...draft.moduleData, isekai: isekaiData } };
+      if (bonusData.asi) {
+        for (const [s, v] of Object.entries(bonusData.asi) as [string, number][]) {
+          newDraft.baseStats[s] = (newDraft.baseStats[s] || 10) + v;
+        }
+      }
+      if (bonusData.skill) {
+        newDraft.proficiencies = [...(newDraft.proficiencies || []), bonusData.skill];
+      }
+      if (bonusData.cantrip) {
+        const ex = newDraft.spells || { cantrips: [], known: [], prepared: [] };
+        newDraft.spells = { ...ex, cantrips: [...(ex.cantrips || []), bonusData.cantrip] };
+      }
+      if (bonusData.spell1) {
+        const ex = newDraft.spells || { cantrips: [], known: [], prepared: [] };
+        newDraft.spells = { ...ex, known: [...(ex.known || []), bonusData.spell1] };
+      }
+      setDraft(newDraft);
+      setShowIsekaiPicker(false);
+      setIsekaiSpeciesMode(true);
+      setActiveSection('species');
+      setSearchTerm('');
+    };
+
+    const canConfirmBonus = () => {
+      if (!selectedTypeId) return false;
+      if (selectedTypeId === 'teleport') return !!asiStat && !!skill;
+      if (selectedTypeId === 'summoned') return !!cantrip && !!spell1;
+      if (selectedTypeId === 'reincarnation') return !!asiStat && !!language;
+      if (selectedTypeId === 'divineDeal') return true;
+      return false;
+    };
+
+    // Bonus config step
+    if (pok === 'bonus' && pick) {
+      return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ background: '#1a202c', padding: '30px', borderRadius: '12px', border: '2px solid #b8860b', width: '540px' }}>
+            <button onClick={() => setPok('type')} style={{ background: 'none', border: 'none', color: '#a0aec0', cursor: 'pointer', fontSize: '0.85rem', marginBottom: 12, padding: 0 }}>← Back to origin types</button>
+            <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>{pick.label}</h2>
+            <p style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16, lineHeight: 1.4 }}>{pick.description}</p>
+
+            {(selectedTypeId === 'teleport' || selectedTypeId === 'reincarnation') && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 6 }}>Choose an ability score to increase by 1:</label>
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                  {Object.entries(STAT_ABBREV).map(([key, l]) => (
+                    <button key={key} onClick={() => setAsiStat(key)}
+                      style={{ padding: '8px 14px', background: asiStat === key ? '#6366f1' : '#2d3748', border: asiStat === key ? '2px solid #818cf8' : '1px solid #4a5568', borderRadius: '6px', color: 'white', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>{l}</button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedTypeId === 'divineDeal' && (
+              <div style={{ marginBottom: 16, padding: '12px', background: '#1a202c', borderRadius: '6px' }}>
+                <p style={{ color: '#68d391', fontSize: '0.85rem', margin: 0 }}>Charisma +1 (applied automatically)</p>
+              </div>
+            )}
+
+            {selectedTypeId === 'teleport' && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 6 }}>Choose a skill proficiency:</label>
+                <select value={skill} onChange={e => setSkill(e.target.value)} style={{ width: '100%', padding: '8px', background: '#1a202c', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.85rem' }}>
+                  <option value="">Select a skill...</option>
+                  {ALL_SKILLS.map(s => <option key={s} value={s}>{s.replace(/([A-Z])/g, ' $1').trim()}</option>)}
+                </select>
+              </div>
+            )}
+
+            {selectedTypeId === 'reincarnation' && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 6 }}>Choose an additional language:</label>
+                <select value={language} onChange={e => setLanguage(e.target.value)} style={{ width: '100%', padding: '8px', background: '#1a202c', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.85rem' }}>
+                  <option value="">Select a language...</option>
+                  {ALL_LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+                </select>
+              </div>
+            )}
+
+            {selectedTypeId === 'summoned' && (
+              <div style={{ marginBottom: 16 }}>
+                <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 4 }}>Cantrip gained (from any class list):</label>
+                <input value={cantrip} onChange={e => setCantrip(e.target.value)} placeholder="e.g. Fire Bolt, Minor Illusion..."
+                  style={{ width: '100%', padding: '8px', marginBottom: 12, background: '#1a202c', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.85rem' }} />
+                <label style={{ color: '#f6e05e', fontSize: '0.8rem', display: 'block', marginBottom: 4 }}>1st-level spell (once per long rest):</label>
+                <input value={spell1} onChange={e => setSpell1(e.target.value)} placeholder="e.g. Shield, Cure Wounds..."
+                  style={{ width: '100%', padding: '8px', background: '#1a202c', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.85rem' }} />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <button onClick={() => setPok('type')} style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid #4a5568', color: '#a0aec0', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>Back</button>
+              <button disabled={!canConfirmBonus()} onClick={apply}
+                style={{ flex: 1, padding: '10px', background: canConfirmBonus() ? '#b8860b' : '#4a5568', border: 'none', color: 'white', borderRadius: '6px', cursor: canConfirmBonus() ? 'pointer' : 'not-allowed', fontSize: '0.85rem', fontWeight: 'bold' }}>
+                Apply Bonuses &amp; Pick Race
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Type picker step
+    return (
+      <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ background: '#1a202c', padding: '30px', borderRadius: '12px', border: '2px solid #b8860b', width: '540px', maxHeight: '85vh', overflowY: 'auto' }}>
+          <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>How did you arrive?</h2>
+          <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '20px' }}>Your character is from another world. Choose how you got here. This grants bonuses.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            {types.map((t: any) => (
+              <button key={t.id} onClick={() => setSelectedTypeId(t.id)}
+                style={{ padding: '14px 18px', background: selectedTypeId === t.id ? '#3a4a5e' : '#2d3748', border: selectedTypeId === t.id ? '2px solid #f6e05e' : '1px solid #4a5568', borderRadius: '8px', color: 'white', cursor: 'pointer', textAlign: 'left', transition: '0.15s' }}>
+                <div style={{ fontWeight: 'bold', fontSize: '1rem', marginBottom: 4 }}>{t.label}</div>
+                <div style={{ fontSize: '0.8rem', color: '#a0aec0', lineHeight: 1.4 }}>{t.description}</div>
+                <div style={{ fontSize: '0.75rem', color: '#68d391', marginTop: 6 }}>Bonus: {t.bonuses}</div>
+              </button>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 20 }}>
+            <button onClick={() => { setShowIsekaiPicker(false); }}
+              style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid #4a5568', color: '#a0aec0', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>
+              Skip (not from another world)
+            </button>
+            <button disabled={!selectedTypeId} onClick={() => { setPok('bonus'); }}
+              style={{ flex: 1, padding: '10px', background: selectedTypeId ? '#b8860b' : '#4a5568', border: 'none', color: 'white', borderRadius: '6px', cursor: selectedTypeId ? 'pointer' : 'not-allowed', fontSize: '0.85rem', fontWeight: 'bold' }}>
+              Next: Configure Bonuses
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // --- 6. SUB-VIEW: SPECIES SELECTOR ---
-  const SpeciesView = () => (
+  const SpeciesView = () => {
+    const speciesList = isekaiSpeciesMode ? allSpeciesUnfiltered : allSpecies;
+    return (
     <div style={subOverlayStyle}>
-      <button onClick={() => setActiveSection(null)} style={backButtonStyle}>← BACK TO HUB</button>
-      <h1 style={{ fontSize: '2.5rem', margin: '10px 0' }}>What's your lineage?</h1>
+      <button onClick={() => { if (isekaiSpeciesMode) { setIsekaiSpeciesMode(false); setSearchTerm(''); } setActiveSection(null); }} style={backButtonStyle}>← BACK TO HUB</button>
+      <h1 style={{ fontSize: '2.5rem', margin: '10px 0' }}>{isekaiSpeciesMode ? 'Choose your new-world race' : "What's your lineage?"}</h1>
+      {isekaiSpeciesMode && (
+        <p style={{ color: '#68d391', fontSize: '0.85rem', marginBottom: '8px' }}>
+          Your character is from another world. All races are available regardless of campaign restrictions.
+        </p>
+      )}
       <input
         placeholder="Search species..."
         style={searchFieldStyle}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
       <div style={speciesGridStyle}>
-        {allSpecies
+        {!isekaiSpeciesMode && isekaiEnabled && (
+          <div key="__isekai" style={{ ...speciesCardStyle, border: '2px solid #f6e05e' }}>
+            <div style={{ ...cardArtStyle, background: 'linear-gradient(135deg, #6b46c1, #d53f8c)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span style={{ fontSize: '3rem' }}>🌌</span>
+            </div>
+            <div style={cardGradientOverlay} />
+            <div style={cardContentStyle}>
+              <h2 style={{ fontSize: '2.2rem', margin: 0 }}>Isekai</h2>
+              <p style={cardDescriptionStyle}>A character transported from another world. Bypass all race restrictions.</p>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', alignItems: 'center' }}>
+                <button onClick={() => { setShowIsekaiPicker(true); }}
+                  style={{ ...selectButtonStyle, background: '#6b46c1' }}>
+                  FROM ANOTHER WORLD
+                </button>
+              </div>
+            </div>
+            <div style={goldCornerTL} /><div style={goldCornerBR} />
+          </div>
+        )}
+        {speciesList
           .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
           .map(s => (
             <div key={s.name} style={speciesCardStyle}>
@@ -2282,6 +2750,7 @@ export default function CharacterWizard({
       </div>
     </div>
   );
+  };
 
   const EquipmentSelectionView = () => {
     const startingGear = selectedClassData?.info?.startingEquipment;
@@ -2945,6 +3414,21 @@ export default function CharacterWizard({
                   </button>
                 </div>
               </div>
+            )}
+
+            {/* Isekai picker overlay */}
+            {showIsekaiPicker && (
+              <IsekaiPicker />
+            )}
+
+            {/* Background traits picker overlay */}
+            {showBackgroundTraits && (
+              <BackgroundTraitsView bgData={showBackgroundTraits} />
+            )}
+
+            {/* Language picker overlay */}
+            {showLanguagePicker && (
+              <LanguagePickerView />
             )}
           </>
         )}

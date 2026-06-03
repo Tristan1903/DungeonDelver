@@ -27,10 +27,6 @@ export function useDmAuth() {
     setAuthed(false);
   };
 
-  const hasPassword = (): boolean => {
-    try { return !!localStorage.getItem('dd-dm-password'); } catch { return false; }
-  };
-
   const setPassword = (pw: string) => {
     try {
       if (pw) localStorage.setItem('dd-dm-password', pw);
@@ -40,17 +36,25 @@ export function useDmAuth() {
     setAuthed(false);
   };
 
-  return { authed, authenticate, lock, hasPassword, setPassword };
+  return { authed, authenticate, lock, setPassword };
 }
 
 export default function DmAuthGate({ children }: DmAuthGateProps) {
-  const { authed, authenticate, hasPassword } = useDmAuth();
+  const { authed, authenticate, setPassword } = useDmAuth();
+  const [mounted, setMounted] = useState(false);
+  const [hasPw, setHasPw] = useState(false);
   const [pw, setPw] = useState('');
   const [error, setError] = useState('');
   const [showSetup, setShowSetup] = useState(false);
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
 
+  useEffect(() => {
+    setMounted(true);
+    try { setHasPw(!!localStorage.getItem('dd-dm-password')); } catch { setHasPw(false); }
+  }, []);
+
+  if (!mounted) return null;
   if (authed) return <>{children}</>;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -63,7 +67,7 @@ export default function DmAuthGate({ children }: DmAuthGateProps) {
     }
   };
 
-  if (!hasPassword()) {
+  if (!hasPw) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', padding: '2rem' }}>
         <div style={{ background: 'var(--dungeon-panel)', border: '1px solid var(--dungeon-border)', borderRadius: 'var(--dungeon-radius-md)', padding: '2rem', maxWidth: 400, width: '100%', textAlign: 'center' }}>

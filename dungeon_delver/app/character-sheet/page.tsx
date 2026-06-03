@@ -11,7 +11,7 @@ import { resetSpellSlots, getSpellSaveDC, concentrationSaveDC, getSpellcastingAb
 import { DataEngine } from '../../utils/dataLoader';
 import { SpellDetailModal } from '../../components/SpellSelectionView';
 import { isMuleNearby, loadStash } from '../../utils/stashEngine';
-import { HonorSanityStats, PietySection, RenownSection, DarkGiftsSection, MadnessSection, EpicBoonsSection, HeroPointsSection, StressFearSection, CampaignSelector, getActiveModules, TransformationsSection, DefilingSection, GroupPatronsSection, ShipMoraleSection, SidekicksSection } from '../../components/CampaignModulesCharacterSheet';
+import { HonorSanityStats, PietySection, RenownSection, DarkGiftsSection, MadnessSection, EpicBoonsSection, HeroPointsSection, StressFearSection, CampaignSelector, getActiveModules, TransformationsSection, DefilingSection, GroupPatronsSection, ShipMoraleSection, SidekicksSection, IsekaiSection } from '../../components/CampaignModulesCharacterSheet';
 import { saveCharToLocal, getStorageKey, loadCharFromLocal, isValidCharacter, CHAR_STORAGE_PREFIX } from '../../utils/storageEngine';
 import { useSpellSlot as useSpellSlotEngine, useClassResource } from '../../utils/resourceEngine';
 import { getMastery } from '../../utils/weaponMasteries';
@@ -2011,9 +2011,10 @@ useEffect(() => {
                          <DefilingSection char={char} onCharChange={setChar} enabled={activeModules.includes('defiling')} />
                          <GroupPatronsSection char={char} onCharChange={setChar} enabled={activeModules.includes('groupPatrons')} />
                          <ShipMoraleSection char={char} onCharChange={setChar} enabled={activeModules.includes('shipMorale')} />
-                         <SidekicksSection char={char} onCharChange={setChar} enabled={activeModules.includes('sidekicks')} />
+                          <SidekicksSection char={char} onCharChange={setChar} enabled={activeModules.includes('sidekicks')} />
+                          <IsekaiSection char={char} onCharChange={setChar} enabled={activeModules.includes('isekai')} moduleConfig={campaignModuleConfig} />
 
-                         {/* Proficiencies summary */}
+                          {/* Proficiencies summary */}
                         {char.proficiencies && char.proficiencies.length > 0 && (
                             <div style={cardPanel}>
                                 <h4 style={{ margin: '0 0 6px 0', fontSize: '0.8rem' }}>PROFICIENCIES</h4>

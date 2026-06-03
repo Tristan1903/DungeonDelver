@@ -17,6 +17,7 @@ import HonorSanityConfig from './configs/HonorSanityConfig';
 import GrittyRealismConfig from './configs/GrittyRealismConfig';
 import HeroPointsConfig from './configs/HeroPointsConfig';
 import TransformationsConfig from './configs/TransformationsConfig';
+import IsekaiConfig from './configs/IsekaiConfig';
 
 export { OPTIONAL_MODULES };
 export type { ModuleId };
@@ -45,6 +46,7 @@ const CONFIG_PANELS: Record<string, React.FC<{ value: any; onChange: (v: any) =>
   grittyRealism: GrittyRealismConfig,
   heroPoints: HeroPointsConfig,
   transformations: TransformationsConfig,
+  isekai: IsekaiConfig,
 };
 
 export default function ModulePanel({ enabled, onChange, moduleConfig, onModuleConfigChange }: ModulePanelProps) {
@@ -104,6 +106,9 @@ export default function ModulePanel({ enabled, onChange, moduleConfig, onModuleC
         if (mod.id === 'transformations') {
           if (!Array.isArray((value as any).types)) (value as any).types = (defaults as any).types;
           if (typeof (value as any).activeTransformations !== 'object') (value as any).activeTransformations = {};
+        }
+        if (mod.id === 'isekai' && !Array.isArray((value as any).types)) {
+          (value as any).types = (defaults as any).types;
         }
         return (
           <div key={mod.id} style={{

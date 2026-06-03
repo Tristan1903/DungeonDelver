@@ -18,6 +18,7 @@ export const OPTIONAL_MODULES = [
   { id: 'grittyRealism', name: 'Gritty Realism (DMG)', description: '8-hour short rests, 7-day long rests.' },
   { id: 'heroPoints', name: 'Hero Points (DMG)', description: 'Pool of d6s to modify d20 rolls.' },
   { id: 'transformations', name: 'Transformations (GHPG)', description: 'Dark transformations: Vampire, Lycanthrope, Lich, Seraph, Fiend, Aberrant Horror, Fey, Primordial, Specter.' },
+  { id: 'isekai', name: 'Isekai (Another World)', description: 'Characters transported from another world bypass race restrictions and gain an origin bonus.' },
 ] as const;
 
 export type ModuleId = (typeof OPTIONAL_MODULES)[number]['id'];
@@ -99,6 +100,17 @@ export interface TransformationsConfig {
   activeTransformations: Record<string, { boons: string[]; flaws: string[]; features: string[] }>;
 }
 
+export interface IsekaiTypeConfig {
+  id: string;
+  label: string;
+  description: string;
+  bonuses: string;
+}
+
+export interface IsekaiConfig {
+  types: IsekaiTypeConfig[];
+}
+
 export type ModuleConfigMap = {
   piety: PietyConfig;
   renown: RenownConfig;
@@ -116,12 +128,81 @@ export type ModuleConfigMap = {
   grittyRealism: GrittyRealismConfig;
   heroPoints: HeroPointsConfig;
   transformations: TransformationsConfig;
+  isekai: IsekaiConfig;
 };
+
+export type RacePresetId =
+  | 'standard'
+  | 'phb'
+  | 'greyhawk'
+  | 'grimHollow'
+  | 'ravenloft'
+  | 'eberron'
+  | 'exandria'
+  | 'theros'
+  | 'ravnica'
+  | 'spelljammer'
+  | 'dragonlance'
+  | 'strixhaven'
+  | 'darkSun';
+
+export interface RacePresetDef {
+  id: RacePresetId;
+  label: string;
+  description: string;
+  /** Only raw entries with these source IDs are kept */
+  sources?: string[];
+  /** Race names to always include even if source doesn't match */
+  includeRaces?: string[];
+  /** Race names to always exclude even if source matches */
+  excludeRaces?: string[];
+  /** If true, include races whose raw entry has lineage: "VRGR" or lineage: true */
+  includeLineages?: boolean;
+}
+
+export const CAMPAIGN_RACE_PRESETS: RacePresetDef[] = [
+  { id: 'standard', label: 'Standard', description: 'All available races — no restrictions. (Forgotten Realms, Planescape)' },
+  { id: 'phb', label: 'PHB Only', description: 'Only races published in the Player\'s Handbook (2014 + 2024).', sources: ['XPHB', 'PHB'] },
+  { id: 'greyhawk', label: 'Greyhawk', description: 'Standard PHB races. High-magic races (Dragonborn, Tiefling) are extremely rare but may appear.', sources: ['XPHB', 'PHB'] },
+  { id: 'grimHollow', label: 'Grim Hollow', description: 'Core + Grim Hollow Player\'s Guide races (Accursed, Arisen, Dhampir, Disembodied, Downcast, Dreamer, Grudgel, Laneshi, Ogresh, Wechselkind, Wulven).', sources: ['XPHB', 'PHB', 'GrimHollowPG24'] },
+  { id: 'ravenloft', label: 'Ravenloft', description: 'Core races + Van Richten\'s exclusive lineages (Dhampir, Hexblood, Reborn).', sources: ['XPHB', 'PHB'], includeRaces: ['Dhampir', 'Hexblood', 'Reborn'] },
+  { id: 'eberron', label: 'Eberron', description: 'Core + Eberron races (Warforged, Shifter, Changeling, Kalashtar, Bugbear, Goblin, Hobgoblin, Orc, Khoravar).', sources: ['XPHB', 'PHB', 'ERLW', 'EFA'] },
+  { id: 'exandria', label: 'Exandria (Wildemount)', description: 'Core + Explorer\'s Guide to Wildemount (Pallid Elves, Lotusden Halflings, Draconblood/Ravenite Dragonborn).', sources: ['XPHB', 'PHB', 'EGW'] },
+  { id: 'theros', label: 'Theros', description: 'Theros-native races only: Humans, Centaurs, Leonin, Minotaurs, Satyrs, Tritons.', sources: ['MOT'], includeRaces: ['Human'] },
+  { id: 'ravnica', label: 'Ravnica', description: 'Ravnica-native races: Humans, Elves, Half-Elves, Centaurs, Goblins, Loxodons, Minotaurs, Simic Hybrids, Vedalken.', sources: ['GGR'], includeRaces: ['Human', 'Elf', 'Half-Elf'] },
+  { id: 'spelljammer', label: 'Spelljammer', description: 'Core + Astral Adventurer\'s Guide races (Astral Elf, Autognome, Giff, Hadozee, Plasmoid, Thri-kreen).', sources: ['XPHB', 'PHB', 'AAG'] },
+  { id: 'dragonlance', label: 'Dragonlance', description: 'Core races + Kender. No Orcs, Half-Orcs, or Halflings. Minotaurs are playable.', sources: ['XPHB', 'PHB', 'DSotDQ'], excludeRaces: ['Orc', 'Half-Orc', 'Halfling'] },
+  { id: 'strixhaven', label: 'Strixhaven', description: 'Core + Strixhaven races (Owlin).', sources: ['XPHB', 'PHB', 'SCC'] },
+  { id: 'darkSun', label: 'Dark Sun', description: 'Dark Sun-native races only: Humans, Dwarves, Half-Elves, Halflings, Elves. No data loaded for Half-Giants, Muls, Pterrans, or Thri-kreen.', includeRaces: ['Human', 'Dwarf', 'Half-Elf', 'Halfling', 'Elf'] },
+];
+
+export function filterRacesByPreset(allSpecies: any[], rawSpecies: any[], presetId: RacePresetId): any[] {
+  if (presetId === 'standard') return allSpecies;
+  const preset = CAMPAIGN_RACE_PRESETS.find(p => p.id === presetId);
+  if (!preset) return allSpecies;
+
+  const allowedNames = new Set<string>();
+
+  for (const entry of rawSpecies) {
+    let allowed = false;
+
+    if (preset.sources?.includes(entry.source)) allowed = true;
+    if (preset.includeRaces?.includes(entry.name)) allowed = true;
+    if (preset.includeLineages && (entry.lineage === 'VRGR' || entry.lineage === true)) allowed = true;
+
+    if (preset.excludeRaces?.includes(entry.name)) allowed = false;
+
+    if (allowed) allowedNames.add(entry.name);
+  }
+
+  return allSpecies.filter(s => allowedNames.has(s.name));
+}
 
 export interface CampaignConfig {
   name: string;
   enabledModules: string[];
   moduleConfig: Partial<ModuleConfigMap>;
+  racePreset?: RacePresetId;
   updatedAt: string;
 }
 
@@ -327,15 +408,23 @@ export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
     ],
     activeTransformations: {},
   },
+  isekai: {
+    types: [
+      { id: 'teleport', label: 'Teleported', description: 'You were physically transported from your original world. Your body and mind remain unchanged, but the transition has left you slightly altered.', bonuses: '+1 to any ability score, one skill proficiency of your choice' },
+      { id: 'summoned', label: 'Summoned', description: 'A powerful being called you here as a servant, champion, or pawn. Some of their magic lingers in your soul.', bonuses: 'One cantrip from any class spell list, one 1st-level spell you can cast once per long rest' },
+      { id: 'reincarnation', label: 'Reincarnated', description: 'Your soul was reborn into a new body in this world. You retain faint echoes of your past life.', bonuses: '+1 to any ability score, one additional language of your choice' },
+      { id: 'divineDeal', label: "Divine Deal", description: 'A deity or cosmic force plucked you from your world for a purpose. Their blessing empowers you.', bonuses: '+1 Charisma, you can cast Bless once per long rest without a spell slot' },
+    ],
+  },
 };
 
 const STORAGE_KEY = 'campaign-config';
 
-function storageKey() { return campaignKey(STORAGE_KEY); }
+function storageKey(campaignId?: string) { return campaignKey(STORAGE_KEY, campaignId); }
 
-export function loadCampaignConfig(): CampaignConfig {
+export function loadCampaignConfig(campaignId?: string): CampaignConfig {
   try {
-    const raw = localStorage.getItem(storageKey());
+    const raw = localStorage.getItem(storageKey(campaignId));
     if (raw) {
       const parsed = JSON.parse(raw);
       return parsed as CampaignConfig;
@@ -349,13 +438,13 @@ export function loadCampaignConfig(): CampaignConfig {
   };
 }
 
-export function saveCampaignConfig(config: CampaignConfig): void {
+export function saveCampaignConfig(config: CampaignConfig, campaignId?: string): void {
   config.updatedAt = new Date().toISOString();
-  localStorage.setItem(storageKey(), JSON.stringify(config));
+  localStorage.setItem(storageKey(campaignId), JSON.stringify(config));
 }
 
-export function clearCampaignConfig(): void {
-  localStorage.removeItem(storageKey());
+export function clearCampaignConfig(campaignId?: string): void {
+  localStorage.removeItem(storageKey(campaignId));
 }
 
 export function getModuleConfig<K extends ModuleId>(config: CampaignConfig, moduleId: K): ModuleConfigMap[K] {

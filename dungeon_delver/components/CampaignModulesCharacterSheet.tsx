@@ -379,3 +379,40 @@ export function SidekicksSection({ char, onCharChange, enabled }: { char: Charac
     </div>
   );
 }
+
+export function IsekaiSection({ char, onCharChange, enabled, moduleConfig }: { char: Character; onCharChange: (c: Character) => void; enabled: boolean; moduleConfig: any }) {
+  if (!enabled) return null;
+  const isekaiData = char.moduleData?.isekai;
+  if (!isekaiData) return null;
+  const configTypes = moduleConfig?.isekai?.types || [];
+  const typeDef = configTypes.find((t: any) => t.id === isekaiData.type);
+  const label = typeDef?.label || isekaiData.type.charAt(0).toUpperCase() + isekaiData.type.slice(1);
+  const desc = typeDef?.description || '';
+  const STAT_ABBREV: Record<string, string> = { str: 'STR', dex: 'DEX', con: 'CON', int: 'INT', wis: 'WIS', cha: 'CHA' };
+  const appliedBonuses: string[] = [];
+  if (isekaiData.asi) {
+    for (const [s, v] of Object.entries(isekaiData.asi) as [string, number][]) {
+      if (v !== 0) appliedBonuses.push(`${STAT_ABBREV[s] || s.toUpperCase()} +${v}`);
+    }
+  }
+  if (isekaiData.skill) appliedBonuses.push(`Skill: ${isekaiData.skill.replace(/([A-Z])/g, ' $1').trim()}`);
+  if (isekaiData.language) appliedBonuses.push(`Language: ${isekaiData.language}`);
+  if (isekaiData.cantrip) appliedBonuses.push(`Cantrip: ${isekaiData.cantrip}`);
+  if (isekaiData.spell1) appliedBonuses.push(`1st-level spell: ${isekaiData.spell1} (1/long rest)`);
+  return (
+    <div style={cardPanel}>
+      <h4 style={{ margin: '0 0 8px 0', fontSize: '0.8rem', color: colors.gold }}>ISEKAI (Another World)</h4>
+      <div style={{ fontSize: '0.75rem', color: colors.textLight, marginBottom: 4 }}><strong>Origin:</strong> {label}</div>
+      {desc && <p style={{ fontSize: '0.7rem', color: colors.textDim, margin: '0 0 4px', lineHeight: 1.4 }}>{desc}</p>}
+      {appliedBonuses.length > 0 && (
+        <div style={{ fontSize: '0.7rem', color: '#68d391', margin: 0 }}>
+          <strong>Applied Bonuses:</strong>
+          <ul style={{ margin: '4px 0 0 0', paddingLeft: 16 }}>
+            {appliedBonuses.map((b, i) => <li key={i}>{b}</li>)}
+          </ul>
+        </div>
+      )}
+      {isekaiData.bonuses && !appliedBonuses.length && <p style={{ fontSize: '0.7rem', color: '#68d391', margin: 0 }}><strong>Bonuses:</strong> {isekaiData.bonuses}</p>}
+    </div>
+  );
+}
