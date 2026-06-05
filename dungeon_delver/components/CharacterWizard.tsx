@@ -10,6 +10,7 @@ import { getNewFeaturesAtLevel, getNewSubclassFeaturesAtLevel, getHPGainDisplay,
 import { getAvailablePicks } from '../utils/classResources';
 import { rollDice } from '../utils/rollEngine';
 import { loadCampaignConfig, filterRacesByPreset, type RacePresetId, CAMPAIGN_RACE_PRESETS } from '../utils/campaignEngine';
+import { CLASS_THEMES, type ClassTheme } from '../utils/classThemes';
 
 // Multiclass prerequisites per 2024 rules (min ability score of 13)
 const MULTICLASS_PREREQS: Record<string, Record<string, number>> = {
@@ -126,108 +127,7 @@ export default function CharacterWizard({
   };
 
 
-  const CLASS_THEMES: Record<string, any> = {
-    Barbarian: {
-      color: '#eca6037c',
-      tagline_color: '#eca603',
-      tagline: 'A Fierce Warrior of Primal Rage',
-      highlights: ['Storm with Rage and charge headlong into danger.', 'Channel primal forces to fuel uncanny reflexes.', 'Fight with reckless abandon.'],
-      gear: ['A Greataxe, Greatsword, or Maul', 'Bare, lightweight clothing', 'Belt of Giant Strength'],
-      pills: [{ short: 'Raging Warrior', full: 'Raging Warrior' }, { short: 'STR', full: 'Strength' }]
-    },
-    Bard: {
-      color: '#c200c54d', // Purple
-      tagline_color: '#c200c5',
-      tagline: 'An Inspiring Performer of Music, Dance, and Magic',
-      highlights: ['Weave magic and wonder through the arts.', 'Become a jack of all trades.', 'Perform spells that inspire and heal allies.'],
-      gear: ['A Lute or other Musical Instrument', 'Stylish, often theatrical outfits', 'Instrument of the Bards'],
-      pills: [{ short: 'Inspiring Performer', full: 'Inspiring Performer' }, { short: 'CHA', full: 'Charisma' }]
-
-    },
-    Cleric: {
-      color: '#ffd12b79', // Olive Gold
-      tagline_color: '#ffd12b',
-      tagline: 'A Miraculous Priest of Divine Power',
-      highlights: ['Invoke divine magic to bolster people.', 'Channel divine energy to sear enemies.', 'Martial the power of gods to ward off Undead.'],
-      gear: ['A Holy Symbol borne prominently', 'Cloth vestments worn over a Chain shirt', 'Necklace of Prayer Beads'],
-      pills: [{ short: 'Divine Priest', full: 'Divine Priest' }, { short: 'WIS', full: 'Wisdom' }]
-    },
-    Druid: {
-      color: '#abce2e6e', // Forest Green
-      tagline_color: '#abce2e',
-      tagline: 'A Nature Priest of Primal Power',
-      highlights: ['Call on the forces of nature to heal allies.', 'Embody the wilds by shape-shifting.', 'Combat threats to the natural world.'],
-      gear: ['A Druidic Focus and a Sickle', 'Organic clothing adorned with nature', 'Staff of the Woodlands'],
-      pills: [
-        { short: 'WEAPONS MASTER', full: 'WEAPONS MASTER' },
-        { short: 'STR • DEX', full: 'STRENGTH • DEXTERITY' }
-      ]
-    },
-    Fighter: {
-      color: '#c9750046', // Brown/Bronze
-      tagline_color: '#c97500',
-      tagline: 'A Master of All Arms and Armor',
-      highlights: ['Master weapons to be prepared for anything.', 'Push yourself beyond normal limits.', 'Rule the battlefield.'],
-      gear: ['Weapons of all descriptions', 'Every type of armor and shield', 'Vorpal Sword'],
-      pills: [{ short: 'Weapon Master', full: 'Weapon Master' }, { short: 'STR • DEX', full: 'Strength • Dexterity' }]
-    },
-    Monk: {
-      color: '#00d1d188', // Teal
-      tagline_color: '#00ffff',
-      tagline: 'A Martial Artist of Supernatural Focus',
-      highlights: ['Focus potential to create supernatural effects.', 'Channel uncanny speed to sidestep danger.', 'Turn yourself into a living weapon.'],
-      gear: ['Shortswords, Spears, or Quarterstaffs', 'Loose, simple clothes', 'Wraps of Unarmed Power'],
-      pills: [{ short: 'Martial Artist', full: 'Martial Artist' }, { short: 'DEX • WIS', full: 'Dexterity • Wisdom' }]
-    },
-    Paladin: {
-      color: '#6d88889a', // Steel Blue
-      tagline_color: '#999999',
-      tagline: 'A Devout Warrior of Sacred Oaths',
-      highlights: ['Combine martial prowess and divine might.', 'Swear a sacred oath and abide by its tenets.', 'Wield divine power to heal the injured.'],
-      gear: ['A Longsword and a Shield with a Holy Symbol', 'A suit of polished Plate Armor', 'Holy Avenger'],
-      pills: [{ short: 'Devout Warrior', full: 'Devout Warrior' }, { short: 'STR • CHA', full: 'Strength • Charisma' }]
-    },
-    Ranger: {
-      color: '#a0e95b71', // Deep Green
-      tagline_color: '#a4ff50',
-      tagline: 'A Wandering Warrior Imbued with Primal Magic',
-      highlights: ['Weave together martial prowess and nature magic.', 'Deepen your connection to nature.', 'Track and slay your quarry like a predator.'],
-      gear: ['A Scimitar, Shortsword, and a Longbow', 'A cloak camouflaged for the wilds', 'Bracers of Archery'],
-      pills: [{ short: 'Primal Warrior', full: 'Primal Warrior' }, { short: 'DEX • WIS', full: 'Dexterity • Wisdom' }]
-    },
-    Rogue: {
-      color: '#0c3ad35d', // Dark Blue
-      tagline_color: '#6b8dfd',
-      tagline: 'A Dexterous Expert in Stealth and Subterfuge',
-      highlights: ['Launch deadly Sneak Attacks.', 'Escape notice, disarm traps, and pick locks.', 'Manipulate strikes to inflict debilitating effects.'],
-      gear: ['Daggers and Shortswords', 'A dark, hooded cloak', 'Ring of Invisibility'],
-      pills: [{ short: 'Master Thief', full: 'Master Thief' }, { short: 'DEX', full: 'Dexterity' }]
-    },
-    Sorcerer: {
-      color: '#fcc35375', // Crimson
-      tagline_color: '#ddab47',
-      tagline: 'A Dazzling Mage Filled with Innate Magic',
-      highlights: ['Alter your spells to suit your needs.', 'Attune to the origin of your innate magic.', 'Harness and channel raw, roiling power.'],
-      gear: ["A Sorcerer's shard as a focus", 'Robe of the Archmagi', 'Staff of Power'],
-      pills: [{ short: 'Innate Magic', full: 'Innate Magic' }, { short: 'CHA', full: 'Charisma' }]
-    },
-    Warlock: {
-      color: '#fc2f1962', // Maroon
-      tagline_color: '#a71504',
-      tagline: 'An Occultist Empowered by Otherworldly Pacts',
-      highlights: ['Form a pact with a mysterious entity.', 'Uncover eldritch truths for supernatural abilities.', 'Deepen your occult connection for greater power.'],
-      gear: ['Leather Armor and a Sickle', 'Occult attire and tomes', 'Rod of the Pact Keeper'],
-      pills: [{ short: 'Otherworldly Patron', full: 'Otherworldly Patron' }, { short: 'CHA', full: 'Charisma' }]
-    },
-    Wizard: {
-      color: '#8228e96e', // Deep Indigo
-      tagline_color: '#8431e4',
-      tagline: 'A Scholarly Magic-User of Arcane Power',
-      highlights: ['Pursue arcane magic with scholastic fervor.', 'Cast spells of explosive fire and lightning.', 'Become capable of manipulating reality.'],
-      gear: ['Their personal spellbook & Spell Scrolls', 'An ornate, arcane Robe', 'Ring of Spell Storing'],
-      pills: [{ short: 'Arcane Scholar', full: 'Arcane Scholar' }, { short: 'INT', full: 'Intelligence' }]
-    }
-  };
+  // CLASS_THEMES imported from utils/classThemes.ts
 
   // --- 1. STATE ---
 
@@ -263,7 +163,7 @@ export default function CharacterWizard({
   const [allLibraryItems, setAllLibraryItems] = useState<any[]>([]);
   const [activeEquipmentPicker, setActiveEquipmentPicker] = useState<{
     groupIndex: number,
-    choiceKey: 'a' | 'b',
+    choiceKey: string,
     filter: string
   } | null>(null);
 
@@ -834,7 +734,7 @@ export default function CharacterWizard({
     const classInfo = selectedClassData?.info;
     const classFeatures = selectedClassData?.features || [];
     const subclassFeatures = selectedClassData?.subclassFeatures || [];
-    const theme = CLASS_THEMES[targetClass] || { color: '#b8860b', tagline_color: '#b8860b' };
+    const theme = CLASS_THEMES[targetClass.replace(/ /g, '')] || { color: '#b8860b', tagline_color: '#b8860b' };
     const conMod = getAbilityModifier(baseScores.con);
     const hpDisplay = getHPGainDisplay(classInfo, conMod);
     const newFeatures = getNewFeaturesAtLevel(classFeatures, targetClass, newClassLevel);
@@ -986,7 +886,7 @@ export default function CharacterWizard({
     const classInfo = selectedClassData?.info;
     const classFeatures = selectedClassData?.features || [];
     const subclassFeatures = selectedClassData?.subclassFeatures || [];
-    const theme = CLASS_THEMES[targetClass] || { color: '#b8860b', tagline_color: '#b8860b' };
+    const theme = CLASS_THEMES[targetClass.replace(/ /g, '')] || { color: '#b8860b', tagline_color: '#b8860b' };
     const conMod = getAbilityModifier(baseScores.con);
     const hpDisplay = getHPGainDisplay(classInfo, conMod);
     const newFeatures = getNewFeaturesAtLevel(classFeatures, targetClass, newClassLevel);
@@ -1248,7 +1148,7 @@ export default function CharacterWizard({
     const classInfo = selectedClassData?.info;
     const classFeatures = selectedClassData?.features || [];
     const subclassFeatures = selectedClassData?.subclassFeatures || [];
-    const theme = CLASS_THEMES[targetClass] || { color: '#b8860b', tagline_color: '#b8860b' };
+    const theme = CLASS_THEMES[targetClass.replace(/ /g, '')] || { color: '#b8860b', tagline_color: '#b8860b' };
     const conMod = getAbilityModifier(baseScores.con);
     const hpDisplay = getHPGainDisplay(classInfo, conMod);
     const hpGain = hpRollMode === 'average' ? hpDisplay.average : (rolledHpGain || hpDisplay.average);
@@ -1429,7 +1329,7 @@ export default function CharacterWizard({
               {classList.map(cls => {
                 const cl = classLevels.find((c: any) => c.className === cls);
                 const oldLevel = cl?.level || 1;
-                const theme = CLASS_THEMES[cls] || { color: '#b8860b', tagline_color: '#b8860b' };
+                const theme = CLASS_THEMES[cls.replace(/ /g, '')] || { color: '#b8860b', tagline_color: '#b8860b' };
                 return (
                   <button key={cls} onClick={() => handlePickClass(cls)} disabled={loadingData}
                     style={{
@@ -1462,7 +1362,7 @@ export default function CharacterWizard({
                 .filter((cls: string) => !classList.includes(cls))
                 .map(cls => {
                   const prereqs = meetsMulticlassPrereqs(cls, existingChar?.baseStats || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 });
-                  const theme = CLASS_THEMES[cls] || { color: '#b8860b', tagline_color: '#b8860b' };
+                  const theme = CLASS_THEMES[cls.replace(/ /g, '')] || { color: '#b8860b', tagline_color: '#b8860b' };
                   return (
                     <button key={cls} onClick={() => handleAddNewClass(cls)} disabled={loadingData || !prereqs.ok}
                       style={{
@@ -1494,7 +1394,7 @@ export default function CharacterWizard({
 
   const AbilitiesView = () => {
 
-    const classTheme = CLASS_THEMES[draft.class] || { color: '#b8860b' };
+    const classTheme = CLASS_THEMES[draft.class.replace(/ /g, '')] || { color: '#b8860b' };
     // --- 1. SEARCHING THE JSON TREE (CRAWLER) ---
     const getCategorizedSkills = () => {
       const raceData = rawSpecies.find(s => s.name === draft.race) ||
@@ -1935,7 +1835,7 @@ export default function CharacterWizard({
     const info = data.info;
     const features = data.features || [];
     const subclassFeatures = data.subclassFeatures || [];
-    const theme = CLASS_THEMES[info.name] || CLASS_THEMES.Barbarian;
+    const theme = CLASS_THEMES[info.name.replace(/ /g, '')] || CLASS_THEMES.Barbarian;
     const [expandedSub, setExpandedSub] = useState<string | null>(null);
 
     const getFeaturesForSubclass = (shortName: string) => {
@@ -2199,14 +2099,14 @@ export default function CharacterWizard({
 
               {/* --- THE UPDATED PILLS SECTION (Uses the .short text) --- */}
               <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
-                {CLASS_THEMES[clsName] ? (
-                  CLASS_THEMES[clsName].pills.map((pill: any) => (
+                {CLASS_THEMES[clsName.replace(/ /g, '')] ? (
+                  CLASS_THEMES[clsName.replace(/ /g, '')].pills.map((pill: any) => (
                     <div
                       key={pill.short}
                       style={{
                         ...pillBadgeStyle,
-                        borderColor: CLASS_THEMES[clsName].tagline_color,
-                        background: hexToRGBA(CLASS_THEMES[clsName].color, 0.1),
+                        borderColor: CLASS_THEMES[clsName.replace(/ /g, '')].tagline_color,
+                        background: hexToRGBA(CLASS_THEMES[clsName.replace(/ /g, '')].color, 0.1),
                         padding: '2px 10px',
                         fontSize: '0.6rem'
                       }}
@@ -2221,7 +2121,7 @@ export default function CharacterWizard({
               </div>
 
               <p style={classDescriptionStyle}>
-                {CLASS_THEMES[clsName]?.tagline || `Masters of their craft, the ${clsName} brings unique skills to the party.`}
+                {CLASS_THEMES[clsName.replace(/ /g, '')]?.tagline || `Masters of their craft, the ${clsName} brings unique skills to the party.`}
               </p>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', alignItems: 'center', marginTop: '10px' }}>
@@ -2757,6 +2657,61 @@ export default function CharacterWizard({
     const choices = startingGear?.defaultData || [];
     const [isShopOpen, setIsShopOpen] = useState(false);
     const [purchasedItems, setPurchasedItems] = useState<{ name: string; quantity: number }[]>([]);
+    const [mandatoryAdded, setMandatoryAdded] = useState(false);
+
+    // --- AUTO-GRANT MANDATORY (_) ITEMS ---
+    useEffect(() => {
+      if (mandatoryAdded || !choices.length) return;
+      const autoGear: { name: string; quantity: number }[] = [];
+      choices.forEach((group: any) => {
+        const mandatory = group._;
+        if (!mandatory) return;
+        const itemsArray = Array.isArray(mandatory) ? mandatory : [mandatory];
+        itemsArray.forEach((i: any) => {
+          if (i.equipmentType) return;
+          if (i.value) return;
+          const itemName = typeof i === 'string' ? cleanString(i) : cleanString(i.item || i.name);
+          if (!itemName) return;
+          const packItems = expandPack(itemName);
+          if (packItems) {
+            packItems.forEach((p) => autoGear.push(p));
+          } else {
+            autoGear.push({
+              name: itemName,
+              quantity: typeof i === 'object' && i.quantity ? i.quantity : 1,
+            });
+          }
+        });
+      });
+      if (autoGear.length === 0) { setMandatoryAdded(true); return; }
+      const enrichItem = (name: string) => {
+        const lower = name.toLowerCase();
+        return allLibraryItems.find((lib: any) => lib.name.toLowerCase() === lower && lib.source === 'XPHB')
+          || allLibraryItems.find((lib: any) => lib.name.toLowerCase() === lower);
+      };
+      setDraft((prev: any) => {
+        const existingNames = new Set((prev.inventory || []).map((i: any) => i.name.toLowerCase()));
+        const toAdd = autoGear
+          .filter((g) => !existingNames.has(g.name.toLowerCase()))
+          .map((g, idx) => {
+            const libItem = enrichItem(g.name);
+            const acBonus = libItem?.ac ? (typeof libItem.ac === 'number' ? libItem.ac : (libItem.ac.ac || 0)) : 0;
+            return {
+              id: `auto-${idx}-${g.name}`,
+              name: g.name,
+              equipped: false,
+              quantity: g.quantity || 1,
+              entries: libItem?.entries || [],
+              weight: libItem?.weight ? Number(libItem.weight) : undefined,
+              type: libItem?.type || undefined,
+              dmg1: libItem?.dmg1 || undefined,
+              modifiers: acBonus ? { ac: acBonus } : undefined,
+            };
+          });
+        return { ...prev, inventory: [...(prev.inventory || []), ...toAdd] };
+      });
+      setMandatoryAdded(true);
+    }, [choices, mandatoryAdded]);
 
     // --- 1. ROBUST LABEL GENERATOR ---
     const generateGearLabel = (items: any[]) => {
@@ -2811,7 +2766,7 @@ export default function CharacterWizard({
       return results;
     };
 
-    const handleChoiceClick = (index: number, key: 'a' | 'b', items: any) => {
+    const handleChoiceClick = (index: number, key: string, items: any) => {
       if (!items) return;
       const itemsArray = Array.isArray(items) ? items : [items];
 
@@ -2949,27 +2904,46 @@ export default function CharacterWizard({
           /* --- EXISTING GEAR GRID --- */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             {choices.map((group: any, index: number) => {
-              const optA = group.a || group.A;
-              const optB = group.b || group.B;
+              const mandatory = group._;
+              const choiceKeys = Object.keys(group).filter((k) => k !== '_' && k !== '');
+
+              // Group with only mandatory items (no choices)
+              if (mandatory && choiceKeys.length === 0) {
+                return (
+                  <div key={index} style={{ ...equipmentRowStyle, padding: '14px 16px', background: 'rgba(72, 187, 120, 0.08)', borderRadius: '8px', border: '1px solid rgba(72, 187, 120, 0.3)', display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                    <span style={{ color: '#48bb78', fontSize: '1rem', marginTop: '2px' }}>✓</span>
+                    <div>
+                      <div style={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#48bb78', letterSpacing: '1px', marginBottom: '4px' }}>
+                        AUTO-GRANTED EQUIPMENT
+                      </div>
+                      <div style={{ fontSize: '1rem', color: '#e2e8f0' }}>
+                        {generateGearLabel(mandatory)}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Group with choice options (a, b, c...)
               return (
                 <div key={index} style={equipmentRowStyle}>
-                  <div
-                    onClick={() => handleChoiceClick(index, 'a', optA)}
-                    style={{ ...gearOptionStyle, border: `2px solid ${equipmentChoices[index] === 'a' ? '#b8860b' : 'transparent'}` }}
-                  >
-                    <div style={optionLabelStyle}>OPTION A</div>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{generateGearLabel(optA)}</div>
-                  </div>
-                  {optB && <div style={orDividerStyle}>OR</div>}
-                  {optB && (
-                    <div
-                      onClick={() => handleChoiceClick(index, 'b', optB)}
-                      style={{ ...gearOptionStyle, border: `2px solid ${equipmentChoices[index] === 'b' ? '#b8860b' : 'transparent'}` }}
-                    >
-                      <div style={optionLabelStyle}>OPTION B</div>
-                      <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{generateGearLabel(optB)}</div>
-                    </div>
-                  )}
+                  {choiceKeys.sort().map((key, ki) => {
+                    const items = group[key];
+                    const labelLetter = key.toUpperCase();
+                    const isSelected = equipmentChoices[index] === key;
+                    return (
+                      <div key={key} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {ki > 0 && <div style={orDividerStyle}>OR</div>}
+                        <div
+                          onClick={() => handleChoiceClick(index, key, items)}
+                          style={{ ...gearOptionStyle, border: `2px solid ${isSelected ? '#b8860b' : 'transparent'}`, flex: 1 }}
+                        >
+                          <div style={optionLabelStyle}>OPTION {labelLetter}</div>
+                          <div style={{ fontSize: '1.1rem', fontWeight: 'bold' }}>{generateGearLabel(items)}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })}
@@ -3204,16 +3178,16 @@ export default function CharacterWizard({
           {type === 'species' && draft.race && (
             <div style={selectionBadgeStyle}>{draft.race.toUpperCase()}</div>
           )}
-          {type === 'class' && draft.class && CLASS_THEMES[draft.class] && (
+          {type === 'class' && draft.class && CLASS_THEMES[draft.class.replace(/ /g, '')] && (
             <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
-              {draft.subclass && <div style={{ ...selectionBadgeStyle, background: `${hexToRGBA(CLASS_THEMES[draft.class].color, 0.3)}`, borderColor: CLASS_THEMES[draft.class].tagline_color }}>{draft.subclass.toUpperCase()}</div>}
-              {CLASS_THEMES[draft.class].pills.map((pill: any) => (
+              {draft.subclass && <div style={{ ...selectionBadgeStyle, background: `${hexToRGBA(CLASS_THEMES[draft.class.replace(/ /g, '')].color, 0.3)}`, borderColor: CLASS_THEMES[draft.class.replace(/ /g, '')].tagline_color }}>{draft.subclass.toUpperCase()}</div>}
+              {CLASS_THEMES[draft.class.replace(/ /g, '')].pills.map((pill: any) => (
                 <div
                   key={pill.short}
                   style={{
                     ...pillBadgeStyle,
-                    borderColor: CLASS_THEMES[draft.class].tagline_color,
-                    background: `${hexToRGBA(CLASS_THEMES[draft.class].color, 0.1)}`, // Match the transparency
+                    borderColor: CLASS_THEMES[draft.class.replace(/ /g, '')].tagline_color,
+                    background: `${hexToRGBA(CLASS_THEMES[draft.class.replace(/ /g, '')].color, 0.1)}`, // Match the transparency
                     fontSize: '0.6rem',
                     padding: '1px 10px'
                   }}

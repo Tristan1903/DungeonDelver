@@ -202,44 +202,44 @@ export default function PartyPage() {
   const selectedCount = selectedPaths.size;
 
   return (
-    <div style={{ padding: '2rem', color: 'white' }}>
-      <Link href="/dm" style={{ color: '#a0aec0' }}>← DM Hub</Link>
-      <h1 style={{ color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif' }}>Party Management</h1>
+    <div style={{ padding: '2rem', color: '#e8dcc8' }}>
+      <Link href="/dm" style={{ color: '#8a7e6a' }}>← DM Hub</Link>
+      <h1 style={{ color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>Party Management</h1>
 
       {/* Header controls */}
       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap' }}>
         <input value={party.name} onChange={(e) => setParty({ ...party, name: e.target.value })}
-          style={{ padding: '8px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', width: '260px' }} />
+          style={{ padding: '8px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', width: '260px' }} />
       </div>
       <div style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <button onClick={savePartyFile} style={{ padding: '8px 16px', background: '#b8860b', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>Save</button>
-        <button onClick={loadPartyFile} style={{ padding: '8px 16px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>Load</button>
-        <button onClick={addCharacter} style={{ padding: '8px 16px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Character</button>
-        {statusMsg && <span style={{ color: '#48bb78', fontSize: '0.85rem', padding: '8px 0' }}>{statusMsg}</span>}
+        <button onClick={savePartyFile} style={{ padding: '8px 16px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>Save</button>
+        <button onClick={loadPartyFile} style={{ padding: '8px 16px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>Load</button>
+        <button onClick={addCharacter} style={{ padding: '8px 16px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem' }}>+ Add Character</button>
+        {statusMsg && <span style={{ color: '#16a34a', fontSize: '0.85rem', padding: '8px 0' }}>{statusMsg}</span>}
       </div>
 
       {/* Initiative mode toggle */}
       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '16px' }}>
-        <span style={{ fontSize: '0.85rem', color: '#a0aec0' }}>Initiative:</span>
+        <span style={{ fontSize: '0.85rem', color: '#8a7e6a' }}>Initiative:</span>
         <button onClick={() => setInitMode('auto')}
-          style={{ padding: '4px 14px', borderRadius: '4px', border: 'none', background: initMode === 'auto' ? '#6366f1' : '#4a5568', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>Auto</button>
+          style={{ padding: '4px 14px', borderRadius: '4px', border: 'none', background: initMode === 'auto' ? '#c9a84c' : '#3d3528', color: '#e8dcc8', cursor: 'pointer', fontSize: '0.8rem' }}>Auto</button>
         <button onClick={() => setInitMode('manual')}
-          style={{ padding: '4px 14px', borderRadius: '4px', border: 'none', background: initMode === 'manual' ? '#6366f1' : '#4a5568', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>Manual</button>
+          style={{ padding: '4px 14px', borderRadius: '4px', border: 'none', background: initMode === 'manual' ? '#c9a84c' : '#3d3528', color: '#e8dcc8', cursor: 'pointer', fontSize: '0.8rem' }}>Manual</button>
       </div>
 
       {/* Push buttons */}
       {loadedChars.length > 0 && (
         <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
           <button onClick={() => pushToCombat([...loadedChars.map((c) => c.path)])}
-            style={{ padding: '8px 20px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
+            style={{ padding: '8px 20px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
             Push All to Combat
           </button>
           <button onClick={() => pushToCombat([...selectedPaths])} disabled={selectedCount === 0}
-            style={{ padding: '8px 20px', background: selectedCount === 0 ? '#4a5568' : '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: selectedCount === 0 ? 'not-allowed' : 'pointer', fontWeight: 'bold', fontSize: '0.85rem', opacity: selectedCount === 0 ? 0.5 : 1 }}>
+            style={{ padding: '8px 20px', background: selectedCount === 0 ? '#3d3528' : '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: selectedCount === 0 ? 'not-allowed' : 'pointer', fontWeight: 'bold', fontSize: '0.85rem', opacity: selectedCount === 0 ? 0.5 : 1 }}>
             Push Selected ({selectedCount})
           </button>
           <button onClick={rollAllInit}
-            style={{ padding: '8px 20px', background: '#ecc94b', border: 'none', color: 'black', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
+            style={{ padding: '8px 20px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem' }}>
             Roll All Initiative
           </button>
         </div>
@@ -247,7 +247,7 @@ export default function PartyPage() {
 
       {/* Character lobby */}
       {loadedChars.length === 0 && (
-        <div style={{ padding: '40px', textAlign: 'center', color: '#718096', background: '#1a202c', borderRadius: '8px', border: '1px dashed #4a5568' }}>
+        <div style={{ padding: '40px', textAlign: 'center', color: '#5a5248', background: '#0c0e14', borderRadius: '8px', border: '1px dashed #3d3528' }}>
           <p>No characters loaded. Add a character file to get started.</p>
           <p style={{ fontSize: '0.8rem' }}>Works with browser-stored characters (dd-char-*) or .json files on desktop.</p>
         </div>
@@ -263,28 +263,28 @@ export default function PartyPage() {
           return (
             <div key={lc.path} style={{
               display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '14px 16px', background: '#1a202c', borderRadius: '10px',
-              border: `2px solid ${isSelected ? '#48bb78' : '#2d3748'}`,
+              padding: '14px 16px', background: '#0c0e14', borderRadius: '10px',
+              border: `2px solid ${isSelected ? '#16a34a' : '#1a1714'}`,
               transition: 'border-color 0.15s',
             }}>
               {/* Checkbox */}
               <input type="checkbox" checked={isSelected} onChange={() => toggleSelected(lc.path)}
-                style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#48bb78' }} />
+                style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#16a34a' }} />
 
               {/* Character info */}
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
                 <div>
-                  <div style={{ fontWeight: 'bold', color: '#f6e05e', fontSize: '0.95rem' }}>{lc.data.name}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>
+                  <div style={{ fontWeight: 'bold', color: '#c9a84c', fontSize: '0.95rem' }}>{lc.data.name}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#8a7e6a' }}>
                     {lc.data.class || lc.data.classes?.join('/')} · Level {lc.data.totalLevel || lc.data.level || 1}
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: '#cbd5e0' }}>
-                  <span>AC <strong style={{ color: 'white' }}>{lc.live.ac}</strong></span>
-                  <span>HP <strong style={{ color: '#48bb78' }}>{lc.data.hp.current}</strong> / <strong style={{ color: 'white' }}>{lc.data.hp.max}</strong></span>
-                  <span>Init <strong style={{ color: '#ecc94b' }}>{initMod >= 0 ? `+${initMod}` : initMod}</strong></span>
+                <div style={{ display: 'flex', gap: '16px', fontSize: '0.8rem', color: '#8a7e6a' }}>
+                  <span>AC <strong style={{ color: '#e8dcc8' }}>{lc.live.ac}</strong></span>
+                  <span>HP <strong style={{ color: '#16a34a' }}>{lc.data.hp.current}</strong> / <strong style={{ color: '#e8dcc8' }}>{lc.data.hp.max}</strong></span>
+                  <span>Init <strong style={{ color: '#c9a84c' }}>{initMod >= 0 ? `+${initMod}` : initMod}</strong></span>
                   {initRoll?.rolled && (
-                    <span>Roll <strong style={{ color: '#ecc94b', fontSize: '1rem' }}>{initTotal}</strong></span>
+                    <span>Roll <strong style={{ color: '#c9a84c', fontSize: '1rem' }}>{initTotal}</strong></span>
                   )}
                 </div>
               </div>
@@ -296,7 +296,7 @@ export default function PartyPage() {
                     <input type="number" value={manualInits[lc.path] ?? ''} onChange={(e) => {
                       setManualInits((prev) => ({ ...prev, [lc.path]: e.target.value }));
                     }} placeholder="Init"
-                      style={{ width: '50px', padding: '4px 6px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.8rem', textAlign: 'center' }} />
+                      style={{ width: '50px', padding: '4px 6px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.8rem', textAlign: 'center' }} />
                     <button onClick={() => {
                       const val = parseInt(manualInits[lc.path] || '');
                       if (!isNaN(val)) {
@@ -304,20 +304,20 @@ export default function PartyPage() {
                         setRolledAll(false);
                       }
                     }}
-                      style={{ padding: '4px 8px', background: '#ecc94b', border: 'none', color: 'black', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>Set</button>
+                      style={{ padding: '4px 8px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>Set</button>
                   </div>
                 ) : (
                   <button onClick={() => rollInit(lc.path)}
-                    style={{ padding: '4px 12px', background: initRoll?.rolled ? '#9758e6' : '#ecc94b', border: 'none', color: initRoll?.rolled ? 'white' : 'black', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                    style={{ padding: '4px 12px', background: initRoll?.rolled ? '#c9a84c' : '#c9a84c', border: 'none', color: initRoll?.rolled ? 'white' : 'black', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>
                     {initRoll?.rolled ? `Rolled ${initTotal}` : 'Roll d20'}
                   </button>
                 )}
                 <button onClick={() => pushToCombat([lc.path])}
-                  style={{ padding: '4px 12px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                  style={{ padding: '4px 12px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>
                   Push
                 </button>
                 <button onClick={() => removeChar(lc.path)}
-                  style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #e53e3e', color: '#fc8181', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                  style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #a83232', color: '#a83232', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
                   ×
                 </button>
               </div>
@@ -328,7 +328,7 @@ export default function PartyPage() {
 
       {/* Legend for non-loaded paths */}
       {party.characterPaths.length > loadedChars.length && (
-        <div style={{ marginTop: '16px', padding: '12px', background: '#2d3748', borderRadius: '8px', fontSize: '0.8rem', color: '#718096' }}>
+        <div style={{ marginTop: '16px', padding: '12px', background: '#1a1714', borderRadius: '8px', fontSize: '0.8rem', color: '#5a5248' }}>
           {party.characterPaths.length - loadedChars.length} character(s) could not be loaded. Remove and re-add them.
         </div>
       )}

@@ -6,7 +6,7 @@ import { OPTIONAL_MODULES, loadCampaignConfig } from '../../utils/campaignEngine
 interface SessionSummary { sessions: Array<{ id: string; name: string; date: string; encounters?: unknown[] }>; activeSessionId: string | null; }
 interface QuestSummary { id: string; status: 'active' | 'complete' | 'failed'; }
 
-const cardStyle: React.CSSProperties = { background: 'var(--dungeon-panel, #2d3748)', border: '1px solid var(--dungeon-border, #4a5568)', borderRadius: '10px', padding: '16px' };
+const cardStyle: React.CSSProperties = { background: '#1a1714', border: '1px solid #3d3528', borderRadius: '10px', padding: '16px' };
 
 const quickLinks = [
   { href: '/dm/session', label: 'Session & Encounter Prep', desc: 'Run prep templates, encounter queues, and journal entries.' },
@@ -46,47 +46,47 @@ export default function DMHub() {
   const activeQuests = questSummary.filter((q) => q.status === 'active').length;
 
   return (
-    <div style={{ padding: '2rem', color: 'white', maxWidth: '1200px', margin: '0 auto' }}>
+    <div style={{ padding: '2rem', color: '#e8dcc8', maxWidth: '1200px', margin: '0 auto' }}>
       <header style={{ marginBottom: '20px' }}>
-        <h1 style={{ fontFamily: 'serif', color: 'var(--dungeon-gold, #b8860b)', marginBottom: '8px' }}>DM Command Hub</h1>
-        <p style={{ color: '#a0aec0', margin: 0 }}>Central ops for campaign flow, storylines, subsystem tuning, and live session control.</p>
+        <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', marginBottom: '8px' }}>DM Command Hub</h1>
+        <p style={{ color: '#8a7e6a', margin: 0 }}>Central ops for campaign flow, storylines, subsystem tuning, and live session control.</p>
       </header>
 
       <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '20px' }}>
         <div style={cardStyle}>
-          <div style={{ color: '#718096', fontSize: '0.8rem' }}>Active Session</div>
+          <div style={{ color: '#5a5248', fontSize: '0.8rem' }}>Active Session</div>
           <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{activeSession?.name || 'None selected'}</div>
-          <div style={{ color: '#a0aec0', fontSize: '0.8rem', marginTop: '4px' }}>{activeSession ? `${activeSession.encounters?.length || 0} encounters planned` : 'Create one in Session Prep'}</div>
+          <div style={{ color: '#8a7e6a', fontSize: '0.8rem', marginTop: '4px' }}>{activeSession ? `${activeSession.encounters?.length || 0} encounters planned` : 'Create one in Session Prep'}</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ color: '#718096', fontSize: '0.8rem' }}>Storyline Load</div>
+          <div style={{ color: '#5a5248', fontSize: '0.8rem' }}>Storyline Load</div>
           <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{activeQuests} active quests</div>
-          <div style={{ color: '#a0aec0', fontSize: '0.8rem', marginTop: '4px' }}>{questSummary.length} total tracked quests</div>
+          <div style={{ color: '#8a7e6a', fontSize: '0.8rem', marginTop: '4px' }}>{questSummary.length} total tracked quests</div>
         </div>
         <div style={cardStyle}>
-          <div style={{ color: '#718096', fontSize: '0.8rem' }}>Subsystems Enabled</div>
+          <div style={{ color: '#5a5248', fontSize: '0.8rem' }}>Subsystems Enabled</div>
           <div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{activeModules.length}</div>
-          <div style={{ color: '#a0aec0', fontSize: '0.8rem', marginTop: '4px' }}>{moduleNames.slice(0, 2).join(', ') || 'No optional modules yet'}</div>
+          <div style={{ color: '#8a7e6a', fontSize: '0.8rem', marginTop: '4px' }}>{moduleNames.slice(0, 2).join(', ') || 'No optional modules yet'}</div>
         </div>
       </section>
 
       <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px' }}>
         <div style={{ ...cardStyle, padding: '14px' }}>
-          <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#f6e05e' }}>Primary Workflow</h2>
+          <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#c9a84c' }}>Primary Workflow</h2>
           <div style={{ display: 'grid', gap: '10px' }}>
             {quickLinks.map((item) => (
-              <Link key={item.href} href={item.href} style={{ textDecoration: 'none', color: 'white', background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '12px', display: 'block' }}>
+              <Link key={item.href} href={item.href} style={{ textDecoration: 'none', color: '#e8dcc8', background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '12px', display: 'block' }}>
                 <div style={{ fontWeight: 700 }}>{item.label}</div>
-                <div style={{ fontSize: '0.82rem', color: '#a0aec0', marginTop: '4px' }}>{item.desc}</div>
+                <div style={{ fontSize: '0.82rem', color: '#8a7e6a', marginTop: '4px' }}>{item.desc}</div>
               </Link>
             ))}
           </div>
         </div>
         <div style={{ ...cardStyle, padding: '14px' }}>
-          <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#f6e05e' }}>Toolbox</h2>
+          <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#c9a84c' }}>Toolbox</h2>
           <div style={{ display: 'grid', gap: '8px' }}>
             {tools.map((tool) => (
-              <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none', color: 'white', padding: '9px 10px', borderRadius: '6px', border: '1px solid #4a5568', background: '#1a202c', fontSize: '0.85rem' }}>{tool.label}</Link>
+              <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none', color: '#e8dcc8', padding: '9px 10px', borderRadius: '6px', border: '1px solid #3d3528', background: '#0c0e14', fontSize: '0.85rem' }}>{tool.label}</Link>
             ))}
           </div>
         </div>

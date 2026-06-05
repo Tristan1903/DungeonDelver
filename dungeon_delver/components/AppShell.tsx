@@ -1,32 +1,35 @@
 'use client';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRollLog } from '../context/RollLogContext';
 import { useRole, UserRole } from '../context/RoleContext';
 import CommandPalette from './CommandPalette';
-import { getActiveCampaign, getCampaigns, setActiveCampaign, createCampaign, type CampaignEntry } from '../utils/campaignStorage';
+import { getActiveCampaign, getCampaigns } from '../utils/campaignStorage';
+import { cn } from '../lib/utils';
 
 interface NavItem {
   href: string;
   label: string;
   role: 'both' | 'dm' | 'player';
   section: 'player' | 'dm' | 'content';
+  icon: string;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Home', role: 'both', section: 'player' },
-  { href: '/hub', label: 'Hub', role: 'both', section: 'player' },
-  { href: '/character-sheet', label: 'Character', role: 'both', section: 'player' },
-  { href: '/combat', label: 'Combat', role: 'both', section: 'player' },
-  { href: '/dm', label: 'DM Hub', role: 'dm', section: 'dm' },
-  { href: '/dm/obsidian', label: 'Obsidian', role: 'dm', section: 'dm' },
-  { href: '/library', label: 'Library', role: 'both', section: 'content' },
-  { href: '/party-stash', label: 'Stash', role: 'both', section: 'content' },
-  { href: '/cards', label: 'Cards', role: 'both', section: 'content' },
-  { href: '/handouts', label: 'Handouts', role: 'both', section: 'content' },
-  { href: '/qr', label: 'QR Codes', role: 'both', section: 'content' },
-  { href: '/notes', label: 'Notes', role: 'both', section: 'content' },
+  { href: '/', label: 'Home', role: 'both', section: 'player', icon: '⌂' },
+  { href: '/hub', label: 'Hub', role: 'both', section: 'player', icon: '◎' },
+  { href: '/character-sheet', label: 'Character', role: 'both', section: 'player', icon: '🧙' },
+  { href: '/combat', label: 'Combat', role: 'both', section: 'player', icon: '⚔' },
+  { href: '/dm', label: 'DM Hub', role: 'dm', section: 'dm', icon: '👑' },
+  { href: '/dm/obsidian', label: 'Obsidian', role: 'dm', section: 'dm', icon: '🔗' },
+  { href: '/dm/campaigns', label: 'Campaigns', role: 'dm', section: 'dm', icon: '📜' },
+  { href: '/library', label: 'Library', role: 'both', section: 'content', icon: '📚' },
+  { href: '/party-stash', label: 'Stash', role: 'both', section: 'content', icon: '📦' },
+  { href: '/cards', label: 'Cards', role: 'both', section: 'content', icon: '🃏' },
+  { href: '/handouts', label: 'Handouts', role: 'both', section: 'content', icon: '📝' },
+  { href: '/qr', label: 'QR Codes', role: 'both', section: 'content', icon: '📱' },
+  { href: '/notes', label: 'Notes', role: 'both', section: 'content', icon: '✎' },
 ];
 
 const SECTION_LABELS: Record<string, string> = {
@@ -55,27 +58,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { log, clearLog } = useRollLog();
   const { role, setRole } = useRole();
-  const [campaigns, setCampaigns] = useState<CampaignEntry[]>([]);
-  const [activeCampaign, setActiveCampaignState] = useState(getActiveCampaign());
-  const [showCampaignPicker, setShowCampaignPicker] = useState(false);
-  const [newCampaignName, setNewCampaignName] = useState('');
-
-  useEffect(() => { setCampaigns(getCampaigns()); }, []);
-
-  const switchCampaign = (id: string) => {
-    setActiveCampaign(id);
-    setActiveCampaignState(id);
-    window.location.reload();
-  };
-
-  const handleCreateCampaign = () => {
-    if (!newCampaignName.trim()) return;
-    const entry = createCampaign(newCampaignName.trim());
-    setCampaigns(getCampaigns());
-    switchCampaign(entry.id);
-  };
-
-  const campaignLabel = campaigns.find(c => c.id === activeCampaign)?.name || 'Default Campaign';
+  const [_campaigns, _setCampaigns] = useState(getCampaigns());
+  const activeId = getActiveCampaign();
+  const activeName = activeId ? _campaigns.find(c => c.id === activeId)?.name : null;
   const [showDice, setShowDice] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const logEndRef = useRef<HTMLDivElement>(null);
@@ -97,7 +82,6 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [log]);
 
-  // Close sidebar on route change (mobile)
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
 
   const filteredNav = NAV_ITEMS.filter(item => item.role === 'both' || item.role === role);
@@ -108,95 +92,68 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
   const sidebarContent = (
     <>
-      <div style={{ padding: '16px 16px 12px', fontFamily: 'serif', fontSize: '1.1rem', color: 'var(--dungeon-gold)', fontWeight: 'bold', whiteSpace: 'nowrap' }}>
-        {isMobile ? 'DD' : 'Dungeon Delver'}
-      </div>
-
-      {sections.map(section => {
-        const items = filteredNav.filter(i => i.section === section);
-        if (!items.length) return null;
-        return (
-          <div key={section} style={{ marginBottom: '8px' }}>
-            {!isMobile && (
-              <div style={{ padding: '4px 16px', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--dungeon-text-dim)', fontWeight: 600 }}>
-                {SECTION_LABELS[section]}
-              </div>
-            )}
-            {items.map(item => {
-              const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
-              return (
-                <Link key={item.href} href={item.href}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                    padding: isMobile ? '10px 16px' : '8px 16px',
-                    color: active ? 'var(--dungeon-gold)' : 'var(--dungeon-text-light)',
-                    textDecoration: 'none',
-                    background: active ? 'rgba(184,134,11,0.15)' : 'transparent',
-                    borderLeft: active ? '3px solid var(--dungeon-gold)' : '3px solid transparent',
-                    fontSize: isMobile ? '0.95rem' : '0.85rem',
-                    transition: 'background var(--dungeon-transition, 0.2s)',
-                  }}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        );
-      })}
-
-      {/* Campaign selector */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid var(--dungeon-border)' }}>
-        <button onClick={() => setShowCampaignPicker(!showCampaignPicker)}
-          style={{ width: '100%', padding: '6px 8px', borderRadius: 'var(--dungeon-radius-sm, 4px)',
-            background: 'rgba(99,102,241,0.1)', border: '1px solid var(--dungeon-border, #4a5568)',
-            color: 'var(--dungeon-text, #e2e8f0)', cursor: 'pointer', fontSize: '0.75rem',
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
-          <span>📜 {campaignLabel}</span>
-          <span style={{ fontSize: '0.6rem' }}>{showCampaignPicker ? '▲' : '▼'}</span>
-        </button>
-        {showCampaignPicker && (
-          <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <button onClick={() => switchCampaign('default')}
-              style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: activeCampaign === 'default' ? 'rgba(99,102,241,0.3)' : 'transparent', color: 'var(--dungeon-text)', cursor: 'pointer', fontSize: '0.7rem', textAlign: 'left' }}>
-              📁 Default Campaign
-            </button>
-            {campaigns.map(c => (
-              <div key={c.id} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                <button onClick={() => switchCampaign(c.id)}
-                  style={{ flex: 1, padding: '4px 8px', borderRadius: '4px', border: 'none', background: activeCampaign === c.id ? 'rgba(99,102,241,0.3)' : 'transparent', color: 'var(--dungeon-text)', cursor: 'pointer', fontSize: '0.7rem', textAlign: 'left' }}>
-                  📁 {c.name}
-                </button>
-              </div>
-            ))}
-            <div style={{ display: 'flex', gap: '4px', marginTop: '4px' }}>
-              <input value={newCampaignName} onChange={e => setNewCampaignName(e.target.value)}
-                placeholder="New campaign..."
-                style={{ flex: 1, padding: '4px 6px', borderRadius: '4px', border: '1px solid var(--dungeon-border)', background: 'var(--dungeon-bg)', color: 'var(--dungeon-text)', fontSize: '0.7rem' }} />
-              <button onClick={handleCreateCampaign}
-                style={{ padding: '4px 8px', borderRadius: '4px', border: 'none', background: 'var(--dungeon-accent)', color: 'white', cursor: 'pointer', fontSize: '0.7rem' }}>
-                +
-              </button>
-            </div>
-          </div>
+      {/* Branding */}
+      <div className="px-4 pt-5 pb-4 border-b border-border">
+        <h1 className="text-lg font-bold tracking-wide" style={{ fontFamily: '"MedievalSharp", serif', color: '#c9a84c' }}>
+          {isMobile ? 'DD' : 'Dungeon Delver'}
+        </h1>
+        {!isMobile && (
+          <p className="text-[0.6rem] text-muted-foreground mt-0.5 tracking-widest uppercase">
+            D&D 5e Companion
+          </p>
         )}
       </div>
 
-      {/* Role toggle */}
-      <div style={{ padding: '12px 16px', borderTop: '1px solid var(--dungeon-border)' }}>
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto py-3 px-2">
+        {sections.map(section => {
+          const items = filteredNav.filter(i => i.section === section);
+          if (!items.length) return null;
+          return (
+            <div key={section} className="mb-3">
+              {!isMobile && (
+                <div className="px-3 py-1 text-[0.6rem] font-bold tracking-[0.15em] uppercase text-muted-foreground">
+                  {SECTION_LABELS[section]}
+                </div>
+              )}
+              {items.map(item => {
+                const active = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                return (
+                  <Link key={item.href} href={item.href}
+                    className={cn(
+                      "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-all duration-150",
+                      active
+                        ? "bg-primary/15 text-primary border-l-2 border-primary font-semibold"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted/50 border-l-2 border-transparent"
+                    )}
+                  >
+                    <span className="text-base w-5 text-center">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          );
+        })}
+      </nav>
+
+      {/* Campaign indicator + Role toggle */}
+      <div className="px-3 pb-4 border-t border-border pt-3 flex flex-col gap-2">
+        {activeName && (
+          <div style={{ fontSize: '0.65rem', color: '#5a5248', textAlign: 'center', padding: '2px 0' }}>
+            📜 {activeName}
+          </div>
+        )}
         <button onClick={toggleRole}
-          style={{
-            width: '100%', padding: '8px', borderRadius: 'var(--dungeon-radius-sm, 4px)',
-            background: role === 'dm' ? 'rgba(99,102,241,0.2)' : 'rgba(72,187,120,0.2)',
-            border: `1px solid ${role === 'dm' ? 'var(--dungeon-accent, #6366f1)' : 'var(--dungeon-success, #48bb78)'}`,
-            color: role === 'dm' ? 'var(--dungeon-accent, #6366f1)' : 'var(--dungeon-success, #48bb78)',
-            cursor: 'pointer', fontSize: '0.75rem', fontWeight: 600,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-          }}
-        >
+          className={cn(
+            "w-full py-2.5 rounded-md text-xs font-bold flex items-center justify-center gap-2 border transition-all",
+            role === 'dm'
+              ? "bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
+              : "bg-emerald-500/10 border-emerald-500/30 text-emerald-500 hover:bg-emerald-500/20"
+          )}>
           <span>{role === 'dm' ? '👑' : '🎮'}</span>
           {role === 'dm' ? 'DM Mode' : 'Player Mode'}
-          <span style={{ fontSize: '0.6rem', opacity: 0.6 }}>→ {otherRole === 'dm' ? 'DM' : 'Player'}</span>
+          <span className="text-[0.6rem] opacity-60">→ {otherRole === 'dm' ? 'DM' : 'Player'}</span>
         </button>
       </div>
     </>
@@ -205,56 +162,36 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <>
       <CommandPalette />
-      <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--dungeon-bg)' }}>
+      <div className="flex min-h-screen bg-background">
 
         {/* Mobile hamburger */}
         {isMobile && (
           <>
             <button onClick={() => setSidebarOpen(!sidebarOpen)}
-              style={{
-                position: 'fixed', top: '12px', left: '12px', zIndex: 1001,
-                width: '40px', height: '40px', borderRadius: 'var(--dungeon-radius-sm)',
-                background: 'var(--dungeon-sidebar)', border: '1px solid var(--dungeon-border)',
-                color: 'var(--dungeon-gold)', fontSize: '1.2rem', cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-            >
+              className="fixed top-3 left-3 z-[1001] w-10 h-10 rounded-md bg-sidebar border border-border text-primary flex items-center justify-center hover:bg-muted transition-colors">
               {sidebarOpen ? '×' : '☰'}
             </button>
-            {/* Mobile sidebar overlay */}
             {sidebarOpen && (
               <div onClick={() => setSidebarOpen(false)}
-                style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 999 }}
-              />
+                className="fixed inset-0 bg-black/60 z-[999]" />
             )}
-            <aside style={{
-              position: 'fixed', top: 0, left: 0, bottom: 0, zIndex: 1000,
-              width: '260px', background: 'var(--dungeon-sidebar)',
-              borderRight: '1px solid var(--dungeon-border)',
-              display: 'flex', flexDirection: 'column',
-              transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-              transition: 'transform 0.2s ease-out',
-              overflowY: 'auto',
-            }}>
+            <aside className={cn(
+              "fixed top-0 left-0 bottom-0 z-[1000] w-64 bg-sidebar border-r border-border flex flex-col overflow-y-auto transition-transform duration-200",
+              sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            )}>
               {sidebarContent}
             </aside>
             {/* Bottom nav */}
-            <nav style={{
-              position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
-              background: 'var(--dungeon-sidebar)', borderTop: '1px solid var(--dungeon-border)',
-              display: 'flex', justifyContent: 'space-around', padding: '4px 0',
-            }}>
+            <nav className="fixed bottom-0 left-0 right-0 z-100 bg-sidebar border-t border-border flex justify-around py-1 px-2">
               {filteredNav.slice(0, 5).map(item => {
                 const active = pathname === item.href;
                 return (
                   <Link key={item.href} href={item.href}
-                    style={{
-                      display: 'flex', flexDirection: 'column', alignItems: 'center',
-                      padding: '6px 8px', color: active ? 'var(--dungeon-gold)' : 'var(--dungeon-text-dim)',
-                      textDecoration: 'none', fontSize: '0.6rem', gap: '2px',
-                    }}
-                  >
-                    <span style={{ fontSize: '1rem' }}>{getNavIcon(item.href)}</span>
+                    className={cn(
+                      "flex flex-col items-center px-2 py-1.5 text-[0.6rem] gap-0.5 transition-colors",
+                      active ? "text-primary" : "text-muted-foreground"
+                    )}>
+                    <span className="text-base">{item.icon}</span>
                     {item.label}
                   </Link>
                 );
@@ -265,58 +202,57 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
         {/* Desktop sidebar */}
         {!isMobile && (
-          <aside style={{
-            width: isTablet ? '180px' : '200px',
-            background: 'var(--dungeon-sidebar)',
-            borderRight: '1px solid var(--dungeon-border)',
-            display: 'flex', flexDirection: 'column',
-            flexShrink: 0, position: 'sticky', top: 0, height: '100vh',
-            overflowY: 'auto',
-          }}>
+          <aside className={cn(
+            "bg-sidebar border-r border-border flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-y-auto",
+            isTablet ? "w-[180px]" : "w-[200px]"
+          )}>
             {sidebarContent}
           </aside>
         )}
 
         {/* Main content */}
-        <main style={{
-          flex: 1, overflow: 'auto',
-          paddingBottom: isMobile ? '56px' : '0',
-          paddingTop: isMobile ? '60px' : '0',
-        }}>
+        <main className={cn(
+          "flex-1 overflow-auto",
+          isMobile ? "pb-14 pt-14" : "pb-0 pt-0"
+        )}>
           {children}
         </main>
 
         {/* Dice log sidebar */}
         {showDice && !isMobile && (
-          <aside style={{
-            width: isTablet ? '220px' : '260px',
-            background: 'var(--dungeon-sidebar)',
-            borderLeft: '1px solid var(--dungeon-border)',
-            padding: '16px', overflowY: 'auto', flexShrink: 0,
-            display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0,
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <strong style={{ color: 'var(--dungeon-gold)', fontSize: '0.85rem' }}>Dice Log</strong>
-              <button onClick={clearLog} style={{ fontSize: '0.65rem', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', cursor: 'pointer', padding: '2px 8px', borderRadius: '3px' }}>
+          <aside className={cn(
+            "bg-sidebar border-l border-border p-4 overflow-y-auto flex-shrink-0 flex flex-col h-screen sticky top-0",
+            isTablet ? "w-[220px]" : "w-[260px]"
+          )}>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="text-sm font-bold" style={{ fontFamily: '"MedievalSharp", serif', color: '#c9a84c' }}>
+                Dice Log
+              </h3>
+              <button onClick={clearLog}
+                className="text-[0.65rem] bg-transparent border border-border text-muted-foreground px-2 py-0.5 rounded hover:text-foreground transition-colors">
                 Clear
               </button>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto' }}>
-              {log.length === 0 && <p style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.8rem' }}>No rolls yet.</p>}
+            <div className="flex-1 overflow-y-auto">
+              {log.length === 0 && (
+                <p className="text-muted-foreground text-xs italic">No rolls yet.</p>
+              )}
               {log.map((entry, i) => (
-                <div key={i} style={{ marginBottom: '6px', padding: '6px 8px', background: 'var(--dungeon-panel)', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--dungeon-text)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--dungeon-gold)', fontWeight: 600 }}>{entry.label || entry.source}</span>
-                    <span style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.6rem' }}>{formatTime(entry.timestamp)}</span>
+                <div key={i} className="mb-1.5 p-2 bg-card rounded-md text-xs border border-border">
+                  <div className="flex justify-between items-start">
+                    <span className="font-bold" style={{ color: '#c9a84c' }}>{entry.label || entry.source}</span>
+                    <span className="text-muted-foreground text-[0.6rem]">{formatTime(entry.timestamp)}</span>
                   </div>
-                  <div style={{ marginTop: '2px' }}>
+                  <div className="mt-1 text-foreground">
                     {entry.rolls.length ? `[${entry.rolls.join(', ')}]` : ''}
                     {entry.modifier !== 0 ? ` ${entry.modifier >= 0 ? '+' : ''}${entry.modifier}` : ''}
                     {entry.rolls.length > 0 && (
-                      <>{' '}= <strong style={{ color: 'var(--dungeon-gold)' }}>{entry.total}</strong></>
+                      <>{' '}= <strong style={{ color: '#c9a84c' }}>{entry.total}</strong></>
                     )}
                   </div>
-                  {entry.formula && <div style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.6rem', marginTop: '1px' }}>{entry.formula}</div>}
+                  {entry.formula && (
+                    <div className="text-muted-foreground text-[0.6rem] mt-0.5">{entry.formula}</div>
+                  )}
                 </div>
               ))}
               <div ref={logEndRef} />
@@ -327,45 +263,39 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {/* Mobile dice log toggle */}
         {isMobile && (
           <button onClick={() => setShowDice(!showDice)}
-            style={{
-              position: 'fixed', bottom: '60px', right: '12px', zIndex: 100,
-              width: '44px', height: '44px', borderRadius: '50%',
-              background: showDice ? 'var(--dungeon-gold)' : 'var(--dungeon-panel)',
-              border: '1px solid var(--dungeon-border)',
-              color: 'white', fontSize: '1rem', cursor: 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}
-          >
+            className={cn(
+              "fixed bottom-16 right-3 z-100 w-11 h-11 rounded-full flex items-center justify-center border border-border transition-all shadow-lg",
+              showDice ? "bg-primary text-primary-foreground" : "bg-card text-foreground"
+            )}>
             🎲
           </button>
         )}
 
         {/* Mobile dice log sheet */}
         {showDice && isMobile && (
-          <div style={{
-            position: 'fixed', bottom: '56px', left: 0, right: 0, zIndex: 99,
-            maxHeight: '40vh', background: 'var(--dungeon-sidebar)',
-            borderTop: '1px solid var(--dungeon-border)',
-            padding: '12px', overflowY: 'auto',
-            display: 'flex', flexDirection: 'column',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <strong style={{ color: 'var(--dungeon-gold)', fontSize: '0.85rem' }}>Dice Log</strong>
-              <button onClick={clearLog} style={{ fontSize: '0.65rem', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', cursor: 'pointer', padding: '2px 8px', borderRadius: '3px' }}>
+          <div className="fixed bottom-14 left-0 right-0 z-[99] max-h-[40vh] bg-sidebar border-t border-border p-3 overflow-y-auto flex flex-col">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-sm font-bold" style={{ fontFamily: '"MedievalSharp", serif', color: '#c9a84c' }}>
+                Dice Log
+              </h3>
+              <button onClick={clearLog}
+                className="text-[0.65rem] bg-transparent border border-border text-muted-foreground px-2 py-0.5 rounded hover:text-foreground transition-colors">
                 Clear
               </button>
             </div>
-            {log.length === 0 && <p style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.8rem' }}>No rolls yet.</p>}
+            {log.length === 0 && (
+              <p className="text-muted-foreground text-xs italic">No rolls yet.</p>
+            )}
             {log.map((entry, i) => (
-              <div key={i} style={{ marginBottom: '4px', padding: '6px 8px', background: 'var(--dungeon-panel)', borderRadius: '4px', fontSize: '0.75rem', color: 'var(--dungeon-text)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: 'var(--dungeon-gold)', fontWeight: 600 }}>{entry.label || entry.source}</span>
-                  <span style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.6rem' }}>{formatTime(entry.timestamp)}</span>
+              <div key={i} className="mb-1 p-2 bg-card rounded-md text-xs border border-border">
+                <div className="flex justify-between">
+                  <span className="font-bold" style={{ color: '#c9a84c' }}>{entry.label || entry.source}</span>
+                  <span className="text-muted-foreground text-[0.6rem]">{formatTime(entry.timestamp)}</span>
                 </div>
-                <div style={{ marginTop: '2px' }}>
+                <div className="mt-1">
                   {entry.rolls.length ? `[${entry.rolls.join(', ')}]` : ''}
                   {entry.modifier !== 0 ? ` ${entry.modifier >= 0 ? '+' : ''}${entry.modifier}` : ''}
-                  {entry.rolls.length > 0 && <>{' '}= <strong style={{ color: 'var(--dungeon-gold)' }}>{entry.total}</strong></>}
+                  {entry.rolls.length > 0 && <>{' '}= <strong style={{ color: '#c9a84c' }}>{entry.total}</strong></>}
                 </div>
               </div>
             ))}
@@ -374,22 +304,4 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       </div>
     </>
   );
-}
-
-function getNavIcon(href: string): string {
-  const icons: Record<string, string> = {
-    '/': '⌂',
-    '/hub': '◎',
-    '/character-sheet': '🧙',
-    '/combat': '⚔',
-    '/dm': '👑',
-    '/library': '📚',
-    '/party-stash': '📦',
-    '/cards': '🃏',
-    '/handouts': '📝',
-    '/qr': '📱',
-    '/notes': '✎',
-    '/dm/obsidian': '🔗',
-  };
-  return icons[href] || '•';
 }

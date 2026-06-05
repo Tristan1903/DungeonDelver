@@ -9,13 +9,16 @@ import { isValidCharacter } from '../../../utils/storageEngine';
 function LevelUpContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get('id');
-
+  const [mounted, setMounted] = useState(false);
   const [char, setChar] = useState<Character | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
+    if (!mounted) return;
+    const id = searchParams.get('id');
     if (!id) {
       setError('No character ID provided. Use ?id=<uuid> to specify a character.');
       setLoading(false);
@@ -40,7 +43,7 @@ function LevelUpContent() {
       setError('Failed to load character.');
     }
     setLoading(false);
-  }, [id]);
+  }, [mounted, searchParams]);
 
   const handleComplete = (updatedChar: Character) => {
     const key = updatedChar.id ? `dd-char-${updatedChar.id}` : `dd-char-${updatedChar.name}`;
@@ -48,7 +51,7 @@ function LevelUpContent() {
     router.push(`/character-sheet?id=${updatedChar.id || ''}`);
   };
 
-  if (loading) {
+  if (!mounted || loading) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#0d1117', color: '#a0aec0' }}>
         Loading character...

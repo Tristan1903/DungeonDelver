@@ -332,6 +332,11 @@ export const DataEngine = {
         description: match?.entries || b.entries || [] // Fallback to mechanics if no fluff
       };
     });
-  }
+  },
+
+  getDeities: async () => {
+    const data = await DataEngine.loadLocalJson('data/deities.json');
+    return data?.deity || [];
+  },
 };
 

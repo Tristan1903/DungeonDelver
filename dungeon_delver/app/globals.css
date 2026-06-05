@@ -1,51 +1,174 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+@custom-variant dark (&:is(.dark *));
+
+/* ── Classic RPG Dark Theme ── */
 :root {
-  --background: #1a202c;
-  --foreground: #e2e8f0;
-  --dungeon-bg: #1a202c;
-  --dungeon-bg-dark: #12161d;
-  --dungeon-bg-darker: #0a0d12;
-  --dungeon-sidebar: #0f1419;
-  --dungeon-panel: #2d3748;
-  --dungeon-panel-dark: #1a202c;
-  --dungeon-border: #4a5568;
-  --dungeon-gold: #b8860b;
-  --dungeon-gold-dark: #822000;
-  --dungeon-accent: #6366f1;
-  --dungeon-success: #48bb78;
-  --dungeon-danger: #e53e3e;
-  --dungeon-text: #e2e8f0;
-  --dungeon-text-muted: #a0aec0;
-  --dungeon-text-dim: #718096;
-  --dungeon-text-light: #cbd5e0;
+  --background: #0c0e14;
+  --foreground: #e8dcc8;
+  --card: #1a1714;
+  --card-foreground: #e8dcc8;
+  --popover: #1a1714;
+  --popover-foreground: #e8dcc8;
+  --primary: #c9a84c;
+  --primary-foreground: #1a1714;
+  --secondary: #2a2520;
+  --secondary-foreground: #e8dcc8;
+  --muted: #2a2520;
+  --muted-foreground: #8a7e6a;
+  --accent: #c9a84c;
+  --accent-foreground: #1a1714;
+  --destructive: #a83232;
+  --border: #3d3528;
+  --input: #3d3528;
+  --ring: #c9a84c;
+  --chart-1: #c9a84c;
+  --chart-2: #6b8a5e;
+  --chart-3: #8b5e3c;
+  --chart-4: #5a7a9a;
+  --chart-5: #9a5a7a;
+  --radius: 0.5rem;
+  --sidebar: #0f1118;
+  --sidebar-foreground: #e8dcc8;
+  --sidebar-primary: #c9a84c;
+  --sidebar-primary-foreground: #1a1714;
+  --sidebar-accent: #2a2520;
+  --sidebar-accent-foreground: #e8dcc8;
+  --sidebar-border: #3d3528;
+  --sidebar-ring: #c9a84c;
+
+  /* RPG custom tokens */
+  --rpg-parchment: #f0e6c8;
+  --rpg-ink: #2c1810;
+  --rpg-gold: #c9a84c;
+  --rpg-gold-dim: #8a6e2f;
+  --rpg-gold-bright: #e8c84c;
+  --rpg-blood: #a83232;
+  --rpg-mana: #4a6fa5;
+  --rpg-nature: #6b8a5e;
+  --rpg-stone: #3d3528;
+  --rpg-parchment-bg: #1a1714;
+  --rpg-dark: #0c0e14;
+  --rpg-panel: #1a1714;
+  --rpg-panel-border: #3d3528;
+  --rpg-text: #e8dcc8;
+  --rpg-text-muted: #8a7e6a;
+  --rpg-text-dim: #5a5248;
+
+  /* Legacy dungeon variable aliases (backward compat) */
+  --dungeon-bg: #0c0e14;
+  --dungeon-bg-dark: #08090d;
+  --dungeon-bg-darker: #050608;
+  --dungeon-sidebar: #0f1118;
+  --dungeon-panel: #1a1714;
+  --dungeon-panel-dark: #0c0e14;
+  --dungeon-border: #3d3528;
+  --dungeon-gold: #c9a84c;
+  --dungeon-gold-dark: #8a6e2f;
+  --dungeon-accent: #c9a84c;
+  --dungeon-success: #16a34a;
+  --dungeon-danger: #a83232;
+  --dungeon-warning: #d97706;
+  --dungeon-text: #e8dcc8;
+  --dungeon-text-muted: #8a7e6a;
+  --dungeon-text-dim: #5a5248;
+  --dungeon-text-light: #d4c8a8;
   --dungeon-radius-sm: 4px;
-  --dungeon-radius-md: 8px;
-  --dungeon-radius-lg: 12px;
-  --dungeon-radius-xl: 15px;
+  --dungeon-radius-md: 6px;
+  --dungeon-radius-lg: 8px;
+  --dungeon-radius-xl: 12px;
   --dungeon-radius-full: 25px;
-  --dungeon-spacing-xs: 10px;
-  --dungeon-spacing-sm: 15px;
-  --dungeon-spacing-md: 20px;
-  --dungeon-spacing-lg: 30px;
-  --dungeon-spacing-xl: 40px;
-  --dungeon-transition: 0.2s;
+  --dungeon-spacing-xs: 8px;
+  --dungeon-spacing-sm: 12px;
+  --dungeon-spacing-md: 16px;
+  --dungeon-spacing-lg: 24px;
+  --dungeon-spacing-xl: 32px;
+  --dungeon-transition: 0.15s;
+  --dungeon-surface: #1a1714;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --font-sans: "MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+  --font-mono: "Geist Mono", "Courier New", monospace;
+  --font-heading: "MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
 body {
-  background: var(--dungeon-bg);
+  background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
-/* Touch-friendly targets */
+/* ── Base layer ── */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0c0e14;
+}
+::-webkit-scrollbar-thumb {
+  background: #3d3528;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5a5248;
+}
+
+/* ── Touch targets ── */
 .touch-target {
   min-width: 44px;
   min-height: 44px;
@@ -61,7 +184,7 @@ body {
   }
 }
 
-/* Responsive utilities */
+/* ── Responsive ── */
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -80,22 +203,43 @@ body {
   }
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--dungeon-bg-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--dungeon-border);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--dungeon-text-dim);
+/* ── RPG ornamental utilities ── */
+.rpg-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--rpg-gold-dim), transparent);
+  border: none;
+  margin: 1rem 0;
 }
 
+.rpg-glow {
+  box-shadow: 0 0 12px rgba(201, 168, 76, 0.15), inset 0 1px 0 rgba(201, 168, 76, 0.08);
+}
+
+.rpg-panel {
+  background: var(--rpg-panel);
+  border: 1px solid var(--rpg-panel-border);
+  border-radius: var(--radius);
+}
+
+/* ── Animations ── */
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.animate-slide-in {
+  animation: slideIn 0.2s ease-out;
 }

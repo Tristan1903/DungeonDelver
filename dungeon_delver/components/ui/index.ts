@@ -1,11 +1,50 @@
-export { Button } from './Button';
-export { Card, CardHeader, CardBody, CardFooter } from './Card';
-export { Input } from './Input';
-export { Modal } from './Modal';
-export { Badge } from './Badge';
-export { Tabs } from './Tabs';
-export type { Tab } from './Tabs';
-export { HPBar } from './HPBar';
-export { Select } from './Select';
-export { Toggle } from './Toggle';
-export { Tooltip } from './Tooltip';
+export { Button, buttonVariants } from "./button"
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
+} from "./card"
+export { Input } from "./input"
+export {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+} from "./dialog"
+export { Badge, badgeVariants } from "./badge"
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "./tabs"
+export { HPBar } from "./hp-bar"
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./select"
+export { Toggle, toggleVariants } from "./toggle"
+export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "./tooltip"
+export { ScrollArea } from "./scroll-area"
+export { Separator } from "./separator"
+export {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./dropdown-menu"
+export { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "./sheet"
+export { Textarea } from "./textarea"
+export { Progress } from "./progress"

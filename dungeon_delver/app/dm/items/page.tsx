@@ -15,17 +15,17 @@ interface CharRef {
 }
 
 const styles = {
-  page: { padding: '2rem', color: 'white', fontFamily: 'serif', maxWidth: '1200px', margin: '0 auto' } as const,
-  header: { fontSize: '2rem', color: '#b8860b', marginBottom: '4px' } as const,
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
-  panel: { background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
+  page: { padding: '2rem', color: '#e8dcc8', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', maxWidth: '1200px', margin: '0 auto' } as const,
+  header: { fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' } as const,
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
+  panel: { background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1rem' } as const,
   input: {
-    width: '100%', padding: '8px', background: '#2d3748', border: '1px solid #4a5568',
-    borderRadius: '4px', color: 'white', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
+    width: '100%', padding: '8px', background: '#1a1714', border: '1px solid #3d3528',
+    borderRadius: '4px', color: '#e8dcc8', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
   },
   itemCard: (identified: boolean): React.CSSProperties => ({
-    background: '#2d3748', border: `1px solid ${identified ? '#48bb78' : '#e53e3e'}`,
+    background: '#1a1714', border: `1px solid ${identified ? '#16a34a' : '#a83232'}`,
     borderRadius: '8px', padding: '0.75rem',
   }),
 };
@@ -96,7 +96,7 @@ export default function MagicItemsPage() {
       {/* Character select */}
       <div style={styles.panel}>
         <select value={selectedChar} onChange={e => setSelectedChar(e.target.value)}
-          style={{ width: '100%', padding: '10px', background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '4px', fontSize: '0.85rem' }}>
+          style={{ width: '100%', padding: '10px', background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '4px', fontSize: '0.85rem' }}>
           <option value="">— Select a character —</option>
           {characters.map(c => (
             <option key={c.id} value={c.id}>{c.name}</option>
@@ -108,12 +108,12 @@ export default function MagicItemsPage() {
         <>
           <div style={{ display: 'flex', gap: '0', marginBottom: '1rem' }}>
             <button onClick={() => setTab('assign')} style={{
-              padding: '8px 20px', background: tab === 'assign' ? '#6366f1' : '#2d3748',
-              border: '1px solid #4a5568', color: 'white', cursor: 'pointer', borderRadius: '6px 0 0 6px', fontSize: '0.8rem',
+              padding: '8px 20px', background: tab === 'assign' ? '#c9a84c' : '#1a1714',
+              border: '1px solid #3d3528', color: '#e8dcc8', cursor: 'pointer', borderRadius: '6px 0 0 6px', fontSize: '0.8rem',
             }}>Assign Items</button>
             <button onClick={() => setTab('manage')} style={{
-              padding: '8px 20px', background: tab === 'manage' ? '#6366f1' : '#2d3748',
-              border: '1px solid #4a5568', borderLeft: 'none', color: 'white', cursor: 'pointer', borderRadius: '0 6px 6px 0', fontSize: '0.8rem',
+              padding: '8px 20px', background: tab === 'manage' ? '#c9a84c' : '#1a1714',
+              border: '1px solid #3d3528', borderLeft: 'none', color: '#e8dcc8', cursor: 'pointer', borderRadius: '0 6px 6px 0', fontSize: '0.8rem',
             }}>Manage ({charObscured.length})</button>
           </div>
 
@@ -121,25 +121,25 @@ export default function MagicItemsPage() {
             <div style={styles.panel}>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                 <input style={styles.input} placeholder="Search magic items..." value={search} onChange={e => setSearch(e.target.value)} />
-                <span style={{ fontSize: '0.7rem', color: '#718096', alignSelf: 'center' }}>{filteredLibrary.length} items</span>
+                <span style={{ fontSize: '0.7rem', color: '#5a5248', alignSelf: 'center' }}>{filteredLibrary.length} items</span>
               </div>
               <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
                 {filteredLibrary.map((item, i) => (
                   <div key={i} style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '8px 10px', background: '#2d3748', marginBottom: '4px', borderRadius: '6px',
+                    padding: '8px 10px', background: '#1a1714', marginBottom: '4px', borderRadius: '6px',
                   }}>
                     <div>
                       <span style={{ fontSize: '0.8rem' }}>{item.name}</span>
-                      {item.rarity && <span style={{ fontSize: '0.6rem', color: '#718096', marginLeft: '6px' }}>{item.rarity}</span>}
+                      {item.rarity && <span style={{ fontSize: '0.6rem', color: '#5a5248', marginLeft: '6px' }}>{item.rarity}</span>}
                     </div>
                     <div style={{ display: 'flex', gap: '4px' }}>
                       <button onClick={() => handleAssign(item, true)}
-                        style={{ padding: '4px 10px', background: '#e53e3e', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
+                        style={{ padding: '4px 10px', background: '#a83232', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
                         Assign Hidden
                       </button>
                       <button onClick={() => handleAssign(item, false)}
-                        style={{ padding: '4px 10px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
+                        style={{ padding: '4px 10px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
                         Assign Revealed
                       </button>
                     </div>
@@ -154,22 +154,22 @@ export default function MagicItemsPage() {
               {/* Unidentified items */}
               {unidentified.length > 0 && (
                 <div>
-                  <h3 style={{ color: '#e53e3e', fontSize: '0.85rem', marginBottom: '8px' }}>Unidentified ({unidentified.length})</h3>
+                  <h3 style={{ color: '#a83232', fontSize: '0.85rem', marginBottom: '8px' }}>Unidentified ({unidentified.length})</h3>
                   <div style={styles.grid}>
                     {unidentified.map(item => (
                       <div key={item.id} style={styles.itemCard(false)}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#f6e05e' }}>{item.displayName}</span>
-                          <button onClick={() => handleRemove(item.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
+                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#c9a84c' }}>{item.displayName}</span>
+                          <button onClick={() => handleRemove(item.id)} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
                         </div>
-                        <div style={{ fontSize: '0.65rem', color: '#718096', marginBottom: '4px' }}>
-                          True: <span style={{ color: '#a0aec0' }}>{item.trueName}</span>
+                        <div style={{ fontSize: '0.65rem', color: '#5a5248', marginBottom: '4px' }}>
+                          True: <span style={{ color: '#8a7e6a' }}>{item.trueName}</span>
                         </div>
-                        <div style={{ fontSize: '0.65rem', color: '#718096', marginBottom: '8px' }}>
+                        <div style={{ fontSize: '0.65rem', color: '#5a5248', marginBottom: '8px' }}>
                           Assigned: {item.assignedAt.split('T')[0]}
                         </div>
                         <button onClick={() => handleIdentify(item.id)}
-                          style={{ padding: '5px 14px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                          style={{ padding: '5px 14px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
                           Identify
                         </button>
                       </div>
@@ -181,15 +181,15 @@ export default function MagicItemsPage() {
               {/* Identified items */}
               {identified.length > 0 && (
                 <div>
-                  <h3 style={{ color: '#48bb78', fontSize: '0.85rem', marginBottom: '8px' }}>Identified ({identified.length})</h3>
+                  <h3 style={{ color: '#16a34a', fontSize: '0.85rem', marginBottom: '8px' }}>Identified ({identified.length})</h3>
                   <div style={styles.grid}>
                     {identified.map(item => (
                       <div key={item.id} style={styles.itemCard(true)}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#48bb78' }}>{item.trueName}</span>
-                          <button onClick={() => handleRemove(item.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
+                          <span style={{ fontWeight: 'bold', fontSize: '0.85rem', color: '#16a34a' }}>{item.trueName}</span>
+                          <button onClick={() => handleRemove(item.id)} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
                         </div>
-                        <div style={{ fontSize: '0.65rem', color: '#718096' }}>Identified</div>
+                        <div style={{ fontSize: '0.65rem', color: '#5a5248' }}>Identified</div>
                       </div>
                     ))}
                   </div>
@@ -197,7 +197,7 @@ export default function MagicItemsPage() {
               )}
 
               {charObscured.length === 0 && (
-                <p style={{ color: '#718096', fontSize: '0.85rem' }}>No obscured items for this character. Go to Assign tab to add some.</p>
+                <p style={{ color: '#5a5248', fontSize: '0.85rem' }}>No obscured items for this character. Go to Assign tab to add some.</p>
               )}
             </div>
           )}

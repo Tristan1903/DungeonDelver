@@ -9,40 +9,40 @@ import {
 } from '../../../utils/calendarEngine';
 
 const styles = {
-  page: { padding: '2rem', color: 'white', fontFamily: 'serif', maxWidth: '1000px', margin: '0 auto' } as const,
-  header: { fontSize: '2rem', color: '#b8860b', marginBottom: '4px' } as const,
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
+  page: { padding: '2rem', color: '#e8dcc8', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', maxWidth: '1000px', margin: '0 auto' } as const,
+  header: { fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' } as const,
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
   nav: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1rem' } as const,
   navBtn: {
-    padding: '6px 14px', background: '#4a5568', border: 'none', color: 'white',
+    padding: '6px 14px', background: '#3d3528', border: 'none', color: '#e8dcc8',
     borderRadius: '6px', cursor: 'pointer', fontSize: '0.8rem',
   } as const,
   grid: { display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' } as const,
-  dayHeader: { textAlign: 'center', fontSize: '0.65rem', color: '#718096', padding: '4px' } as const,
+  dayHeader: { textAlign: 'center', fontSize: '0.65rem', color: '#5a5248', padding: '4px' } as const,
   dayCell: (isToday: boolean, isExtra: boolean): React.CSSProperties => ({
-    padding: '6px', background: isToday ? '#6366f1' : isExtra ? 'rgba(246,224,94,0.1)' : '#2d3748',
+    padding: '6px', background: isToday ? '#c9a84c' : isExtra ? 'rgba(246,224,94,0.1)' : '#1a1714',
     borderRadius: '4px', minHeight: '50px', cursor: 'pointer', fontSize: '0.75rem',
-    border: isToday ? '2px solid #818cf8' : '1px solid #4a5568', position: 'relative' as const,
+    border: isToday ? '2px solid #c9a84c' : '1px solid #3d3528', position: 'relative' as const,
   }),
   dayNum: (isExtra: boolean): React.CSSProperties => ({
-    fontSize: '0.7rem', fontWeight: 'bold', color: isExtra ? '#f6e05e' : 'white', marginBottom: '2px',
+    fontSize: '0.7rem', fontWeight: 'bold', color: isExtra ? '#c9a84c' : 'white', marginBottom: '2px',
   }),
   eventDot: { width: '6px', height: '6px', borderRadius: '50%', display: 'inline-block', marginRight: '2px' } as const,
   eventTypeColor: (t: string): string => {
     switch (t) {
-      case 'session': return '#48bb78';
-      case 'quest': return '#f6e05e';
-      case 'lore': return '#63b3ed';
-      case 'note': return '#a0aec0';
-      default: return '#718096';
+      case 'session': return '#16a34a';
+      case 'quest': return '#c9a84c';
+      case 'lore': return '#8a7e6a';
+      case 'note': return '#8a7e6a';
+      default: return '#5a5248';
     }
   },
   panel: {
-    background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem',
+    background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem',
   } as const,
   input: {
-    width: '100%', padding: '8px', background: '#2d3748', border: '1px solid #4a5568',
-    borderRadius: '4px', color: 'white', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
+    width: '100%', padding: '8px', background: '#1a1714', border: '1px solid #3d3528',
+    borderRadius: '4px', color: '#e8dcc8', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
   },
 };
 
@@ -106,7 +106,7 @@ export default function CalendarPage() {
           <div style={styles.panel}>
             <div style={styles.nav}>
               <select value={calState.definitionId} onChange={e => setAndSave({ definitionId: e.target.value, currentMonth: 0, currentDay: 1 })}
-                style={{ background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '4px', padding: '6px 10px', fontSize: '0.8rem' }}>
+                style={{ background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '4px', padding: '6px 10px', fontSize: '0.8rem' }}>
                 {listCalendars().map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -116,7 +116,7 @@ export default function CalendarPage() {
               <button onClick={() => handleAdvance(7)} style={styles.navBtn}>+1 Week</button>
               <button onClick={() => handleAdvance(30)} style={styles.navBtn}>+1 Month</button>
               <div style={{ flex: 1 }} />
-              <span style={{ fontSize: '0.8rem', color: '#f6e05e', fontWeight: 'bold' }}>
+              <span style={{ fontSize: '0.8rem', color: '#c9a84c', fontWeight: 'bold' }}>
                 {def.months[calState.currentMonth]?.name || '?'}
               </span>
             </div>
@@ -128,13 +128,13 @@ export default function CalendarPage() {
                 else setAndSave({ currentMonth: prevMonth, currentDay: 1 });
               }} style={{ ...styles.navBtn, padding: '4px 10px', fontSize: '0.7rem' }}>◀</button>
               <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '1rem', fontWeight: 'bold', color: 'white' }}>
+                <span style={{ fontSize: '1rem', fontWeight: 'bold', color: '#e8dcc8' }}>
                   {def.months[calState.currentMonth]?.name} {calState.currentYear}
                 </span>
                 {getSeason(def, calState.currentMonth + 1) && (
-                  <span style={{ fontSize: '0.65rem', color: '#48bb78', marginLeft: '8px', display: 'inline-block' }}>
+                  <span style={{ fontSize: '0.65rem', color: '#16a34a', marginLeft: '8px', display: 'inline-block' }}>
                     {getSeason(def, calState.currentMonth + 1)}
-                    {isLeapYear(def, calState.currentYear) && <span style={{ color: '#f6e05e', marginLeft: '4px' }}>· Leap Year</span>}
+                    {isLeapYear(def, calState.currentYear) && <span style={{ color: '#c9a84c', marginLeft: '4px' }}>· Leap Year</span>}
                   </span>
                 )}
               </div>
@@ -158,7 +158,7 @@ export default function CalendarPage() {
                 return (
                   <div key={i} style={{
                     ...styles.dayCell(isToday, isExtra),
-                    border: isSelected ? '2px solid #f6e05e' : undefined,
+                    border: isSelected ? '2px solid #c9a84c' : undefined,
                   }} onClick={() => setSelectedDay({ month: calState.currentMonth, day: d.day })}>
                     <div style={styles.dayNum(isExtra)}>
                       {d.day}
@@ -171,7 +171,7 @@ export default function CalendarPage() {
                       </div>
                     ))}
                     {dayEvents.length > 3 && (
-                      <div style={{ fontSize: '0.5rem', color: '#718096' }}>+{dayEvents.length - 3} more</div>
+                      <div style={{ fontSize: '0.5rem', color: '#5a5248' }}>+{dayEvents.length - 3} more</div>
                     )}
                   </div>
                 );
@@ -181,17 +181,17 @@ export default function CalendarPage() {
 
           {selectedDay && (
             <div style={{ ...styles.panel, marginTop: '1rem' }}>
-              <h3 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: '#f6e05e' }}>
+              <h3 style={{ margin: '0 0 8px 0', fontSize: '0.9rem', color: '#c9a84c' }}>
                 {def.months[selectedDay.month]?.name} {selectedDay.day}
               </h3>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
                 <input style={{ ...styles.input, flex: 1 }} placeholder="Event title..." value={newTitle} onChange={e => setNewTitle(e.target.value)} />
                 <select value={newType} onChange={e => setNewType(e.target.value as CalendarEvent['type'])}
-                  style={{ background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '4px', padding: '6px', fontSize: '0.75rem' }}>
+                  style={{ background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '4px', padding: '6px', fontSize: '0.75rem' }}>
                   {TYPE_OPTIONS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
                 <button onClick={handleAddEvent} disabled={!newTitle.trim()}
-                  style={{ padding: '6px 14px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
+                  style={{ padding: '6px 14px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
                   Add
                 </button>
               </div>
@@ -199,15 +199,15 @@ export default function CalendarPage() {
 
               {allEvents.filter(e => e.day === selectedDay.day).length > 0 && (
                 <div style={{ marginTop: '10px' }}>
-                  <div style={{ fontSize: '0.7rem', color: '#718096', marginBottom: '4px' }}>EVENTS</div>
+                  <div style={{ fontSize: '0.7rem', color: '#5a5248', marginBottom: '4px' }}>EVENTS</div>
                   {allEvents.filter(e => e.day === selectedDay.day).map(ev => (
-                    <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 6px', background: '#2d3748', borderRadius: '4px', marginBottom: '3px', fontSize: '0.75rem' }}>
+                    <div key={ev.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 6px', background: '#1a1714', borderRadius: '4px', marginBottom: '3px', fontSize: '0.75rem' }}>
                       <div>
                         <span style={{ color: styles.eventTypeColor(ev.type), fontWeight: 'bold' }}>[{ev.type.toUpperCase()}]</span>
                         {' '}{ev.title}
-                        {ev.description && <span style={{ color: '#a0aec0' }}> — {ev.description}</span>}
+                        {ev.description && <span style={{ color: '#8a7e6a' }}> — {ev.description}</span>}
                       </div>
-                      <button onClick={() => handleDeleteEvent(ev.id)} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.7rem' }}>×</button>
+                      <button onClick={() => handleDeleteEvent(ev.id)} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.7rem' }}>×</button>
                     </div>
                   ))}
                 </div>
@@ -217,11 +217,11 @@ export default function CalendarPage() {
         </div>
 
         <div style={{ ...styles.panel, flex: '0 0 280px', maxHeight: '400px', overflowY: 'auto' }}>
-          <h3 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', color: '#b8860b' }}>All Events</h3>
-          {events.length === 0 && <p style={{ fontSize: '0.75rem', color: '#718096' }}>No events logged.</p>}
+          <h3 style={{ margin: '0 0 8px 0', fontSize: '0.85rem', color: '#c9a84c' }}>All Events</h3>
+          {events.length === 0 && <p style={{ fontSize: '0.75rem', color: '#5a5248' }}>No events logged.</p>}
           {[...events].sort((a, b) => b.year - a.year || b.month - a.month || b.day - a.day).slice(0, 50).map(ev => (
-            <div key={ev.id} style={{ padding: '4px 6px', background: '#2d3748', borderRadius: '4px', marginBottom: '3px', fontSize: '0.7rem' }}>
-              <div style={{ color: '#718096', fontSize: '0.6rem' }}>
+            <div key={ev.id} style={{ padding: '4px 6px', background: '#1a1714', borderRadius: '4px', marginBottom: '3px', fontSize: '0.7rem' }}>
+              <div style={{ color: '#5a5248', fontSize: '0.6rem' }}>
                 {def.months[ev.month]?.name || '?'} {ev.day}, {ev.year}
               </div>
               <div>

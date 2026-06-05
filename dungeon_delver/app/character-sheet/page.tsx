@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { getLiveStats, SKILL_MAP, computeLoad } from '../../utils/characterEngine';
 import { cleanString } from '../../utils/formatters';
@@ -806,9 +806,9 @@ useEffect(() => {
 
     const getHpBarColor = () => {
         const pct = char.hp.max > 0 ? char.hp.current / char.hp.max : 1;
-        if (pct > 0.6) return '#48bb78';
+        if (pct > 0.6) return '#16a34a';
         if (pct > 0.3) return '#ecc94b';
-        return '#e53e3e';
+        return '#a83232';
     };
 
     const localInput: React.CSSProperties = {
@@ -936,9 +936,9 @@ useEffect(() => {
         <>
             {/* CHARACTER SELECT SCREEN */}
             {showSelect && (
-                <div style={{ padding: spacing.xl, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: 'serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ padding: spacing.xl, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ maxWidth: '800px', width: '100%' }}>
-                        <h1 style={{ fontFamily: 'serif', color: colors.gold, fontSize: '2.5rem', marginBottom: '8px' }}>
+                        <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: colors.gold, fontSize: '2.5rem', marginBottom: '8px' }}>
                             Character Select
                         </h1>
                         <p style={{ color: colors.textMuted, marginBottom: spacing.lg }}>
@@ -1009,11 +1009,11 @@ useEffect(() => {
                         rogue: '#2c3e50', sorcerer: '#8e44ad', warlock: '#6c3483', wizard: '#3498db',
                         artificer: '#d35400', bloodHunter: '#922b21', illrigger: '#1a1a2e',
                     };
-                    const accent = classColors[primaryClass.toLowerCase()] || '#b8860b';
-                    const gradientFrom = `#0a0d12`;
+                    const accent = classColors[primaryClass.toLowerCase()] || '#c9a84c';
+                    const gradientFrom = `#0c0e14`;
                     const gradientTo = accent + '40';
                     return (
-                    <div style={{ position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`, padding: '24px 32px', borderBottom: `3px solid var(--dungeon-gold, ${accent})`, color: 'white' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`, padding: '24px 32px', borderBottom: `3px solid #c9a84c`, color: 'white' }}>
                         {/* Ghost class icon backgrounds — all classes for multiclass */}
                         {classList.length > 1 ? classList.map((cls, i) => (
                             <img key={cls} src={getClassIconUrl(cls)} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -1025,16 +1025,16 @@ useEffect(() => {
                         <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                 {getClassList(char).map(cls => {
-                                    const clsAccent = classColors[cls.toLowerCase()] || '#b8860b';
+                                    const clsAccent = classColors[cls.toLowerCase()] || '#c9a84c';
                                     return (
                                     <img key={cls} src={getClassIconUrl(cls)} style={{ width: '48px', height: '48px', borderRadius: '10px', flexShrink: 0, border: `2px solid ${clsAccent}`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                 );})}
                                 {getClassList(char).length === 0 && char.class && (
-                                    <img src={getClassIconUrl(char.class)} style={{ width: '64px', height: '64px', borderRadius: '12px', flexShrink: 0, border: `2px solid var(--dungeon-gold, ${accent})`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    <img src={getClassIconUrl(char.class)} style={{ width: '64px', height: '64px', borderRadius: '12px', flexShrink: 0, border: `2px solid #c9a84c`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                 )}
                             </div>
                             <div style={{ flex: 1, minWidth: '200px' }}>
-                                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{char.name || 'Unnamed Hero'}</div>
+                                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{char.name || 'Unnamed Hero'}</div>
                                 <div style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.75)', marginTop: '4px' }}>
                                     {[char.race, ...getClassList(char).map(cls => {
                                         const cl = char.classLevels?.find(c => c.className === cls);
@@ -1043,12 +1043,12 @@ useEffect(() => {
                                 </div>
                             </div>
                             <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--dungeon-gold, #b8860b)', fontSize: '1.1rem' }}>LV {char.totalLevel || char.level || 1}</div>
-                                {char.xp !== undefined && <div style={{ fontSize: '0.8rem', color: 'var(--dungeon-text-dim)' }}>{char.xp} XP</div>}
+                                <div style={{ fontWeight: 'bold', color: '#c9a84c', fontSize: '1.1rem' }}>LV {char.totalLevel || char.level || 1}</div>
+                                {char.xp !== undefined && <div style={{ fontSize: '0.8rem', color: '#5a5248' }}>{char.xp} XP</div>}
                                 <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                                    <button onClick={() => saveChar(false)} style={{ background: 'var(--dungeon-accent, #6366f1)', border: 'none', color: 'white', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
-                                    <button onClick={() => saveChar(true)} style={{ background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-muted)', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer' }}>Export</button>
-                                    <button onClick={() => { window.location.href = `/character-sheet/level-up?id=${char.id || ''}`; }} style={{ background: 'var(--dungeon-gold, #b8860b)', border: 'none', color: 'black', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Level Up</button>
+                                    <button onClick={() => saveChar(false)} style={{ background: '#c9a84c', border: 'none', color: 'white', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
+                                    <button onClick={() => saveChar(true)} style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer' }}>Export</button>
+                                    <button onClick={() => { window.location.href = `/character-sheet/level-up?id=${char.id || ''}`; }} style={{ background: '#c9a84c', border: 'none', color: 'black', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Level Up</button>
                                 </div>
                             </div>
                         </div>
@@ -1062,19 +1062,19 @@ useEffect(() => {
                                     <div style={{ width: `${Math.max(0, Math.min(100, ((char.hp?.current || 0) / (char.hp?.max || 1)) * 100))}%`, height: '100%', background: getHpBarColor(), borderRadius: '9px', transition: 'width 0.3s', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.2)' }} />
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
-                                    <button onClick={() => takeDamage(hpAmount)} style={{ background: 'var(--dungeon-danger, #e53e3e)', border: 'none', color: 'white', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>− Damage</button>
-                                    <select value={hpAmount} onChange={e => setHpAmount(Number(e.target.value))} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid var(--dungeon-border)', color: 'white', padding: '3px 6px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', outline: 'none' }}>
+                                    <button onClick={() => takeDamage(hpAmount)} style={{ background: '#a83232', border: 'none', color: 'white', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>− Damage</button>
+                                    <select value={hpAmount} onChange={e => setHpAmount(Number(e.target.value))} style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid #3d3528', color: 'white', padding: '3px 6px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', outline: 'none' }}>
                                         {[1, 2, 3, 4, 5, 10, 15, 20, 25, 50].map(n => <option key={n} value={n}>{n}</option>)}
                                     </select>
-                                    <button onClick={() => healDamage(hpAmount)} style={{ background: 'var(--dungeon-success, #48bb78)', border: 'none', color: 'white', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>+ Heal</button>
-                                    <div style={{ width: '1px', height: '20px', background: 'var(--dungeon-border)', margin: '0 8px' }} />
-                                    <button onClick={handleShortRest} style={{ background: 'rgba(99,102,241,0.3)', border: '1px solid var(--dungeon-accent, #6366f1)', color: 'var(--dungeon-accent, #6366f1)', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer' }}>Short Rest</button>
-                                    <button onClick={handleLongRest} style={{ background: 'rgba(72,187,120,0.2)', border: '1px solid var(--dungeon-success, #48bb78)', color: 'var(--dungeon-success, #48bb78)', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer' }}>Long Rest</button>
+                                    <button onClick={() => healDamage(hpAmount)} style={{ background: '#16a34a', border: 'none', color: 'white', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>+ Heal</button>
+                                    <div style={{ width: '1px', height: '20px', background: '#3d3528', margin: '0 8px' }} />
+                                    <button onClick={handleShortRest} style={{ background: 'rgba(201,168,76,0.3)', border: '1px solid #c9a84c', color: '#c9a84c', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer' }}>Short Rest</button>
+                                    <button onClick={handleLongRest} style={{ background: 'rgba(22,163,74,0.2)', border: '1px solid #16a34a', color: '#16a34a', padding: '3px 12px', borderRadius: 'var(--dungeon-radius-sm)', fontSize: '0.7rem', cursor: 'pointer' }}>Long Rest</button>
                                     <div style={{ flex: 1 }} />
                                     {char.hp.temp ? (
                                         <span style={{ fontSize: '0.65rem', color: '#ecc94b', cursor: 'pointer' }} onClick={() => setTempHp(0)} title="Click to clear temp HP">❤️‍🔥 Temp {char.hp.temp}</span>
                                     ) : (
-                                        <span style={{ fontSize: '0.65rem', color: 'var(--dungeon-text-dim)', cursor: 'pointer' }} onClick={() => { const t = prompt('Temp HP?'); if (t) setTempHp(parseInt(t) || 0); }}>+ Temp HP</span>
+                                        <span style={{ fontSize: '0.65rem', color: '#5a5248', cursor: 'pointer' }} onClick={() => { const t = prompt('Temp HP?'); if (t) setTempHp(parseInt(t) || 0); }}>+ Temp HP</span>
                                     )}
                                 </div>
                             </div>
@@ -1099,7 +1099,7 @@ useEffect(() => {
                                                 <span style={{ fontSize: '0.65rem', color: colors.textMuted, minWidth: '30px', textAlign: 'right' }}>{remaining}/{cl.level}</span>
                                                 {remaining > 0 && (
                                                     <button onClick={() => spendHitDie(cl.className, hdSize)}
-                                                        style={{ background: 'rgba(72,187,120,0.2)', border: `1px solid #48bb78`, color: '#48bb78', padding: '1px 8px', borderRadius: radii.sm, fontSize: '0.6rem', cursor: 'pointer' }}>
+                                                        style={{ background: 'rgba(22,163,74,0.2)', border: `1px solid #16a34a`, color: '#16a34a', padding: '1px 8px', borderRadius: radii.sm, fontSize: '0.6rem', cursor: 'pointer' }}>
                                                         Spend
                                                     </button>
                                                 )}
@@ -1113,7 +1113,7 @@ useEffect(() => {
                 </div>
                 );
             })()}
-            <div style={{ display: 'flex', padding: spacing.md, gap: spacing.md, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: 'serif' }}>
+            <div style={{ display: 'flex', padding: spacing.md, gap: spacing.md, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>
                     <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
 
                     {/* ABILITY SCORES */}
@@ -1122,7 +1122,7 @@ useEffect(() => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                             {statDisplay.map(stat => (
                                 <div key={stat} onClick={() => setShowRollPicker({ label: statNames[stat], mod: live.modifiers[stat], onRoll: (mode) => rollCheck(statNames[stat], live.modifiers[stat], mode) })}
-                                    style={{ background: 'rgba(45,55,72,0.3)', borderRadius: radii.sm, padding: '8px 10px', cursor: 'pointer', border: `1px solid ${colors.borderLight}`, textAlign: 'center' }}>
+                                    style={{ background: 'rgba(26,23,20,0.3)', borderRadius: radii.sm, padding: '8px 10px', cursor: 'pointer', border: `1px solid ${colors.borderLight}`, textAlign: 'center' }}>
                                     <div style={{ fontSize: '0.65rem', color: colors.textMuted, fontWeight: 'bold', letterSpacing: '1px' }}>{stat.toUpperCase()}</div>
                                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white' }}>{live.stats[stat]}</div>
                                     <div style={{ fontSize: '0.8rem', color: '#f6e05e', fontWeight: 'bold' }}>{live.modifiers[stat] >= 0 ? '+' : ''}{live.modifiers[stat]}</div>
@@ -1144,7 +1144,7 @@ useEffect(() => {
                                 const bonus = mod + (isProficient ? live.profBonus : 0);
                                 return (
                                     <div key={stat} onClick={() => setShowRollPicker({ label: `${statNames[stat]} Save`, mod: bonus, onRoll: (mode) => rollCheck(`${statNames[stat]} Save`, bonus, mode) })}
-                                        style={{ background: 'rgba(45,55,72,0.3)', borderRadius: radii.sm, padding: '6px 10px', cursor: 'pointer', border: `1px solid ${colors.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        style={{ background: 'rgba(26,23,20,0.3)', borderRadius: radii.sm, padding: '6px 10px', cursor: 'pointer', border: `1px solid ${colors.borderLight}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <span style={{ fontSize: '0.7rem', color: colors.textMuted }}>
                                             {isProficient && <span style={{ color: colors.accent, marginRight: '4px' }}>●</span>}
                                             {stat.toUpperCase()}
@@ -1165,14 +1165,14 @@ useEffect(() => {
                                 if (!skills || skills.length === 0) return null;
                                 const statMod = live.modifiers[stat];
                                 return (
-                                    <div key={stat} style={{ background: 'rgba(45,55,72,0.2)', borderRadius: radii.md, padding: '8px 10px', border: `1px solid ${colors.borderLight}` }}>
+                                    <div key={stat} style={{ background: 'rgba(26,23,20,0.2)', borderRadius: radii.md, padding: '8px 10px', border: `1px solid ${colors.borderLight}` }}>
                                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: colors.textDim, marginBottom: '4px' }}>
                                             <span style={{ fontWeight: 'bold' }}>{stat.toUpperCase()}</span>
                                             <span>{statMod >= 0 ? '+' : ''}{statMod}</span>
                                         </div>
                                         {skills.map(s => (
                                             <div key={s.skill} onClick={() => setShowRollPicker({ label: s.skill.replace(/([A-Z])/g, ' $1').replace(/^./, x => x.toUpperCase()), mod: s.bonus, onRoll: (mode) => rollCheck(s.skill, s.bonus, mode) })}
-                                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 4px', cursor: 'pointer', borderRadius: radii.sm, background: s.isProf ? 'rgba(99,102,241,0.12)' : 'transparent' }}
+                                                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 4px', cursor: 'pointer', borderRadius: radii.sm, background: s.isProf ? 'rgba(201,168,76,0.12)' : 'transparent' }}
                                                 title={`${s.skill.replace(/([A-Z])/g, ' $1').replace(/^./, x => x.toUpperCase())}: ${s.bonus >= 0 ? '+' : ''}${s.bonus} = ${s.breakdown}`}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                     <div style={{ width: '5px', height: '5px', borderRadius: '50%', background: s.isProf ? (s.isExpert ? '#f6e05e' : colors.accent) : 'transparent', border: s.isProf ? 'none' : `1px solid ${colors.textDim}` }} />
@@ -1189,7 +1189,7 @@ useEffect(() => {
                     </div>
 
                     {/* PASSIVE SKILLS */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: spacing.md, padding: '8px 12px', background: 'rgba(45,55,72,0.2)', borderRadius: radii.md, border: `1px solid ${colors.borderLight}` }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: spacing.md, padding: '8px 12px', background: 'rgba(26,23,20,0.2)', borderRadius: radii.md, border: `1px solid ${colors.borderLight}` }}>
                         <span style={{ fontSize: '0.65rem', color: colors.textMuted, fontWeight: 'bold', letterSpacing: '1px' }}>PASSIVE</span>
                         {[
                             { label: 'Perception', value: 10 + (live.skills.perception || 0) },
@@ -1212,7 +1212,7 @@ useEffect(() => {
                     {(['actions', 'spells', 'inventory', 'features', 'background', 'notes'] as const).map(tab => (
                         <button key={tab} onClick={() => setActiveTab(tab)}
                             style={{
-                                background: activeTab === tab ? 'rgba(99,102,241,0.15)' : 'transparent',
+                                background: activeTab === tab ? 'rgba(201,168,76,0.15)' : 'transparent',
                                 border: 'none', color: activeTab === tab ? colors.gold : colors.textMuted,
                                 padding: '6px 12px', borderRadius: `${radii.sm} ${radii.sm} 0 0`,
                                 fontWeight: activeTab === tab ? 'bold' : 'normal',
@@ -1230,16 +1230,20 @@ useEffect(() => {
                 {activeTab === 'actions' && (
                     <ErrorBoundary tabName="Actions">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
-                        <div style={{ display: 'flex', gap: '12px' }}>
-                            <div style={{ ...cardPanel, flex: 1, textAlign: 'center', padding: '10px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            <div style={{ ...cardPanel, textAlign: 'center', padding: '10px' }}>
+                                <div style={{ fontSize: '0.6rem', color: colors.textMuted, letterSpacing: '1px' }}>AC</div>
+                                <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#68d391' }}>{live.ac}</div>
+                            </div>
+                            <div style={{ ...cardPanel, textAlign: 'center', padding: '10px' }}>
                                 <div style={{ fontSize: '0.6rem', color: colors.textMuted, letterSpacing: '1px' }}>ATTACKS</div>
                                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: colors.gold }}>1</div>
                             </div>
-                            <div style={{ ...cardPanel, flex: 1, textAlign: 'center', padding: '10px' }}>
+                            <div style={{ ...cardPanel, textAlign: 'center', padding: '10px' }}>
                                 <div style={{ fontSize: '0.6rem', color: colors.textMuted, letterSpacing: '1px' }}>PROFICIENCY</div>
                                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>+{live.profBonus}</div>
                             </div>
-                            <div style={{ ...cardPanel, flex: 1, textAlign: 'center', padding: '10px' }}>
+                            <div style={{ ...cardPanel, textAlign: 'center', padding: '10px' }}>
                                 <div style={{ fontSize: '0.6rem', color: colors.textMuted, letterSpacing: '1px' }}>INITIATIVE</div>
                                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{live.modifiers.dex >= 0 ? '+' : ''}{live.modifiers.dex}</div>
                             </div>
@@ -1316,7 +1320,7 @@ useEffect(() => {
                                                             </div>
                                                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
                                                                 {props.map((p: string) => PROP_LABELS[p] && (
-                                                                    <span key={p} style={{ fontSize: '0.55rem', padding: '1px 5px', background: 'rgba(99,102,241,0.15)', borderRadius: '3px', color: colors.textMuted }}>{PROP_LABELS[p]}</span>
+                                                                    <span key={p} style={{ fontSize: '0.55rem', padding: '1px 5px', background: 'rgba(201,168,76,0.15)', borderRadius: '3px', color: colors.textMuted }}>{PROP_LABELS[p]}</span>
                                                                 ))}
                                                                 {bonusWeapon > 0 && <span style={{ fontSize: '0.55rem', padding: '1px 5px', background: 'rgba(246,224,94,0.15)', borderRadius: '3px', color: colors.gold }}>+{bonusWeapon}</span>}
                                                                 {(lib.mastery || []).map((m: string) => {
@@ -1406,7 +1410,7 @@ useEffect(() => {
                                                     const lvl = s.level ?? 0;
                                                     const expended = isLevelExpended(lvl);
                                                     return (
-                                                        <div key={s.name} style={{ background: 'rgba(45,55,72,0.25)', borderRadius: radii.sm, border: `1px solid ${colors.borderLight}`, borderLeft: `3px solid ${colors.accent}`, padding: '6px 10px', marginBottom: '4px', opacity: expended ? 0.4 : 1, transition: 'opacity 0.2s' }}>
+                                                        <div key={s.name} style={{ background: 'rgba(26,23,20,0.25)', borderRadius: radii.sm, border: `1px solid ${colors.borderLight}`, borderLeft: `3px solid ${colors.accent}`, padding: '6px 10px', marginBottom: '4px', opacity: expended ? 0.4 : 1, transition: 'opacity 0.2s' }}>
                                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                                                 <div>
                                                                     <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: colors.gold }}>{s.name}</span>
@@ -1473,7 +1477,7 @@ useEffect(() => {
                                     )}
                                 </div>
                                 {char.concentratingOn && (
-                                    <div style={{ margin: '6px 0', padding: '4px 8px', background: 'rgba(99,102,241,0.2)', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
+                                    <div style={{ margin: '6px 0', padding: '4px 8px', background: 'rgba(201,168,76,0.2)', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem' }}>
                                         <span><strong style={{ color: '#f6e05e' }}>C</strong> {char.concentratingOn}</span>
                                         <span style={{ fontSize: '0.6rem', color: colors.textDim }}>Concentration active</span>
                                     </div>
@@ -1500,9 +1504,9 @@ useEffect(() => {
 
                         {/* Defiling (campaign module) */}
                         {activeModules.includes('defiling') && (
-                            <div style={{ ...cardPanel, border: '1px solid #e53e3e' }}>
-                                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.8rem', color: '#e53e3e' }}>DEFILING MAGIC (Dark Sun)</h4>
-                                <p style={{ fontSize: '0.75rem', color: '#cbd5e0', margin: 0 }}>
+                            <div style={{ ...cardPanel, border: '1px solid #a83232' }}>
+                                <h4 style={{ margin: '0 0 6px 0', fontSize: '0.8rem', color: '#a83232' }}>DEFILING MAGIC (Dark Sun)</h4>
+                                <p style={{ fontSize: '0.75rem', color: '#e8dcc8', margin: 0 }}>
                                     You may defile the land when casting. Each spell level deals {campaignModuleConfig?.defiling?.damagePerSpellLevel || 1} damage per level to plants and creatures within {campaignModuleConfig?.defiling?.radiusPerLevel || 10} ft/level.
                                 </p>
                             </div>
@@ -1581,7 +1585,7 @@ useEffect(() => {
                                                     const isExpanded = expandedSpell === s.name;
                                                     return (
                                                         <div key={s.name} style={{
-                                                            background: 'rgba(45,55,72,0.25)',
+                                                            background: 'rgba(26,23,20,0.25)',
                                                             borderRadius: radii.md,
                                                             border: `1px solid ${isPrepared ? colors.accent : colors.borderLight}`,
                                                             borderLeft: `3px solid ${isPrepared ? colors.accent : 'transparent'}`,
@@ -1726,7 +1730,7 @@ useEffect(() => {
                                             const item = char.inventory.find((i: any) => i.equipped && i.slot === slot);
                                             return (
                                                 <div key={slot} onClick={() => item && toggleItem(item.id)}
-                                                    style={{ padding: '8px', background: item ? 'rgba(99,102,241,0.15)' : colors.bg, border: `1px dashed ${item ? colors.accent : colors.border}`, borderRadius: radii.sm, cursor: item ? 'pointer' : 'default', minHeight: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
+                                                    style={{ padding: '8px', background: item ? 'rgba(201,168,76,0.15)' : colors.bg, border: `1px dashed ${item ? colors.accent : colors.border}`, borderRadius: radii.sm, cursor: item ? 'pointer' : 'default', minHeight: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
                                                     onDragOver={(e) => e.preventDefault()}
                                                     onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id) toggleItem(id, slot); }}
                                                 >
@@ -1745,7 +1749,7 @@ useEffect(() => {
                                         const item = char.inventory.find((i: any) => i.equipped && i.slot === slot);
                                         return (
                                             <div key={slot} onClick={() => item && toggleItem(item.id)}
-                                                style={{ padding: '8px', background: item ? 'rgba(99,102,241,0.1)' : colors.bg, border: `1px dashed ${item ? colors.accent : colors.border}`, borderRadius: radii.sm, cursor: item ? 'pointer' : 'default', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
+                                                style={{ padding: '8px', background: item ? 'rgba(201,168,76,0.1)' : colors.bg, border: `1px dashed ${item ? colors.accent : colors.border}`, borderRadius: radii.sm, cursor: item ? 'pointer' : 'default', minHeight: '60px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
                                                 onDragOver={(e) => e.preventDefault()}
                                                 onDrop={(e) => { e.preventDefault(); const id = e.dataTransfer.getData('text/plain'); if (id) toggleItem(id, slot); }}
                                             >
@@ -1805,15 +1809,15 @@ useEffect(() => {
                                         const stash = loadStash();
                                         return stash.map((stashItem: any) => (
                                             <div key={stashItem.id}
-                                                style={{ background: 'rgba(99,102,241,0.1)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #6366f1' }}
+                                                style={{ background: 'rgba(201,168,76,0.1)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #c9a84c' }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                                                    <span style={{ color: '#6366f1', fontSize: '0.6rem' }}>📦</span>
-                                                    <span style={{ fontSize: '0.7rem', color: '#a78bfa' }}>{stashItem.name}</span>
+                                                    <span style={{ color: '#c9a84c', fontSize: '0.6rem' }}>📦</span>
+                                                    <span style={{ fontSize: '0.7rem', color: '#c9a84c' }}>{stashItem.name}</span>
                                                     {(stashItem.quantity && stashItem.quantity > 1) && <span style={{ fontSize: '0.6rem', color: colors.textMuted, flexShrink: 0 }}>×{stashItem.quantity}</span>}
-                                                    <span style={{ fontSize: '0.55rem', color: '#6366f1', background: 'rgba(99,102,241,0.15)', padding: '1px 5px', borderRadius: '3px', flexShrink: 0 }}>Stash</span>
+                                                    <span style={{ fontSize: '0.55rem', color: '#c9a84c', background: 'rgba(201,168,76,0.15)', padding: '1px 5px', borderRadius: '3px', flexShrink: 0 }}>Stash</span>
                                                 </div>
-                                                <span style={{ fontSize: '0.55rem', color: '#4a5568' }}>{stashItem.weight ? `${stashItem.weight} lb` : ''}</span>
+                                                <span style={{ fontSize: '0.55rem', color: '#3d3528' }}>{stashItem.weight ? `${stashItem.weight} lb` : ''}</span>
                                             </div>
                                         ));
                                     })()}
@@ -1822,27 +1826,27 @@ useEffect(() => {
                                         const obscured = getObscuredForCharacter(char.id);
                                         return (
                                             <>
-                                                <div style={{ fontSize: '0.65rem', color: '#e53e3e', fontWeight: 'bold', marginTop: '8px', marginBottom: '4px' }}>
+                                                <div style={{ fontSize: '0.65rem', color: '#a83232', fontWeight: 'bold', marginTop: '8px', marginBottom: '4px' }}>
                                                     UNCERTAIN ITEMS ({obscured.filter(i => !i.identified).length})
                                                 </div>
                                                 {obscured.filter(i => !i.identified).map(item => (
                                                     <div key={item.id}
-                                                        style={{ background: 'rgba(229,62,62,0.08)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #e53e3e' }}>
+                                                        style={{ background: 'rgba(168,50,50,0.08)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #a83232' }}>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                                                            <span style={{ color: '#e53e3e', fontSize: '0.7rem' }}>?</span>
+                                                            <span style={{ color: '#a83232', fontSize: '0.7rem' }}>?</span>
                                                             <span style={{ fontSize: '0.75rem', fontStyle: 'italic', color: '#fc8181' }}>{item.displayName}</span>
                                                         </div>
-                                                        <span style={{ fontSize: '0.55rem', color: '#718096' }}>Unidentified</span>
+                                                        <span style={{ fontSize: '0.55rem', color: '#5a5248' }}>Unidentified</span>
                                                     </div>
                                                 ))}
                                                 {obscured.filter(i => i.identified).map(item => (
                                                     <div key={item.id}
-                                                        style={{ background: 'rgba(72,187,120,0.08)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #48bb78' }}>
+                                                        style={{ background: 'rgba(22,163,74,0.08)', padding: '6px 10px', borderRadius: radii.sm, display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px dashed #16a34a' }}>
                                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
-                                                            <span style={{ color: '#48bb78', fontSize: '0.7rem' }}>✓</span>
+                                                            <span style={{ color: '#16a34a', fontSize: '0.7rem' }}>✓</span>
                                                             <span style={{ fontSize: '0.75rem', color: '#68d391' }}>{item.trueName}</span>
                                                         </div>
-                                                        <span style={{ fontSize: '0.55rem', color: '#48bb78' }}>Identified</span>
+                                                        <span style={{ fontSize: '0.55rem', color: '#16a34a' }}>Identified</span>
                                                     </div>
                                                 ))}
                                             </>
@@ -1894,8 +1898,8 @@ useEffect(() => {
                                         const sourceClass = colonIdx > 0 ? key.slice(0, colonIdx) : null;
                                         return (
                                         <div key={key} style={{
-                                            background: 'rgba(99,102,241,0.1)',
-                                            border: '1px solid rgba(99,102,241,0.3)',
+                                            background: 'rgba(201,168,76,0.1)',
+                                            border: '1px solid rgba(201,168,76,0.3)',
                                             borderRadius: radii.sm,
                                             padding: '8px 12px',
                                             minWidth: '100px',
@@ -1911,7 +1915,7 @@ useEffect(() => {
                                                             [key]: { ...res, current: Math.max(0, res.current - 1) }
                                                         }
                                                     }))}
-                                                    style={{ background: 'none', border: '1px solid #e53e3e', color: '#e53e3e', borderRadius: '50%', width: '24px', height: '24px', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                                                    style={{ background: 'none', border: '1px solid #a83232', color: '#a83232', borderRadius: '50%', width: '24px', height: '24px', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                                                 >−</button>
                                                 <span style={{ fontSize: '1.1rem', fontWeight: 'bold', minWidth: '40px', textAlign: 'center' }}>
                                                     {res.current}/{res.max}
@@ -1924,7 +1928,7 @@ useEffect(() => {
                                                             [key]: { ...res, current: Math.min(res.max, res.current + 1) }
                                                         }
                                                     }))}
-                                                    style={{ background: 'none', border: '1px solid #48bb78', color: '#48bb78', borderRadius: '50%', width: '24px', height: '24px', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                                                    style={{ background: 'none', border: '1px solid #16a34a', color: '#16a34a', borderRadius: '50%', width: '24px', height: '24px', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
                                                 >+</button>
                                             </div>
                                             <div style={{ fontSize: '0.6rem', color: colors.textDim, marginTop: '2px' }}>{sourceClass ? `${sourceClass} · ` : ''}{res.refreshOn === 'short' ? 'Short Rest' : 'Long Rest'}</div>
@@ -2020,7 +2024,7 @@ useEffect(() => {
                                 <h4 style={{ margin: '0 0 6px 0', fontSize: '0.8rem' }}>PROFICIENCIES</h4>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                                     {char.proficiencies.map(p => (
-                                        <span key={p} style={{ fontSize: '0.65rem', padding: '2px 8px', background: 'rgba(99,102,241,0.15)', borderRadius: radii.sm, color: colors.textLight }}>{p.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                        <span key={p} style={{ fontSize: '0.65rem', padding: '2px 8px', background: 'rgba(201,168,76,0.15)', borderRadius: radii.sm, color: colors.textLight }}>{p.replace(/([A-Z])/g, ' $1').trim()}</span>
                                     ))}
                                 </div>
                             </div>
@@ -2169,7 +2173,7 @@ useEffect(() => {
 
             {viewingFeature && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1a1a', padding: spacing.lg, borderRadius: radii.md, width: '500px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '500px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
                         <h2 style={{ color: colors.gold, borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <span>{viewingFeature.name}</span>
                             <span style={{ fontSize: '0.8rem', color: colors.textDim, fontWeight: 'normal' }}>Lv{viewingFeature.level} · {viewingFeature.source}</span>
@@ -2184,7 +2188,7 @@ useEffect(() => {
 
             {viewingItem && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1a1a', padding: spacing.lg, borderRadius: radii.md, width: '450px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '450px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
                         <h2 style={{ color: colors.gold, borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px' }}>{viewingItem.name}</h2>
                         <div style={{ margin: '20px 0', fontSize: '0.9rem', lineHeight: '1.5' }}>
                             {formatEntries(viewingItem.entries || ["No description."])}
@@ -2197,13 +2201,13 @@ useEffect(() => {
             {/* ROLL MODE PICKER */}
             {showRollPicker && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1a1a', padding: spacing.lg, borderRadius: radii.md, width: '300px', border: `2px solid ${colors.gold}`, textAlign: 'center' }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '300px', border: `2px solid ${colors.gold}`, textAlign: 'center' }}>
                         <h3 style={{ color: colors.gold, margin: '0 0 12px 0', fontSize: '1rem' }}>{showRollPicker.label}</h3>
                         <p style={{ fontSize: '0.75rem', color: colors.textMuted, marginBottom: '16px' }}>Select roll type</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                             {(['normal', 'advantage', 'disadvantage'] as AdvantageMode[]).map(mode => (
                                 <button key={mode} onClick={() => { showRollPicker.onRoll(mode); setShowRollPicker(null); }}
-                                    style={{ background: mode === 'normal' ? colors.accent : mode === 'advantage' ? '#48bb78' : '#e53e3e', border: 'none', color: 'white', padding: '10px', borderRadius: radii.sm, fontSize: '0.85rem', cursor: 'pointer', fontWeight: 'bold', textTransform: 'capitalize' }}>
+                                    style={{ background: mode === 'normal' ? colors.accent : mode === 'advantage' ? '#16a34a' : '#a83232', border: 'none', color: 'white', padding: '10px', borderRadius: radii.sm, fontSize: '0.85rem', cursor: 'pointer', fontWeight: 'bold', textTransform: 'capitalize' }}>
                                     {mode === 'normal' ? 'Normal' : mode === 'advantage' ? 'Advantage (roll twice, take higher)' : 'Disadvantage (roll twice, take lower)'}
                                 </button>
                             ))}
@@ -2216,7 +2220,7 @@ useEffect(() => {
             {/* MANAGE SPELLS MODAL */}
             {showManageSpells && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1a1a', padding: spacing.lg, borderRadius: radii.md, width: viewingSpellInManage ? '800px' : '600px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: viewingSpellInManage ? '800px' : '600px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', border: `2px solid ${colors.gold}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px', marginBottom: '12px' }}>
                             <h2 style={{ margin: 0, color: colors.gold, fontSize: '1.2rem' }}>
                                 {viewingSpellInManage ? viewingSpellInManage.name : 'Manage Spells'}
@@ -2257,7 +2261,7 @@ useEffect(() => {
                         ) : (
                             <div style={{ flex: 1, overflowY: 'auto' }}>
                                 {!isPreparedCaster && (
-                                    <div style={{ padding: '8px 10px', marginBottom: '12px', background: 'rgba(99,102,241,0.1)', borderRadius: radii.sm, border: `1px solid ${colors.accent}`, fontSize: '0.7rem', color: colors.textMuted }}>
+                                    <div style={{ padding: '8px 10px', marginBottom: '12px', background: 'rgba(201,168,76,0.1)', borderRadius: radii.sm, border: `1px solid ${colors.accent}`, fontSize: '0.7rem', color: colors.textMuted }}>
                                         You are a known caster — all known spells are always available. No preparation needed.
                                     </div>
                                 )}
@@ -2289,7 +2293,7 @@ useEffect(() => {
                                                         const isPrepared = preparedSet.has(s.name);
                                                         const isCantrip = lvl === 0;
                                                         return (
-                                                            <div key={s.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: isPrepared ? 'rgba(99,102,241,0.1)' : 'rgba(45,55,72,0.2)', borderRadius: radii.sm, border: `1px solid ${isPrepared ? colors.accent : colors.borderLight}`, borderLeft: `3px solid ${isPrepared ? colors.accent : 'transparent'}` }}>
+                                                            <div key={s.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: isPrepared ? 'rgba(201,168,76,0.1)' : 'rgba(26,23,20,0.2)', borderRadius: radii.sm, border: `1px solid ${isPrepared ? colors.accent : colors.borderLight}`, borderLeft: `3px solid ${isPrepared ? colors.accent : 'transparent'}` }}>
                                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                                     {isPreparedCaster && !isCantrip && (
                                                                         <div onClick={() => togglePrepare(s.name)}
@@ -2336,7 +2340,7 @@ useEffect(() => {
 
             {/* ROLL RESULT TOAST */}
             {rollResult && (
-                <div style={{ position: 'fixed', bottom: '24px', right: '24px', background: '#1a1a1a', border: `2px solid ${colors.gold}`, borderRadius: radii.md, padding: '12px 16px', maxWidth: '350px', zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ position: 'fixed', bottom: '24px', right: '24px', background: '#1a1714', border: `2px solid ${colors.gold}`, borderRadius: radii.md, padding: '12px 16px', maxWidth: '350px', zIndex: 9999, boxShadow: '0 4px 20px rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: colors.gold, fontSize: '1.2rem' }}>🎲</span>
                     <span style={{ color: 'white', fontSize: '0.8rem', flex: 1 }}>{rollResult}</span>
                     <button onClick={() => setRollResult(null)} style={{ background: 'none', border: 'none', color: colors.textDim, cursor: 'pointer', fontSize: '0.8rem', padding: '0' }}>×</button>

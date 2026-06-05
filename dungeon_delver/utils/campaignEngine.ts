@@ -198,13 +198,87 @@ export function filterRacesByPreset(allSpecies: any[], rawSpecies: any[], preset
   return allSpecies.filter(s => allowedNames.has(s.name));
 }
 
+export interface SafetyToolsConfig {
+  enabled: boolean;
+  type: 'lines-veils' | 'x-card' | 'both';
+  notes: string;
+}
+
+export interface CustomDeity {
+  name: string;
+  domains: string;
+  alignment: string;
+  symbol: string;
+  description: string;
+}
+
+export interface PantheonPresetDef {
+  id: string;
+  label: string;
+  description: string;
+  /** deity.pantheon values to filter from deities.json */
+  pantheons: string[];
+}
+
+export const CAMPAIGN_PANTHEONS: PantheonPresetDef[] = [
+  { id: 'forgotten-realms', label: 'Forgotten Realms', description: 'Faerûn — the Sword Coast, the Heartlands, and beyond.', pantheons: ['Faerûnian', 'Dwarven', 'Elven', 'Halfling', 'Gnome', 'Drow', 'Orc', 'Nonhuman', 'Gnomish', 'Duergar'] },
+  { id: 'greyhawk', label: 'Greyhawk', description: 'The Flanaess — classic D&D setting on Oerth.', pantheons: ['Greyhawk', 'Dwarven', 'Elven', 'Halfling', 'Gnome', 'Orc'] },
+  { id: 'eberron', label: 'Eberron', description: 'The Silver Flame, the Undying Court, the Sovereign Host, and the Dark Six.', pantheons: ['Eberron'] },
+  { id: 'dragonlance', label: 'Dragonlance', description: 'Krynn — the Gods of Light, Neutrality, and Darkness.', pantheons: ['Dragonlance'] },
+  { id: 'exandria', label: 'Exandria', description: 'Critical Role\'s Wildemount setting. The Dawnfather, the Raven Queen, and more.', pantheons: ['Exandria'] },
+  { id: 'theros', label: 'Theros', description: 'Magic: The Gathering\'s Nyx-born gods.', pantheons: ['Theros'] },
+  { id: 'dawn-war', label: 'Dawn War', description: 'The 4e Points of Light setting — primal and astral deities.', pantheons: ['Dawn War', 'Dwarven', 'Elven', 'Halfling', 'Gnome'] },
+  { id: 'norse', label: 'Norse', description: 'Odin, Thor, Freya, and the heroes of Asgard.', pantheons: ['Norse'] },
+  { id: 'greek', label: 'Greek', description: 'Zeus, Athena, Apollo, and the Olympians.', pantheons: ['Greek'] },
+  { id: 'egyptian', label: 'Egyptian', description: 'Ra, Isis, Osiris, and the gods of the Nile.', pantheons: ['Egyptian'] },
+  { id: 'celtic', label: 'Celtic', description: 'The Tuatha Dé Danann and the heroes of Celtic myth.', pantheons: ['Celtic'] },
+  { id: 'homebrew', label: 'Homebrew / Custom', description: 'Your own pantheon — add custom deities below.', pantheons: [] },
+];
+
+export function getDeitiesInPantheon(pantheons: string[], allDeities: any[]): any[] {
+  const seen = new Set<string>();
+  return allDeities.filter(d => {
+    if (!pantheons.includes(d.pantheon)) return false;
+    const key = `${d.name}|${d.pantheon}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 export interface CampaignConfig {
   name: string;
+  description: string;
+  toneTheme: string;
   enabledModules: string[];
   moduleConfig: Partial<ModuleConfigMap>;
   racePreset?: RacePresetId;
+  restVariant: 'standard' | 'gritty-realism' | 'epic-heroism';
+  startingLevel: number;
+  startingGold: string;
+  houseRules: string;
+  safetyTools: SafetyToolsConfig;
+  pantheonSetting: string;
+  customDeities: CustomDeity[];
   updatedAt: string;
 }
+
+export interface TonePreset {
+  id: string;
+  label: string;
+  description: string;
+  autoModules: string[];
+  restVariant: CampaignConfig['restVariant'];
+}
+
+export const CAMPAIGN_TONES: TonePreset[] = [
+  { id: 'high-fantasy', label: 'High Fantasy', description: 'Classic heroic adventure. Magic is common, heroes rise.', autoModules: [], restVariant: 'standard' },
+  { id: 'gothic-horror', label: 'Gothic Horror', description: 'Dark, atmospheric horror. Sanity frays, horrors lurk.', autoModules: ['darkGifts', 'stressFear', 'madness', 'honorSanity'], restVariant: 'standard' },
+  { id: 'gritty-realism', label: 'Gritty Realism', description: 'Survival is hard. Wounds linger, resources are scarce.', autoModules: ['grittyRealism', 'stressFear'], restVariant: 'gritty-realism' },
+  { id: 'sword-and-sorcery', label: 'Sword & Sorcery', description: 'Might makes right. Gods and factions hold power.', autoModules: ['piety', 'renown'], restVariant: 'standard' },
+  { id: 'epic-myth', label: 'Epic Myth', description: 'Gods walk the earth. Heroes become legends.', autoModules: ['epicBoons', 'heroPoints', 'piety'], restVariant: 'standard' },
+  { id: 'dark-sun', label: 'Dark Sun', description: 'Defiling magic drains the land. Survival is everything.', autoModules: ['defiling', 'stressFear', 'grittyRealism'], restVariant: 'gritty-realism' },
+];
 
 export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
   piety: {
@@ -427,13 +501,37 @@ export function loadCampaignConfig(campaignId?: string): CampaignConfig {
     const raw = localStorage.getItem(storageKey(campaignId));
     if (raw) {
       const parsed = JSON.parse(raw);
-      return parsed as CampaignConfig;
+      return {
+        name: 'Default Campaign',
+        description: '',
+        toneTheme: '',
+        enabledModules: [],
+        moduleConfig: {},
+        restVariant: 'standard' as const,
+        startingLevel: 1,
+        startingGold: 'standard',
+        houseRules: '',
+        safetyTools: { enabled: false, type: 'both', notes: '' },
+        pantheonSetting: '',
+        customDeities: [],
+        updatedAt: new Date().toISOString(),
+        ...parsed,
+      };
     }
   } catch { }
   return {
     name: 'Default Campaign',
+    description: '',
+    toneTheme: '',
     enabledModules: [],
     moduleConfig: {},
+    restVariant: 'standard' as const,
+    startingLevel: 1,
+    startingGold: 'standard',
+    houseRules: '',
+    safetyTools: { enabled: false, type: 'both', notes: '' },
+    pantheonSetting: '',
+    customDeities: [],
     updatedAt: new Date().toISOString(),
   };
 }

@@ -1,46 +1,46 @@
 export const colors = {
-  bg: '#12161d',
-  bgPanel: '#1a202c',
-  bgCard: '#2d3748',
-  bgCardHover: '#3a4a62',
-  border: '#4a5568',
-  borderLight: '#2d3748',
-  gold: '#b8860b',
-  goldDark: '#822000',
-  goldFaded: 'rgba(184, 134, 11, 0.2)',
-  goldBorder: 'rgba(184, 134, 11, 0.3)',
-  text: 'white',
-  textBody: '#e2e8f0',
-  textLight: '#cbd5e0',
-  textMuted: '#a0aec0',
-  textDim: '#718096',
-  accent: '#6366f1',
-  success: '#48bb78',
-  danger: '#e53e3e',
-  overlay: '#0a0d12',
+  bg: '#0c0e14',
+  bgPanel: '#1a1714',
+  bgCard: '#1a1714',
+  bgCardHover: '#2a2520',
+  border: '#3d3528',
+  borderLight: '#2a2520',
+  gold: '#c9a84c',
+  goldDark: '#8a6e2f',
+  goldFaded: 'rgba(201, 168, 76, 0.15)',
+  goldBorder: 'rgba(201, 168, 76, 0.25)',
+  text: '#e8dcc8',
+  textBody: '#e8dcc8',
+  textLight: '#d4c8a8',
+  textMuted: '#8a7e6a',
+  textDim: '#5a5248',
+  accent: '#c9a84c',
+  success: '#16a34a',
+  danger: '#a83232',
+  overlay: '#0c0e14',
 };
 
 export const radii = {
   sm: '4px',
-  md: '8px',
-  lg: '12px',
-  xl: '15px',
+  md: '6px',
+  lg: '8px',
+  xl: '12px',
   round: '20px',
   pill: '25px',
   full: '50%',
 };
 
 export const spacing = {
-  xs: '10px',
-  sm: '15px',
-  md: '20px',
-  lg: '30px',
-  xl: '40px',
+  xs: '8px',
+  sm: '12px',
+  md: '16px',
+  lg: '24px',
+  xl: '32px',
 };
 
 export const transitions = {
-  fast: '0.2s',
-  normal: '0.3s',
+  fast: '0.15s',
+  normal: '0.25s',
 };
 
 export const resetButton: React.CSSProperties = {
@@ -69,11 +69,13 @@ export const flexBetween: React.CSSProperties = {
 
 export const formInput: React.CSSProperties = {
   width: '100%',
-  padding: '12px',
-  background: colors.bgPanel,
-  border: `1px solid ${colors.border}`,
+  padding: '10px 12px',
+  background: '#0c0e14',
+  border: '1px solid #3d3528',
   borderRadius: radii.md,
   color: colors.text,
+  fontSize: '0.85rem',
+  outline: 'none',
 };
 
 export const formSelect: React.CSSProperties = {
@@ -84,40 +86,46 @@ export const formSelect: React.CSSProperties = {
 export const primaryButton: React.CSSProperties = {
   background: colors.gold,
   border: 'none',
-  color: 'black',
-  padding: '12px 25px',
-  borderRadius: radii.pill,
+  color: '#1a1714',
+  padding: '10px 22px',
+  borderRadius: radii.md,
   fontWeight: 'bold',
   cursor: 'pointer',
+  fontSize: '0.85rem',
+  letterSpacing: '0.5px',
+  textTransform: 'uppercase',
 };
 
 export const secondaryButton: React.CSSProperties = {
-  background: colors.bgCard,
-  border: `1px solid ${colors.border}`,
+  background: 'transparent',
+  border: '1px solid #3d3528',
   color: colors.text,
-  padding: '8px 20px',
-  borderRadius: radii.sm,
+  padding: '8px 18px',
+  borderRadius: radii.md,
   fontWeight: 'bold',
   cursor: 'pointer',
+  fontSize: '0.85rem',
 };
 
 export const ghostButton: React.CSSProperties = {
   ...resetButton,
   color: colors.textDim,
+  padding: '6px 12px',
+  borderRadius: radii.md,
 };
 
 export const cardPanel: React.CSSProperties = {
   background: colors.bgCard,
   borderRadius: radii.lg,
   padding: spacing.lg,
-  border: `1px solid ${colors.border}`,
+  border: '1px solid #3d3528',
   position: 'relative',
 };
 
 export const cardPanelDark: React.CSSProperties = {
   ...cardPanel,
-  background: colors.bgPanel,
-  borderColor: colors.borderLight,
+  background: '#0c0e14',
+  borderColor: '#2a2520',
 };
 
 export const modalOverlay: React.CSSProperties = {
@@ -131,23 +139,25 @@ export const modalOverlay: React.CSSProperties = {
 };
 
 export const sectionLabel: React.CSSProperties = {
-  fontSize: '0.75rem',
+  fontSize: '0.7rem',
   fontWeight: 'bold',
   color: colors.gold,
   letterSpacing: '2px',
   marginBottom: spacing.sm,
+  textTransform: 'uppercase',
 };
 
 export const sectionTitle: React.CSSProperties = {
-  fontSize: '2.5rem',
-  margin: '10px 0 30px 0',
-  fontFamily: 'serif',
+  fontSize: '2rem',
+  margin: '10px 0 24px 0',
+  fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif',
+  color: colors.gold,
 };
 
 export const badge: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.1)',
-  border: `1px solid ${colors.border}`,
-  padding: '5px 15px',
+  background: 'rgba(201, 168, 76, 0.1)',
+  border: '1px solid #3d3528',
+  padding: '4px 12px',
   borderRadius: radii.round,
   fontSize: '0.7rem',
   fontWeight: 'bold',
@@ -159,7 +169,7 @@ export const badge: React.CSSProperties = {
 export const goldBadge: React.CSSProperties = {
   display: 'inline-block',
   background: colors.gold,
-  color: 'black',
+  color: '#1a1714',
   padding: '2px 10px',
   borderRadius: radii.sm,
   fontSize: '0.8rem',
@@ -179,10 +189,10 @@ export const statBonusBadge: React.CSSProperties = {
 
 export const pillToggle: React.CSSProperties = {
   display: 'inline-flex',
-  background: colors.bg,
+  background: '#0c0e14',
   padding: '4px',
   borderRadius: '30px',
-  border: `1px solid ${colors.borderLight}`,
+  border: '1px solid #2a2520',
   marginBottom: spacing.md,
 };
 
@@ -214,7 +224,7 @@ export const pageOverlay: React.CSSProperties = {
   background: colors.bg,
   zIndex: 1000,
   display: 'flex',
-  color: 'white',
+  color: colors.text,
 };
 
 export const detailOverlay: React.CSSProperties = {
@@ -231,6 +241,7 @@ export const optionLabel: React.CSSProperties = {
   color: colors.gold,
   letterSpacing: '1px',
   marginBottom: '5px',
+  textTransform: 'uppercase',
 };
 
 export const loreText: React.CSSProperties = {

@@ -8,11 +8,11 @@ import {
 } from '../../../utils/influenceEngine';
 
 const DISPOSITION_COLORS: Record<Disposition, string> = {
-  hostile: '#e53e3e',
-  unfriendly: '#ed8936',
-  indifferent: '#a0aec0',
-  friendly: '#48bb78',
-  helpful: '#38b2ac',
+  hostile: '#a83232',
+  unfriendly: '#c9a84c',
+  indifferent: '#8a7e6a',
+  friendly: '#16a34a',
+  helpful: '#16a34a',
 };
 
 const DISPOSITION_LABELS: Record<Disposition, string> = {
@@ -24,17 +24,17 @@ const DISPOSITION_LABELS: Record<Disposition, string> = {
 };
 
 const styles = {
-  page: { padding: '2rem', color: 'white', fontFamily: 'serif', maxWidth: '1200px', margin: '0 auto' } as const,
-  header: { fontSize: '2rem', color: '#b8860b', marginBottom: '4px' } as const,
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
-  panel: { background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
+  page: { padding: '2rem', color: '#e8dcc8', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', maxWidth: '1200px', margin: '0 auto' } as const,
+  header: { fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' } as const,
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
+  panel: { background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' } as const,
   npcCard: {
-    background: '#2d3748', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem',
+    background: '#1a1714', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem',
   } as const,
   input: {
-    width: '100%', padding: '8px', background: '#2d3748', border: '1px solid #4a5568',
-    borderRadius: '4px', color: 'white', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
+    width: '100%', padding: '8px', background: '#1a1714', border: '1px solid #3d3528',
+    borderRadius: '4px', color: '#e8dcc8', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const,
   },
   slider: {
     width: '100%', height: '6px', appearance: 'none' as const, outline: 'none',
@@ -128,23 +128,23 @@ export default function InfluencePage() {
       {/* Tabs */}
       <div style={{ display: 'flex', gap: '0', marginBottom: '1rem' }}>
         <button onClick={() => setTab('npcs')} style={{
-          padding: '8px 20px', background: tab === 'npcs' ? '#6366f1' : '#2d3748',
-          border: '1px solid #4a5568', color: 'white', cursor: 'pointer', borderRadius: '6px 0 0 6px', fontSize: '0.8rem',
+          padding: '8px 20px', background: tab === 'npcs' ? '#c9a84c' : '#1a1714',
+          border: '1px solid #3d3528', color: '#e8dcc8', cursor: 'pointer', borderRadius: '6px 0 0 6px', fontSize: '0.8rem',
         }}>NPCs ({npcs.length})</button>
         <button onClick={() => setTab('groups')} style={{
-          padding: '8px 20px', background: tab === 'groups' ? '#6366f1' : '#2d3748',
-          border: '1px solid #4a5568', borderLeft: 'none', color: 'white', cursor: 'pointer', borderRadius: '0 6px 6px 0', fontSize: '0.8rem',
+          padding: '8px 20px', background: tab === 'groups' ? '#c9a84c' : '#1a1714',
+          border: '1px solid #3d3528', borderLeft: 'none', color: '#e8dcc8', cursor: 'pointer', borderRadius: '0 6px 6px 0', fontSize: '0.8rem',
         }}>Groups ({groups.length})</button>
       </div>
 
       {reactionResult && (
-        <div style={{ ...styles.panel, background: '#2d3748', border: '2px solid #6366f1', marginBottom: '1rem' }}>
+        <div style={{ ...styles.panel, background: '#1a1714', border: '2px solid #c9a84c', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span><strong>{reactionResult.name}</strong> — Rolled {reactionResult.rolls[0]} + {reactionResult.rolls[1]} = <strong>{reactionResult.total}</strong></span>
             <span style={{ color: DISPOSITION_COLORS[reactionResult.disposition], fontWeight: 'bold' }}>
               {DISPOSITION_LABELS[reactionResult.disposition]}
             </span>
-            <button onClick={() => setReactionResult(null)} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '1rem' }}>×</button>
+            <button onClick={() => setReactionResult(null)} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '1rem' }}>×</button>
           </div>
         </div>
       )}
@@ -156,12 +156,12 @@ export default function InfluencePage() {
             <input style={{ ...styles.input, flex: 1 }} placeholder="NPC name..." value={newName} onChange={e => setNewName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAddNPC()} />
             <button onClick={handleAddNPC} disabled={!newName.trim()}
-              style={{ padding: '8px 16px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Add NPC</button>
+              style={{ padding: '8px 16px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Add NPC</button>
           </div>
 
           {/* NPC Grid */}
           <div style={styles.grid}>
-            {npcs.length === 0 && <p style={{ color: '#718096', fontSize: '0.85rem' }}>No NPCs tracked yet. Add one above.</p>}
+            {npcs.length === 0 && <p style={{ color: '#5a5248', fontSize: '0.85rem' }}>No NPCs tracked yet. Add one above.</p>}
             {npcs.map(npc => {
               const dc = getInfluenceDC(npc.disposition);
               const dcMajor = getInfluenceDC(npc.disposition, true);
@@ -170,12 +170,12 @@ export default function InfluencePage() {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                     <span style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{npc.name}</span>
                     <button onClick={() => { deleteSocialNPC(npc.id); refresh(); }}
-                      style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
+                      style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
                   </div>
 
                   {/* Disposition slider */}
                   <div style={{ marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6rem', color: '#718096', marginBottom: '2px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.6rem', color: '#5a5248', marginBottom: '2px' }}>
                       {DISPOSITION_ORDER.map(d => (
                         <span key={d} style={{ color: DISPOSITION_COLORS[d] }}>{DISPOSITION_LABELS[d]}</span>
                       ))}
@@ -184,7 +184,7 @@ export default function InfluencePage() {
                       onChange={e => handleDispositionChange(npc.id, DISPOSITION_ORDER[parseInt(e.target.value)])}
                       style={{
                         ...styles.slider,
-                        background: `linear-gradient(to right, #e53e3e, #ed8936, #a0aec0, #48bb78, #38b2ac)`,
+                        background: `linear-gradient(to right, #a83232, #c9a84c, #8a7e6a, #16a34a, #16a34a)`,
                       }}
                       title={DISPOSITION_LABELS[npc.disposition]} />
                     <div style={{ textAlign: 'center', fontWeight: 'bold', color: DISPOSITION_COLORS[npc.disposition], fontSize: '0.8rem', marginTop: '2px' }}>
@@ -194,9 +194,9 @@ export default function InfluencePage() {
 
                   {/* Influence DC */}
                   <div style={{ fontSize: '0.75rem', marginBottom: '8px' }}>
-                    <span style={{ color: '#a0aec0' }}>Influence DC: </span>
+                    <span style={{ color: '#8a7e6a' }}>Influence DC: </span>
                     <strong>{getDCDescription(dc)}</strong>
-                    {dc && <span style={{ color: '#718096', marginLeft: '6px' }}>(major: {getDCDescription(dcMajor)})</span>}
+                    {dc && <span style={{ color: '#5a5248', marginLeft: '6px' }}>(major: {getDCDescription(dcMajor)})</span>}
                   </div>
 
                   {/* Notes */}
@@ -207,24 +207,24 @@ export default function InfluencePage() {
                   {/* Actions */}
                   <div style={{ display: 'flex', gap: '4px' }}>
                     <button onClick={() => handleRollReaction(npc)}
-                      style={{ padding: '4px 10px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                      style={{ padding: '4px 10px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
                       Roll Reaction
                     </button>
                     <button onClick={() => {
                       handleDispositionChange(npc.id, adjustDisposition(npc.disposition, 1));
-                    }} style={{ padding: '4px 10px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                    }} style={{ padding: '4px 10px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
                       ↑ Friendlier
                     </button>
                     <button onClick={() => {
                       handleDispositionChange(npc.id, adjustDisposition(npc.disposition, -1));
-                    }} style={{ padding: '4px 10px', background: '#e53e3e', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+                    }} style={{ padding: '4px 10px', background: '#a83232', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
                       ↓ Hostile
                     </button>
                   </div>
 
                   {/* Groups */}
                   {groups.filter(g => g.memberIds.includes(npc.id)).length > 0 && (
-                    <div style={{ marginTop: '6px', fontSize: '0.65rem', color: '#718096' }}>
+                    <div style={{ marginTop: '6px', fontSize: '0.65rem', color: '#5a5248' }}>
                       Groups: {groups.filter(g => g.memberIds.includes(npc.id)).map(g => g.name).join(', ')}
                     </div>
                   )}
@@ -242,9 +242,9 @@ export default function InfluencePage() {
             <input style={{ ...styles.input, flex: 1 }} placeholder="Group name..." value={newGroupName} onChange={e => setNewGroupName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAddGroup()} />
             <button onClick={handleAddGroup} disabled={!newGroupName.trim()}
-              style={{ padding: '8px 16px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Add Group</button>
+              style={{ padding: '8px 16px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Add Group</button>
             <select value={selectedGroup} onChange={e => setSelectedGroup(e.target.value)}
-              style={{ padding: '6px 10px', background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '4px', fontSize: '0.75rem' }}>
+              style={{ padding: '6px 10px', background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '4px', fontSize: '0.75rem' }}>
               <option value="">Select group to manage</option>
               {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
@@ -256,24 +256,24 @@ export default function InfluencePage() {
             return (
               <div style={styles.panel}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                  <h3 style={{ margin: 0, fontSize: '0.9rem', color: '#f6e05e' }}>{group.name}</h3>
+                  <h3 style={{ margin: 0, fontSize: '0.9rem', color: '#c9a84c' }}>{group.name}</h3>
                   <button onClick={() => { deleteSocialGroup(group.id); setSelectedGroup(''); refresh(); }}
-                    style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.8rem' }}>Delete Group</button>
+                    style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.8rem' }}>Delete Group</button>
                 </div>
                 <textarea value={group.notes} onChange={e => {
                   saveSocialGroup({ ...group, notes: e.target.value });
                   refresh();
                 }} placeholder="Group notes..." style={{ ...styles.input, marginBottom: '8px', fontSize: '0.7rem' }} />
-                <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginBottom: '6px' }}>Members ({group.memberIds.length})</div>
+                <div style={{ fontSize: '0.75rem', color: '#8a7e6a', marginBottom: '6px' }}>Members ({group.memberIds.length})</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
                   {npcs.map(npc => (
-                    <label key={npc.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', cursor: 'pointer', padding: '3px 6px', background: group.memberIds.includes(npc.id) ? '#2d3748' : 'transparent', borderRadius: '4px' }}>
+                    <label key={npc.id} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', cursor: 'pointer', padding: '3px 6px', background: group.memberIds.includes(npc.id) ? '#1a1714' : 'transparent', borderRadius: '4px' }}>
                       <input type="checkbox" checked={group.memberIds.includes(npc.id)}
                         onChange={() => handleGroupMemberToggle(group.id, npc.id)} />
-                      <span style={{ color: group.memberIds.includes(npc.id) ? DISPOSITION_COLORS[npc.disposition] : '#718096' }}>
+                      <span style={{ color: group.memberIds.includes(npc.id) ? DISPOSITION_COLORS[npc.disposition] : '#5a5248' }}>
                         {npc.name}
                       </span>
-                      <span style={{ fontSize: '0.6rem', color: '#718096' }}>{DISPOSITION_LABELS[npc.disposition]}</span>
+                      <span style={{ fontSize: '0.6rem', color: '#5a5248' }}>{DISPOSITION_LABELS[npc.disposition]}</span>
                     </label>
                   ))}
                 </div>

@@ -12,13 +12,13 @@ import {
 type Tab = 'items' | 'monsters' | 'spells';
 
 const styles = {
-  page: { padding: '2rem', color: 'white', fontFamily: 'serif', maxWidth: '1200px', margin: '0 auto' } as const,
-  header: { fontSize: '2rem', color: '#b8860b', marginBottom: '4px' } as const,
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
-  panel: { background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
-  input: { width: '100%', padding: '8px', background: '#2d3748', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const },
-  textarea: { width: '100%', minHeight: '80px', padding: '8px', background: '#2d3748', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.8rem', outline: 'none', resize: 'vertical' as const, boxSizing: 'border-box' as const, fontFamily: 'monospace' },
-  label: { fontSize: '0.7rem', color: '#a0aec0', fontWeight: 'bold', marginBottom: '4px', display: 'block' } as const,
+  page: { padding: '2rem', color: '#e8dcc8', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', maxWidth: '1200px', margin: '0 auto' } as const,
+  header: { fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' } as const,
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
+  panel: { background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
+  input: { width: '100%', padding: '8px', background: '#1a1714', border: '1px solid #3d3528', borderRadius: '4px', color: '#e8dcc8', fontSize: '0.8rem', outline: 'none', boxSizing: 'border-box' as const },
+  textarea: { width: '100%', minHeight: '80px', padding: '8px', background: '#1a1714', border: '1px solid #3d3528', borderRadius: '4px', color: '#e8dcc8', fontSize: '0.8rem', outline: 'none', resize: 'vertical' as const, boxSizing: 'border-box' as const, fontFamily: 'monospace' },
+  label: { fontSize: '0.7rem', color: '#8a7e6a', fontWeight: 'bold', marginBottom: '4px', display: 'block' } as const,
   row: { display: 'flex', gap: '8px', flexWrap: 'wrap' as const, marginBottom: '8px' } as const,
   halfRow: { flex: '1 1 180px', display: 'flex', flexDirection: 'column' as const } as const,
 };
@@ -28,7 +28,7 @@ function genId(): string { return crypto.randomUUID?.() || `${Date.now()}-${Math
 function EditorPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={styles.panel}>
-      <h3 style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#f6e05e' }}>{title}</h3>
+      <h3 style={{ margin: '0 0 10px 0', fontSize: '0.85rem', color: '#c9a84c' }}>{title}</h3>
       {children}
     </div>
   );
@@ -175,8 +175,8 @@ export default function HomebrewEditorPage() {
       </div>
       <Input label="Description" value={itemForm.description || ''} onChange={v => setItemForm({ ...itemForm, description: v })} type="textarea" placeholder="Describe the item..." />
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        <button onClick={saveItem} disabled={!itemForm.name} style={{ padding: '8px 16px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Item</button>
-        <button onClick={() => setEditItem(null)} style={{ padding: '8px 16px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
+        <button onClick={saveItem} disabled={!itemForm.name} style={{ padding: '8px 16px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Item</button>
+        <button onClick={() => setEditItem(null)} style={{ padding: '8px 16px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
       </div>
     </EditorPanel>
   );
@@ -218,16 +218,16 @@ export default function HomebrewEditorPage() {
           <button onClick={() => {
             const actions = (monsterForm.actions || []).filter((_, j) => j !== i);
             setMonsterForm({ ...monsterForm, actions });
-          }} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer' }}>×</button>
+          }} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer' }}>×</button>
         </div>
       ))}
       <button onClick={() => setMonsterForm({ ...monsterForm, actions: [...(monsterForm.actions || []), { name: '', description: '' }] })}
-        style={{ padding: '4px 10px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', marginBottom: '8px' }}>
+        style={{ padding: '4px 10px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', marginBottom: '8px' }}>
         + Add Action
       </button>
       <div style={{ display: 'flex', gap: '8px' }}>
-        <button onClick={saveMonster} disabled={!monsterForm.name} style={{ padding: '8px 16px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Monster</button>
-        <button onClick={() => setEditMonster(null)} style={{ padding: '8px 16px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
+        <button onClick={saveMonster} disabled={!monsterForm.name} style={{ padding: '8px 16px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Monster</button>
+        <button onClick={() => setEditMonster(null)} style={{ padding: '8px 16px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
       </div>
     </EditorPanel>
   );
@@ -249,8 +249,8 @@ export default function HomebrewEditorPage() {
       </div>
       <Input label="Description" value={spellForm.description || ''} onChange={v => setSpellForm({ ...spellForm, description: v })} type="textarea" placeholder="Spell description, damage, effects..." />
       <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-        <button onClick={saveSpell} disabled={!spellForm.name} style={{ padding: '8px 16px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Spell</button>
-        <button onClick={() => setEditSpell(null)} style={{ padding: '8px 16px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
+        <button onClick={saveSpell} disabled={!spellForm.name} style={{ padding: '8px 16px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Save Spell</button>
+        <button onClick={() => setEditSpell(null)} style={{ padding: '8px 16px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Cancel</button>
       </div>
     </EditorPanel>
   );
@@ -264,26 +264,26 @@ export default function HomebrewEditorPage() {
       <div style={{ display: 'flex', gap: '0', marginBottom: '1rem', flexWrap: 'wrap' }}>
         {(['items', 'monsters', 'spells'] as Tab[]).map(t => (
           <button key={t} onClick={() => setTab(t)} style={{
-            padding: '8px 20px', background: tab === t ? '#6366f1' : '#2d3748',
-            border: '1px solid #4a5568', color: 'white', cursor: 'pointer', fontSize: '0.8rem',
-            borderRight: t === 'spells' ? '1px solid #4a5568' : 'none',
+            padding: '8px 20px', background: tab === t ? '#c9a84c' : '#1a1714',
+            border: '1px solid #3d3528', color: '#e8dcc8', cursor: 'pointer', fontSize: '0.8rem',
+            borderRight: t === 'spells' ? '1px solid #3d3528' : 'none',
             borderRadius: t === 'items' ? '6px 0 0 6px' : t === 'spells' ? '0 6px 6px 0' : '0',
           }}>
             {t.charAt(0).toUpperCase() + t.slice(1)} ({t === 'items' ? items.length : t === 'monsters' ? monsters.length : spells.length})
           </button>
         ))}
         <div style={{ flex: 1 }} />
-        <button onClick={handleExport} style={{ padding: '6px 14px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', marginLeft: '8px' }}>
+        <button onClick={handleExport} style={{ padding: '6px 14px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem', marginLeft: '8px' }}>
           Export JSON
         </button>
       </div>
 
       {/* Import */}
-      <details style={{ marginBottom: '1rem', color: '#a0aec0', fontSize: '0.75rem' }}>
+      <details style={{ marginBottom: '1rem', color: '#8a7e6a', fontSize: '0.75rem' }}>
         <summary style={{ cursor: 'pointer' }}>Import JSON</summary>
         <div style={{ marginTop: '8px' }}>
           <textarea style={styles.textarea} value={importText} onChange={e => setImportText(e.target.value)} placeholder="Paste homebrew JSON here..." />
-          <button onClick={handleImport} disabled={!importText.trim()} style={{ marginTop: '6px', padding: '6px 14px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
+          <button onClick={handleImport} disabled={!importText.trim()} style={{ marginTop: '6px', padding: '6px 14px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>
             Import
           </button>
         </div>
@@ -294,33 +294,33 @@ export default function HomebrewEditorPage() {
         <div style={{ flex: '0 0 280px', maxHeight: '600px', overflowY: 'auto' }}>
           {tab === 'items' && (
             <div style={styles.panel}>
-              <button onClick={startNewItem} style={{ width: '100%', padding: '8px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Item</button>
+              <button onClick={startNewItem} style={{ width: '100%', padding: '8px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Item</button>
               {items.map(item => (
-                <div key={item.id} onClick={() => startEditItem(item)} style={{ padding: '6px 8px', cursor: 'pointer', background: editItem?.id === item.id ? '#2d3748' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#f6e05e' }}>{item.name}</span>
-                  <button onClick={e => { e.stopPropagation(); removeItem(item.id); }} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
+                <div key={item.id} onClick={() => startEditItem(item)} style={{ padding: '6px 8px', cursor: 'pointer', background: editItem?.id === item.id ? '#1a1714' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#c9a84c' }}>{item.name}</span>
+                  <button onClick={e => { e.stopPropagation(); removeItem(item.id); }} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
                 </div>
               ))}
             </div>
           )}
           {tab === 'monsters' && (
             <div style={styles.panel}>
-              <button onClick={startNewMonster} style={{ width: '100%', padding: '8px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Monster</button>
+              <button onClick={startNewMonster} style={{ width: '100%', padding: '8px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Monster</button>
               {monsters.map(m => (
-                <div key={m.id} onClick={() => startEditMonster(m)} style={{ padding: '6px 8px', cursor: 'pointer', background: editMonster?.id === m.id ? '#2d3748' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#fc8181' }}>{m.name}</span>
-                  <button onClick={e => { e.stopPropagation(); removeMonster(m.id); }} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
+                <div key={m.id} onClick={() => startEditMonster(m)} style={{ padding: '6px 8px', cursor: 'pointer', background: editMonster?.id === m.id ? '#1a1714' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#a83232' }}>{m.name}</span>
+                  <button onClick={e => { e.stopPropagation(); removeMonster(m.id); }} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
                 </div>
               ))}
             </div>
           )}
           {tab === 'spells' && (
             <div style={styles.panel}>
-              <button onClick={startNewSpell} style={{ width: '100%', padding: '8px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Spell</button>
+              <button onClick={startNewSpell} style={{ width: '100%', padding: '8px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', marginBottom: '8px' }}>+ New Spell</button>
               {spells.map(s => (
-                <div key={s.id} onClick={() => startEditSpell(s)} style={{ padding: '6px 8px', cursor: 'pointer', background: editSpell?.id === s.id ? '#2d3748' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
-                  <span style={{ color: '#63b3ed' }}>{s.name}</span>
-                  <button onClick={e => { e.stopPropagation(); removeSpell(s.id); }} style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
+                <div key={s.id} onClick={() => startEditSpell(s)} style={{ padding: '6px 8px', cursor: 'pointer', background: editSpell?.id === s.id ? '#1a1714' : 'transparent', borderRadius: '4px', marginBottom: '2px', fontSize: '0.75rem', display: 'flex', justifyContent: 'space-between' }}>
+                  <span style={{ color: '#8a7e6a' }}>{s.name}</span>
+                  <button onClick={e => { e.stopPropagation(); removeSpell(s.id); }} style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.65rem' }}>×</button>
                 </div>
               ))}
             </div>
@@ -332,9 +332,9 @@ export default function HomebrewEditorPage() {
           {tab === 'items' && (editItem !== undefined) && renderItemForm()}
           {tab === 'monsters' && (editMonster !== undefined) && renderMonsterForm()}
           {tab === 'spells' && (editSpell !== undefined) && renderSpellForm()}
-          {tab === 'items' && editItem === null && !itemForm.name && <p style={{ color: '#718096', fontSize: '0.85rem' }}>Select an item or create a new one.</p>}
-          {tab === 'monsters' && editMonster === null && !monsterForm.name && <p style={{ color: '#718096', fontSize: '0.85rem' }}>Select a monster or create a new one.</p>}
-          {tab === 'spells' && editSpell === null && !spellForm.name && <p style={{ color: '#718096', fontSize: '0.85rem' }}>Select a spell or create a new one.</p>}
+          {tab === 'items' && editItem === null && !itemForm.name && <p style={{ color: '#5a5248', fontSize: '0.85rem' }}>Select an item or create a new one.</p>}
+          {tab === 'monsters' && editMonster === null && !monsterForm.name && <p style={{ color: '#5a5248', fontSize: '0.85rem' }}>Select a monster or create a new one.</p>}
+          {tab === 'spells' && editSpell === null && !spellForm.name && <p style={{ color: '#5a5248', fontSize: '0.85rem' }}>Select a spell or create a new one.</p>}
         </div>
       </div>
     </div>

@@ -100,45 +100,45 @@ function CombatantCard({ c, isActive, onAdjustHp, onToggleCondition, onRemove, o
   const effects = getEffectsFromConditions(c.conditions);
   const effectMods = getCombinedModifiers(effects);
   const hpPct = c.maxHp ? Math.max(0, Math.min(100, (c.currentHp / c.maxHp) * 100)) : 100;
-  const hpColor = hpPct > 60 ? 'var(--dungeon-success, #48bb78)' : hpPct > 30 ? 'var(--dungeon-warning, #ecc94b)' : 'var(--dungeon-danger, #e53e3e)';
+  const hpColor = hpPct > 60 ? '#16a34a' : hpPct > 30 ? '#c9a84c' : '#a83232';
   const monsterActions = !c.isPc ? c.action : undefined;
 
   return (
     <div style={{
-      background: 'var(--dungeon-surface, #2d3748)',
-      border: isActive ? '2px solid var(--dungeon-gold, #b8860b)' : '1px solid var(--dungeon-border, #4a5568)',
+      background: '#1a1714',
+      border: isActive ? '2px solid #c9a84c' : '1px solid #3d3528',
       borderRadius: 'var(--dungeon-radius-md, 8px)',
       padding: '12px 16px',
       marginBottom: '8px',
-      boxShadow: isActive ? '0 0 12px rgba(184,134,11,0.3)' : 'none',
+      boxShadow: isActive ? '0 0 12px rgba(201,168,76,0.3)' : 'none',
       transition: 'border 0.2s, box-shadow 0.2s',
     }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--dungeon-text-dim, #718096)', fontWeight: 600, minWidth: '30px' }}>Init {c.initiative}</span>
-          <strong style={{ color: c.isPc ? 'var(--dungeon-accent, #6366f1)' : 'var(--dungeon-text, #e2e8f0)', fontSize: '1rem' }}>
+          <span style={{ fontSize: '0.8rem', color: '#5a5248', fontWeight: 600, minWidth: '30px' }}>Init {c.initiative}</span>
+          <strong style={{ color: c.isPc ? '#c9a84c' : '#e8dcc8', fontSize: '1rem' }}>
             {c.name}
-            {c.count && c.count > 1 ? <span style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.75rem', marginLeft: '6px' }}>×{c.count}</span> : null}
+            {c.count && c.count > 1 ? <span style={{ color: '#5a5248', fontSize: '0.75rem', marginLeft: '6px' }}>×{c.count}</span> : null}
           </strong>
-          {c.concentratingOn && <span style={{ color: 'var(--dungeon-warning, #ecc94b)', fontSize: '0.7rem', padding: '1px 6px', background: 'rgba(236,201,75,0.15)', borderRadius: '4px' }} title={`Concentrating: ${c.concentratingOn}`}>C</span>}
-          {effectMods.attackDisadvantage && <span style={{ color: 'var(--dungeon-danger)', fontSize: '0.7rem' }}>ATK DIS</span>}
-          {effectMods.grantAdvantageToAttackers && <span style={{ color: 'var(--dungeon-danger)', fontSize: '0.7rem' }}>VULN</span>}
+          {c.concentratingOn && <span style={{ color: '#c9a84c', fontSize: '0.7rem', padding: '1px 6px', background: 'rgba(201,168,76,0.15)', borderRadius: '4px' }} title={`Concentrating: ${c.concentratingOn}`}>C</span>}
+          {effectMods.attackDisadvantage && <span style={{ color: '#a83232', fontSize: '0.7rem' }}>ATK DIS</span>}
+          {effectMods.grantAdvantageToAttackers && <span style={{ color: '#a83232', fontSize: '0.7rem' }}>VULN</span>}
           {!!c.cr && !c.isPc && (
             <button onClick={() => setSelectedMonster(c)}
-              style={{ padding: '1px 6px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', borderRadius: '3px', cursor: 'pointer', fontSize: '0.65rem' }}>
+              style={{ padding: '1px 6px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '3px', cursor: 'pointer', fontSize: '0.65rem' }}>
               View
             </button>
           )}
         </div>
-        <button onClick={() => onRemove(c.id)} style={{ padding: '2px 8px', background: 'transparent', border: '1px solid var(--dungeon-danger, #e53e3e)', color: 'var(--dungeon-danger)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>✕</button>
+        <button onClick={() => onRemove(c.id)} style={{ padding: '2px 8px', background: 'transparent', border: '1px solid #a83232', color: '#a83232', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>✕</button>
       </div>
 
       {/* HP Bar */}
       <div style={{ marginBottom: '8px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '3px' }}>
-          <span style={{ color: 'var(--dungeon-text-dim)' }}>HP</span>
-          <span style={{ fontWeight: 'bold', color: 'var(--dungeon-text)' }}>{showHp ? `${c.currentHp}${c.maxHp ? ` / ${c.maxHp}` : ''}` : '??'}</span>
+          <span style={{ color: '#5a5248' }}>HP</span>
+          <span style={{ fontWeight: 'bold', color: '#e8dcc8' }}>{showHp ? `${c.currentHp}${c.maxHp ? ` / ${c.maxHp}` : ''}` : '??'}</span>
         </div>
         <div style={{ width: '100%', height: '8px', background: 'rgba(0,0,0,0.3)', borderRadius: '4px', overflow: 'hidden' }}>
           <div style={{ width: `${hpPct}%`, height: '100%', background: hpColor, borderRadius: '4px', transition: 'width 0.3s' }} />
@@ -155,11 +155,11 @@ function CombatantCard({ c, isActive, onAdjustHp, onToggleCondition, onRemove, o
           <button className="touch-target" onClick={() => onAdjustHp(c.id, 5)} style={hpBtnStyle(5)}>+5</button>
         </div>
         <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-          {c.ac != null && <span style={{ fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>AC {c.ac}</span>}
+          {c.ac != null && <span style={{ fontSize: '0.75rem', color: '#5a5248' }}>AC {c.ac}</span>}
           {!c.isPc && (
             <>
               <button onClick={() => onSetConcentration(c.id)}
-                style={{ padding: '2px 8px', background: c.concentratingOn ? 'var(--dungeon-warning)' : 'transparent', border: `1px solid ${c.concentratingOn ? 'var(--dungeon-warning)' : 'var(--dungeon-border)'}`, color: c.concentratingOn ? '#000' : 'var(--dungeon-text)', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
+                style={{ padding: '2px 8px', background: c.concentratingOn ? '#c9a84c' : 'transparent', border: `1px solid ${c.concentratingOn ? '#c9a84c' : '#3d3528'}`, color: c.concentratingOn ? '#000' : '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.65rem' }}>
                 C
               </button>
             </>
@@ -176,9 +176,9 @@ function CombatantCard({ c, isActive, onAdjustHp, onToggleCondition, onRemove, o
             <button key={cond} onClick={() => onToggleCondition(c.id, cond)}
               style={{
                 padding: '2px 8px', fontSize: '0.65rem', borderRadius: '4px', cursor: 'pointer',
-                background: isActive ? 'var(--dungeon-accent, #6366f1)' : 'var(--dungeon-bg, #1a202c)',
-                border: `1px solid ${isActive ? 'var(--dungeon-accent)' : 'var(--dungeon-border)'}`,
-                color: 'var(--dungeon-text)',
+                background: isActive ? '#c9a84c' : '#0c0e14',
+                border: `1px solid ${isActive ? '#c9a84c' : '#3d3528'}`,
+                color: '#e8dcc8',
                 fontWeight: hasEffect ? 'bold' : 'normal',
               }}>
               {cond}
@@ -190,9 +190,9 @@ function CombatantCard({ c, isActive, onAdjustHp, onToggleCondition, onRemove, o
       {/* Damage type tags */}
       {(c.resist?.length || c.immune?.length || c.vuln?.length) ? (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '8px', fontSize: '0.65rem' }}>
-          {c.resist?.map((t: string) => <span key={`r-${t}`} style={{ padding: '1px 6px', background: 'rgba(72,187,120,0.15)', color: '#48bb78', borderRadius: '4px' }}>R {t}</span>)}
-          {c.immune?.map((t: string) => <span key={`i-${t}`} style={{ padding: '1px 6px', background: 'rgba(160,174,192,0.15)', color: '#a0aec0', borderRadius: '4px' }}>I {t}</span>)}
-          {c.vuln?.map((t: string) => <span key={`v-${t}`} style={{ padding: '1px 6px', background: 'rgba(252,129,129,0.15)', color: '#fc8181', borderRadius: '4px' }}>V {t}</span>)}
+          {c.resist?.map((t: string) => <span key={`r-${t}`} style={{ padding: '1px 6px', background: 'rgba(22,163,74,0.15)', color: '#16a34a', borderRadius: '4px' }}>R {t}</span>)}
+          {c.immune?.map((t: string) => <span key={`i-${t}`} style={{ padding: '1px 6px', background: 'rgba(138,126,106,0.15)', color: '#8a7e6a', borderRadius: '4px' }}>I {t}</span>)}
+          {c.vuln?.map((t: string) => <span key={`v-${t}`} style={{ padding: '1px 6px', background: 'rgba(168,50,50,0.15)', color: '#d97706', borderRadius: '4px' }}>V {t}</span>)}
         </div>
       ) : null}
 
@@ -200,15 +200,15 @@ function CombatantCard({ c, isActive, onAdjustHp, onToggleCondition, onRemove, o
       {monsterActions && monsterActions.length > 0 && (
         <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
           {monsterActions.slice(0, 4).map((a, ai) => (
-            <button key={ai} onClick={() => setActionRollResult(rollActionSimple(a).rollResult)} style={{ padding: '2px 8px', fontSize: '0.65rem', background: 'var(--dungeon-accent, #6366f1)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>
+            <button key={ai} onClick={() => setActionRollResult(rollActionSimple(a).rollResult)} style={{ padding: '2px 8px', fontSize: '0.65rem', background: '#c9a84c', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>
               {a.name}
             </button>
           ))}
-          {monsterActions.length > 4 && <span style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.65rem', alignSelf: 'center' }}>+{monsterActions.length - 4}</span>}
+          {monsterActions.length > 4 && <span style={{ color: '#5a5248', fontSize: '0.65rem', alignSelf: 'center' }}>+{monsterActions.length - 4}</span>}
         </div>
       )}
       {actionRollResult && (
-        <div style={{ marginTop: '6px', padding: '4px 8px', background: 'rgba(99,102,241,0.1)', borderRadius: '4px', fontSize: '0.7rem', color: 'var(--dungeon-text, #e2e8f0)', fontFamily: 'monospace' }}>
+        <div style={{ marginTop: '6px', padding: '4px 8px', background: 'rgba(201,168,76,0.1)', borderRadius: '4px', fontSize: '0.7rem', color: '#e8dcc8', fontFamily: 'monospace' }}>
           {actionRollResult}
         </div>
       )}
@@ -225,7 +225,7 @@ function hpBtnStyle(delta: number) {
     borderRadius: 'var(--dungeon-radius-sm, 4px)',
     border: 'none',
     cursor: 'pointer',
-    background: isDamage ? 'var(--dungeon-danger, #e53e3e)' : 'var(--dungeon-success, #48bb78)',
+    background: isDamage ? '#a83232' : '#16a34a',
     color: 'white',
     opacity: 0.85,
   };
@@ -415,14 +415,14 @@ export default function CombatTracker() {
 
   const monsterXp = initiativeList.filter(c => !c.isPc && c.currentHp > 0).reduce((sum, c) => sum + getCrXp(c.cr), 0);
   const diff = estimateDifficulty(monsterXp, partySize, avgLevel);
-  const diffColors: Record<string, string> = { Easy: '#48bb78', Medium: '#ecc94b', Hard: '#ed8936', Deadly: '#e53e3e' };
+  const diffColors: Record<string, string> = { Easy: '#16a34a', Medium: '#c9a84c', Hard: '#d97706', Deadly: '#a83232' };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: 'var(--dungeon-bg, #1a202c)', color: 'var(--dungeon-text, #e2e8f0)', gap: 0, overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#0c0e14', color: '#e8dcc8', gap: 0, overflow: 'hidden' }}>
       {/* Mobile browser toggle */}
       <div style={{ position: 'fixed', bottom: '16px', left: '16px', zIndex: 50 }}>
         <button onClick={() => setShowBrowser(!showBrowser)}
-          style={{ padding: '10px 16px', background: 'var(--dungeon-accent, #6366f1)', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem', boxShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
+          style={{ padding: '10px 16px', background: '#c9a84c', border: 'none', color: 'white', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.8rem', boxShadow: '0 2px 10px rgba(0,0,0,0.4)' }}>
           {showBrowser ? '✕ Browser' : '☰ Browser'}
         </button>
       </div>
@@ -433,40 +433,40 @@ export default function CombatTracker() {
         minWidth: showBrowser ? '320px' : '0px',
         overflow: 'hidden',
         transition: 'width 0.25s, min-width 0.25s',
-        background: 'var(--dungeon-surface, #2d3748)',
-        borderRight: showBrowser ? '1px solid var(--dungeon-border)' : 'none',
+        background: '#1a1714',
+        borderRight: showBrowser ? '1px solid #3d3528' : 'none',
         display: 'flex', flexDirection: 'column',
       }}>
         <div style={{ padding: '12px', flexShrink: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <h2 style={{ margin: 0, fontSize: '1rem', color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif' }}>Monster Browser</h2>
+            <h2 style={{ margin: 0, fontSize: '1rem', color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>Monster Browser</h2>
             <div style={{ display: 'flex', gap: '4px' }}>
-              <button onClick={() => setRollMode('auto')} style={{ padding: '3px 8px', fontSize: '0.65rem', background: rollMode === 'auto' ? 'var(--dungeon-accent)' : 'transparent', border: `1px solid ${rollMode === 'auto' ? 'var(--dungeon-accent)' : 'var(--dungeon-border)'}`, color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Auto</button>
-              <button onClick={() => setRollMode('manual')} style={{ padding: '3px 8px', fontSize: '0.65rem', background: rollMode === 'manual' ? 'var(--dungeon-accent)' : 'transparent', border: `1px solid ${rollMode === 'manual' ? 'var(--dungeon-accent)' : 'var(--dungeon-border)'}`, color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Manual</button>
+              <button onClick={() => setRollMode('auto')} style={{ padding: '3px 8px', fontSize: '0.65rem', background: rollMode === 'auto' ? '#c9a84c' : 'transparent', border: `1px solid ${rollMode === 'auto' ? '#c9a84c' : '#3d3528'}`, color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Auto</button>
+              <button onClick={() => setRollMode('manual')} style={{ padding: '3px 8px', fontSize: '0.65rem', background: rollMode === 'manual' ? '#c9a84c' : 'transparent', border: `1px solid ${rollMode === 'manual' ? '#c9a84c' : '#3d3528'}`, color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Manual</button>
             </div>
           </div>
           <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search monsters..."
-            style={{ width: '100%', padding: '8px 10px', background: 'var(--dungeon-bg, #1a202c)', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text)', borderRadius: '6px', fontSize: '0.85rem', marginBottom: '8px' }} />
+            style={{ width: '100%', padding: '8px 10px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '6px', fontSize: '0.85rem', marginBottom: '8px' }} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px', marginBottom: '4px' }}>
             {alphabet.map(letter => (
               <button key={letter} onClick={() => setFilter(letter)}
-                style={{ padding: '3px 5px', fontSize: '0.6rem', background: filter === letter ? 'var(--dungeon-accent)' : 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '3px', cursor: 'pointer', flex: letter === 'All' ? '0 0 100%' : '0 0 auto', textAlign: 'center', marginBottom: letter === 'All' ? '4px' : 0 }}>
+                style={{ padding: '3px 5px', fontSize: '0.6rem', background: filter === letter ? '#c9a84c' : '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '3px', cursor: 'pointer', flex: letter === 'All' ? '0 0 100%' : '0 0 auto', textAlign: 'center', marginBottom: letter === 'All' ? '4px' : 0 }}>
                 {letter}
               </button>
             ))}
           </div>
         </div>
         <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px 12px' }}>
-          {searchResults.length === 0 && <p style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.85rem', textAlign: 'center', padding: '20px' }}>No monsters found.</p>}
+          {searchResults.length === 0 && <p style={{ color: '#5a5248', fontSize: '0.85rem', textAlign: 'center', padding: '20px' }}>No monsters found.</p>}
           {searchResults.map((m, i) => (
-            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: 'var(--dungeon-bg)', marginBottom: '4px', borderRadius: '6px', border: '1px solid var(--dungeon-border)' }}>
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 10px', background: '#0c0e14', marginBottom: '4px', borderRadius: '6px', border: '1px solid #3d3528' }}>
               <div>
                 <div style={{ fontSize: '0.85rem', fontWeight: 600 }}>{m.name}</div>
-                <div style={{ fontSize: '0.65rem', color: 'var(--dungeon-text-dim)' }}>CR {getCrNumber(m.cr)} · {m.hp?.average || '?'} HP</div>
+                <div style={{ fontSize: '0.65rem', color: '#5a5248' }}>CR {getCrNumber(m.cr)} · {m.hp?.average || '?'} HP</div>
               </div>
               <div style={{ display: 'flex', gap: '4px' }}>
-                <button onClick={() => setSelectedMonster(m)} style={{ padding: '4px 8px', fontSize: '0.65rem', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', borderRadius: '4px', cursor: 'pointer' }}>View</button>
-                <button onClick={() => addToInitiative(m)} style={{ padding: '4px 10px', fontSize: '0.65rem', background: 'var(--dungeon-success, #48bb78)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Add</button>
+                <button onClick={() => setSelectedMonster(m)} style={{ padding: '4px 8px', fontSize: '0.65rem', background: '#0c0e14', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '4px', cursor: 'pointer' }}>View</button>
+                <button onClick={() => addToInitiative(m)} style={{ padding: '4px 10px', fontSize: '0.65rem', background: '#16a34a', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Add</button>
               </div>
             </div>
           ))}
@@ -476,13 +476,13 @@ export default function CombatTracker() {
       {/* Main initiative area */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Encounter header bar */}
-        <div style={{ padding: '12px 20px', background: 'var(--dungeon-surface, #2d3748)', borderBottom: '1px solid var(--dungeon-border)', flexShrink: 0 }}>
+        <div style={{ padding: '12px 20px', background: '#1a1714', borderBottom: '1px solid #3d3528', flexShrink: 0 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h1 style={{ margin: 0, fontFamily: 'serif', fontSize: '1.3rem', color: 'var(--dungeon-gold, #b8860b)' }}>Combat</h1>
+              <h1 style={{ margin: 0, fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', fontSize: '1.3rem', color: '#c9a84c' }}>Combat</h1>
               {initiativeList.length > 0 && (
                 <>
-                  <span style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.8rem' }}>
+                  <span style={{ color: '#5a5248', fontSize: '0.8rem' }}>
                     {initiativeList.length} combatants · Turn {turnIndex + 1}
                   </span>
                   <span style={{ color: diffColors[diff] || 'white', fontWeight: 'bold', fontSize: '0.8rem' }}>{monsterXp > 0 ? `${diff} (${monsterXp} XP)` : ''}</span>
@@ -490,22 +490,22 @@ export default function CombatTracker() {
               )}
             </div>
             <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-              <label style={{ fontSize: '0.7rem', color: 'var(--dungeon-text-dim)' }}>Party:</label>
-              <input type="number" min={1} max={20} value={partySize} onChange={e => setPartySize(Math.max(1, parseInt(e.target.value) || 1))} style={{ width: '40px', padding: '3px 6px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
-              <label style={{ fontSize: '0.7rem', color: 'var(--dungeon-text-dim)' }}>Lvl:</label>
-              <input type="number" min={1} max={20} value={avgLevel} onChange={e => setAvgLevel(Math.max(1, parseInt(e.target.value) || 1))} style={{ width: '36px', padding: '3px 6px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
-              <div style={{ width: '1px', height: '20px', background: 'var(--dungeon-border)' }} />
-              <button onClick={() => setShowPcForm(true)} style={{ padding: '6px 12px', background: 'var(--dungeon-accent, #6366f1)', border: 'none', color: 'white', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>+PC</button>
-              <button onClick={() => setShowHp((v) => !v)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: showHp ? 'white' : 'var(--dungeon-text-dim)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}>{showHp ? 'HP' : '??'}</button>
-              <button onClick={nextTurn} style={{ padding: '6px 16px', background: 'var(--dungeon-gold, #b8860b)', border: 'none', color: '#000', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>Next Turn →</button>
-              <button onClick={saveEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Save</button>
-              <button onClick={loadEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Load</button>
+              <label style={{ fontSize: '0.7rem', color: '#5a5248' }}>Party:</label>
+              <input type="number" min={1} max={20} value={partySize} onChange={e => setPartySize(Math.max(1, parseInt(e.target.value) || 1))} style={{ width: '40px', padding: '3px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
+              <label style={{ fontSize: '0.7rem', color: '#5a5248' }}>Lvl:</label>
+              <input type="number" min={1} max={20} value={avgLevel} onChange={e => setAvgLevel(Math.max(1, parseInt(e.target.value) || 1))} style={{ width: '36px', padding: '3px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
+              <div style={{ width: '1px', height: '20px', background: '#3d3528' }} />
+              <button onClick={() => setShowPcForm(true)} style={{ padding: '6px 12px', background: '#c9a84c', border: 'none', color: 'white', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>+PC</button>
+              <button onClick={() => setShowHp((v) => !v)} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #3d3528', color: showHp ? 'white' : '#5a5248', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem' }}>{showHp ? 'HP' : '??'}</button>
+              <button onClick={nextTurn} style={{ padding: '6px 16px', background: '#c9a84c', border: 'none', color: '#000', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>Next Turn →</button>
+              <button onClick={saveEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Save</button>
+              <button onClick={loadEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Load</button>
             </div>
           </div>
 
           {/* Last roll */}
           {lastRoll && (
-            <div style={{ marginTop: '8px', padding: '6px 12px', background: 'var(--dungeon-accent)', borderRadius: '6px', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ marginTop: '8px', padding: '6px 12px', background: '#c9a84c', borderRadius: '6px', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>{lastRoll}</span>
               <button onClick={() => setLastRoll(null)} style={{ background: 'transparent', border: 'none', color: 'white', cursor: 'pointer', fontSize: '0.8rem' }}>×</button>
             </div>
@@ -513,24 +513,24 @@ export default function CombatTracker() {
 
           {/* Damage Calculator */}
           <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>Damage:</span>
-            <input type="number" value={damageInput.amount} onChange={(e) => setDamageInput({ ...damageInput, amount: Number(e.target.value) })} style={{ width: '60px', padding: '4px 6px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
-            <input value={damageInput.type} onChange={(e) => setDamageInput({ ...damageInput, type: e.target.value })} style={{ width: '80px', padding: '4px 6px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} placeholder="fire" />
-            <select value={damageInput.targetId} onChange={(e) => setDamageInput({ ...damageInput, targetId: Number(e.target.value) })} style={{ padding: '4px 6px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }}>
+            <span style={{ fontSize: '0.75rem', color: '#5a5248' }}>Damage:</span>
+            <input type="number" value={damageInput.amount} onChange={(e) => setDamageInput({ ...damageInput, amount: Number(e.target.value) })} style={{ width: '60px', padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} />
+            <input value={damageInput.type} onChange={(e) => setDamageInput({ ...damageInput, type: e.target.value })} style={{ width: '80px', padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }} placeholder="fire" />
+            <select value={damageInput.targetId} onChange={(e) => setDamageInput({ ...damageInput, targetId: Number(e.target.value) })} style={{ padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.75rem' }}>
               {initiativeList.map((c) => (<option key={c.id} value={c.id}>{c.name}</option>))}
             </select>
-            <button onClick={applyTypedDamage} style={{ padding: '4px 12px', background: 'var(--dungeon-danger)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Apply</button>
+            <button onClick={applyTypedDamage} style={{ padding: '4px 12px', background: '#a83232', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Apply</button>
             <button onClick={() => {
               const deadXp = initiativeList.filter(c => !c.isPc && c.currentHp <= 0).reduce((sum, c) => sum + getCrXp(c.cr), 0);
               setXpAward(deadXp > 0 ? { total: deadXp, perPlayer: Math.round(deadXp / Math.max(1, partySize)) } : null);
-            }} style={{ padding: '4px 12px', background: 'var(--dungeon-warning, #ecc94b)', border: 'none', color: '#000', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>XP Award</button>
-            {damageResult && <span style={{ color: 'var(--dungeon-warning)', fontSize: '0.75rem' }}>{damageResult}</span>}
+            }} style={{ padding: '4px 12px', background: '#c9a84c', border: 'none', color: '#000', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>XP Award</button>
+            {damageResult && <span style={{ color: '#c9a84c', fontSize: '0.75rem' }}>{damageResult}</span>}
           </div>
 
           {xpAward && (
-            <div style={{ marginTop: '6px', padding: '6px 12px', background: 'var(--dungeon-bg)', borderRadius: '6px', color: 'var(--dungeon-warning)', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between' }}>
+            <div style={{ marginTop: '6px', padding: '6px 12px', background: '#0c0e14', borderRadius: '6px', color: '#c9a84c', fontSize: '0.8rem', display: 'flex', justifyContent: 'space-between' }}>
               <span>Defeated: <strong>{xpAward.total} XP</strong> ({xpAward.perPlayer} per player)</span>
-              <button onClick={() => setXpAward(null)} style={{ background: 'none', border: 'none', color: 'var(--dungeon-text-dim)', cursor: 'pointer' }}>×</button>
+              <button onClick={() => setXpAward(null)} style={{ background: 'none', border: 'none', color: '#5a5248', cursor: 'pointer' }}>×</button>
             </div>
           )}
         </div>
@@ -538,7 +538,7 @@ export default function CombatTracker() {
         {/* Initiative list */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '12px 20px' }}>
           {initiativeList.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--dungeon-text-dim)' }}>
+            <div style={{ textAlign: 'center', padding: '60px 20px', color: '#5a5248' }}>
               <p style={{ fontSize: '1.1rem', marginBottom: '8px' }}>No combatants yet.</p>
               <p style={{ fontSize: '0.85rem' }}>Add monsters from the browser or use +PC to add party members.</p>
             </div>
@@ -552,24 +552,24 @@ export default function CombatTracker() {
       {/* PC Form Modal */}
       {showPcForm && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div style={{ background: 'var(--dungeon-surface, #2d3748)', color: 'var(--dungeon-text)', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '340px', border: '2px solid var(--dungeon-gold)' }}>
-            <h2 style={{ color: 'var(--dungeon-gold)', marginBottom: '16px', fontFamily: 'serif' }}>Add Party Member</h2>
+          <div style={{ background: '#1a1714', color: '#e8dcc8', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '340px', border: '2px solid #c9a84c' }}>
+            <h2 style={{ color: '#c9a84c', marginBottom: '16px', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>Add Party Member</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <input placeholder="Name" value={pcForm.name} onChange={(e) => setPcForm({ ...pcForm, name: e.target.value })} style={{ padding: '8px 10px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} />
+              <input placeholder="Name" value={pcForm.name} onChange={(e) => setPcForm({ ...pcForm, name: e.target.value })} style={{ padding: '8px 10px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} />
               <div style={{ display: 'flex', gap: '8px' }}>
-                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>AC
-                  <input type="number" value={pcForm.ac} onChange={(e) => setPcForm({ ...pcForm, ac: Number(e.target.value) })} style={{ padding: '6px 8px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
+                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: '#5a5248' }}>AC
+                  <input type="number" value={pcForm.ac} onChange={(e) => setPcForm({ ...pcForm, ac: Number(e.target.value) })} style={{ padding: '6px 8px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
                 </label>
-                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>HP
-                  <input type="number" value={pcForm.hp} onChange={(e) => setPcForm({ ...pcForm, hp: Number(e.target.value) })} style={{ padding: '6px 8px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
+                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: '#5a5248' }}>HP
+                  <input type="number" value={pcForm.hp} onChange={(e) => setPcForm({ ...pcForm, hp: Number(e.target.value) })} style={{ padding: '6px 8px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
                 </label>
-                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>Init
-                  <input type="number" value={pcForm.init} onChange={(e) => setPcForm({ ...pcForm, init: Number(e.target.value) })} style={{ padding: '6px 8px', background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
+                <label style={{ flex: 1, display: 'flex', flexDirection: 'column', fontSize: '0.75rem', color: '#5a5248' }}>Init
+                  <input type="number" value={pcForm.init} onChange={(e) => setPcForm({ ...pcForm, init: Number(e.target.value) })} style={{ padding: '6px 8px', background: '#0c0e14', border: '1px solid #3d3528', color: 'white', borderRadius: '4px', fontSize: '0.85rem', marginTop: '2px' }} />
                 </label>
               </div>
               <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                <button onClick={addPc} style={{ flex: 1, padding: '10px', background: 'var(--dungeon-success)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Add</button>
-                <button onClick={() => setShowPcForm(false)} style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text-dim)', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+                <button onClick={addPc} style={{ flex: 1, padding: '10px', background: '#16a34a', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Add</button>
+                <button onClick={() => setShowPcForm(false)} style={{ flex: 1, padding: '10px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
               </div>
             </div>
           </div>
@@ -579,14 +579,14 @@ export default function CombatTracker() {
       {/* Concentration Prompt */}
       {concSavePrompt && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 200 }}>
-          <div style={{ background: 'var(--dungeon-surface)', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '360px', border: '2px solid var(--dungeon-warning)' }}>
-            <h3 style={{ color: 'var(--dungeon-warning)', margin: '0 0 8px' }}>Concentration Check</h3>
+          <div style={{ background: '#1a1714', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '360px', border: '2px solid #c9a84c' }}>
+            <h3 style={{ color: '#c9a84c', margin: '0 0 8px' }}>Concentration Check</h3>
             {(() => {
               const target = initiativeList.find(c => c.id === concSavePrompt.combatantId);
               return (
                 <>
                   <p style={{ fontSize: '0.9rem' }}>{target?.name || 'Unknown'} took <strong>{concSavePrompt.damage}</strong> damage while concentrating on <strong>{target?.concentratingOn || 'a spell'}</strong>.</p>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--dungeon-text-dim)' }}>Constitution save DC {concSavePrompt.dc}</p>
+                  <p style={{ fontSize: '0.85rem', color: '#5a5248' }}>Constitution save DC {concSavePrompt.dc}</p>
                   <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                     <button onClick={() => {
                       const result = rollD20WithAdvantage('normal', 0, 'Concentration save', 'concentration');
@@ -594,11 +594,11 @@ export default function CombatTracker() {
                       setLastRoll(`Concentration DC ${concSavePrompt.dc}: rolled ${result.total} — ${success ? 'Maintained' : 'Lost!'}`);
                       if (!success) setInitiativeList(prev => prev.map(c => c.id === concSavePrompt.combatantId ? { ...c, concentratingOn: null } : c));
                       setConcSavePrompt(null);
-                    }} style={{ flex: 1, padding: '10px', background: 'var(--dungeon-accent)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Auto-Roll</button>
+                    }} style={{ flex: 1, padding: '10px', background: '#c9a84c', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Auto-Roll</button>
                     <button onClick={() => { setLastRoll(`Concentration lost`); setInitiativeList(prev => prev.map(c => c.id === concSavePrompt.combatantId ? { ...c, concentratingOn: null } : c)); setConcSavePrompt(null); }}
-                      style={{ padding: '10px', background: 'var(--dungeon-danger)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Lost</button>
+                      style={{ padding: '10px', background: '#a83232', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer' }}>Lost</button>
                     <button onClick={() => { setLastRoll(`Concentration held`); setConcSavePrompt(null); }}
-                      style={{ padding: '10px', background: 'transparent', border: '1px solid var(--dungeon-border)', color: 'var(--dungeon-text)', borderRadius: '4px', cursor: 'pointer' }}>Held</button>
+                      style={{ padding: '10px', background: 'transparent', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer' }}>Held</button>
                   </div>
                 </>
               );
@@ -610,13 +610,13 @@ export default function CombatTracker() {
       {/* Monster Detail Modal */}
       {selectedMonster && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div style={{ background: 'var(--dungeon-surface)', color: 'var(--dungeon-text)', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid var(--dungeon-gold)' }}>
-            <h2 style={{ color: 'var(--dungeon-gold)', marginBottom: '4px' }}>{selectedMonster.name}</h2>
-            <p style={{ fontStyle: 'italic', fontSize: '0.85rem', color: 'var(--dungeon-text-dim)', marginBottom: '12px' }}>
+          <div style={{ background: '#1a1714', color: '#e8dcc8', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #c9a84c' }}>
+            <h2 style={{ color: '#c9a84c', marginBottom: '4px' }}>{selectedMonster.name}</h2>
+            <p style={{ fontStyle: 'italic', fontSize: '0.85rem', color: '#5a5248', marginBottom: '12px' }}>
               {selectedMonster.size?.[0] || ''} {(() => { const t = selectedMonster.type; return typeof t === 'string' ? t : t?.type || ''; })()}
               {(() => { const a = selectedMonster.alignment; if (!a) return ''; return `, ${Array.isArray(a) ? a.join(', ') : a}`; })()}
             </p>
-            <div style={{ border: '1px solid var(--dungeon-gold)', padding: '10px', borderRadius: '4px', marginBottom: '12px' }}>
+            <div style={{ border: '1px solid #c9a84c', padding: '10px', borderRadius: '4px', marginBottom: '12px' }}>
               <p style={{ margin: '2px 0' }}><strong>AC:</strong> {(() => { const ac = selectedMonster.ac; if (!ac || !ac[0]) return '—'; const first = ac[0]; const val = typeof first === 'number' ? first : (first.ac ?? first.value); if (val === undefined) return '—'; return first.from ? `${val} (${first.from.join(', ')})` : `${val}`; })()}</p>
               <p style={{ margin: '2px 0' }}><strong>HP:</strong> {selectedMonster.hp?.average || '—'}{selectedMonster.hp?.formula ? ` (${selectedMonster.hp.formula})` : ''}</p>
               <p style={{ margin: '2px 0' }}><strong>Speed:</strong> {(() => { const s = selectedMonster.speed; if (!s) return '—'; if (typeof s === 'string') return s; if (typeof s === 'object') return Object.entries(s).map(([k, v]) => `${k} ${v}`).join(', '); return '—'; })()}</p>
@@ -626,10 +626,10 @@ export default function CombatTracker() {
                 const key = abbr.toLowerCase().slice(0, 3);
                 const val = selectedMonster[key];
                 const mod = val != null ? Math.floor((val - 10) / 2) : null;
-                return (<div key={abbr} style={{ background: 'var(--dungeon-bg)', padding: '6px 2px', borderRadius: '4px' }}>
-                  <div style={{ fontWeight: 'bold', fontSize: '0.7rem', color: 'var(--dungeon-gold)' }}>{abbr}</div>
+                return (<div key={abbr} style={{ background: '#0c0e14', padding: '6px 2px', borderRadius: '4px' }}>
+                  <div style={{ fontWeight: 'bold', fontSize: '0.7rem', color: '#c9a84c' }}>{abbr}</div>
                   <div style={{ fontSize: '1rem' }}>{val ?? '—'}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--dungeon-text-dim)' }}>{mod != null ? `${mod >= 0 ? '+' : ''}${mod}` : '—'}</div>
+                  <div style={{ fontSize: '0.75rem', color: '#5a5248' }}>{mod != null ? `${mod >= 0 ? '+' : ''}${mod}` : '—'}</div>
                 </div>);
               })}
             </div>
@@ -637,10 +637,10 @@ export default function CombatTracker() {
             {(() => { const s = selectedMonster.skill; if (!s || !Object.keys(s).length) return null; return <p style={{ margin: '4px 0', fontSize: '0.85rem' }}><strong>Skills:</strong> {Object.entries(s).map(([k, v]) => `${k} ${v}`).join(', ')}</p>; })()}
             {(() => { const parts: string[] = []; if (selectedMonster.resist?.length) parts.push(`Resistances: ${selectedMonster.resist.join(', ')}`); if (selectedMonster.immune?.length) parts.push(`Immunities: ${selectedMonster.immune.join(', ')}`); if (selectedMonster.vuln?.length) parts.push(`Vulnerabilities: ${selectedMonster.vuln.join(', ')}`); if (selectedMonster.conditionImmune?.length) parts.push(`Condition Immunities: ${selectedMonster.conditionImmune.join(', ')}`); if (!parts.length) return null; return parts.map((p, i) => <p key={i} style={{ margin: '4px 0', fontSize: '0.85rem' }}><strong>{p.split(': ')[0]}:</strong> {p.split(': ')[1]}</p>); })()}
             <p style={{ margin: '4px 0', fontSize: '0.85rem' }}><strong>CR:</strong> {typeof selectedMonster.cr === 'string' ? selectedMonster.cr : selectedMonster.cr?.cr || selectedMonster.cr || '—'}</p>
-            <hr style={{ borderColor: 'var(--dungeon-border)' }} />
-            {selectedMonster.trait?.map((t: { name: string; entries?: unknown[] }, i: number) => (<div key={`trait-${i}`} style={{ margin: '10px 0' }}><strong style={{ color: 'var(--dungeon-gold)' }}>{cleanString(t.name)}.</strong><div style={{ fontSize: '0.85rem', marginTop: '2px' }}>{formatEntries(t.entries)}</div></div>))}
-            {selectedMonster.action?.map((a: { name: string; entries?: unknown[] }, i: number) => (<div key={`action-${i}`} style={{ margin: '10px 0' }}><button onClick={() => rollAction(a)} style={{ marginRight: '10px', padding: '4px 10px', background: 'var(--dungeon-accent)', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', float: 'right' }}>Roll</button><strong style={{ color: 'var(--dungeon-gold)' }}>{cleanString(a.name)}.</strong><div style={{ fontSize: '0.85rem', marginTop: '2px' }}>{formatEntries(a.entries)}</div></div>))}
-            <button onClick={() => setSelectedMonster(null)} style={{ marginTop: '20px', padding: '10px', width: '100%', background: 'var(--dungeon-gold)', border: 'none', color: '#000', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Close</button>
+            <hr style={{ borderColor: '#3d3528' }} />
+            {selectedMonster.trait?.map((t: { name: string; entries?: unknown[] }, i: number) => (<div key={`trait-${i}`} style={{ margin: '10px 0' }}><strong style={{ color: '#c9a84c' }}>{cleanString(t.name)}.</strong><div style={{ fontSize: '0.85rem', marginTop: '2px' }}>{formatEntries(t.entries)}</div></div>))}
+            {selectedMonster.action?.map((a: { name: string; entries?: unknown[] }, i: number) => (<div key={`action-${i}`} style={{ margin: '10px 0' }}><button onClick={() => rollAction(a)} style={{ marginRight: '10px', padding: '4px 10px', background: '#c9a84c', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', float: 'right' }}>Roll</button><strong style={{ color: '#c9a84c' }}>{cleanString(a.name)}.</strong><div style={{ fontSize: '0.85rem', marginTop: '2px' }}>{formatEntries(a.entries)}</div></div>))}
+            <button onClick={() => setSelectedMonster(null)} style={{ marginTop: '20px', padding: '10px', width: '100%', background: '#c9a84c', border: 'none', color: '#000', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>Close</button>
           </div>
         </div>
       )}

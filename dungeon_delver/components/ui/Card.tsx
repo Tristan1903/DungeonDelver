@@ -1,57 +1,103 @@
-'use client';
-import { ReactNode, useState } from 'react';
+import * as React from "react"
 
-type CardVariant = 'default' | 'gold' | 'accent' | 'danger' | 'success';
+import { cn } from "@/lib/utils"
 
-interface CardProps {
-  children: ReactNode;
-  variant?: CardVariant;
-  style?: React.CSSProperties;
-  onClick?: () => void;
-  className?: string;
-  hoverable?: boolean;
-}
-
-const borderColors: Record<CardVariant, string> = {
-  default: 'var(--dungeon-border, #4a5568)',
-  gold: 'var(--dungeon-gold, #b8860b)',
-  accent: 'var(--dungeon-accent, #6366f1)',
-  danger: 'var(--dungeon-danger, #e53e3e)',
-  success: 'var(--dungeon-success, #48bb78)',
-};
-
-export function Card({ children, variant = 'default', style, onClick, className, hoverable }: CardProps) {
-  const [hovered, setHovered] = useState(false);
+function Card({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
   return (
     <div
-      className={className}
-      onClick={onClick}
-      onMouseEnter={() => hoverable && setHovered(true)}
-      onMouseLeave={() => hoverable && setHovered(false)}
-      style={{
-        background: 'var(--dungeon-surface, #2d3748)',
-        border: `1px solid ${hoverable && hovered ? 'var(--dungeon-accent, #6366f1)' : borderColors[variant]}`,
-        borderRadius: 'var(--dungeon-radius-md, 8px)',
-        padding: '16px',
-        cursor: onClick ? 'pointer' : undefined,
-        transition: 'border-color 0.15s, box-shadow 0.15s',
-        ...(hoverable && hovered ? { boxShadow: '0 0 8px rgba(99,102,241,0.2)' } : {}),
-        ...style,
-      }}
-    >
-      {children}
-    </div>
-  );
+      data-slot="card"
+      data-size={size}
+      className={cn(
+        "group/card flex flex-col gap-4 overflow-hidden rounded-xl bg-card py-4 text-sm text-card-foreground ring-1 ring-foreground/10 has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0 data-[size=sm]:gap-3 data-[size=sm]:py-3 data-[size=sm]:has-data-[slot=card-footer]:pb-0 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function CardHeader({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
-  return <div style={{ marginBottom: '12px', ...style }}>{children}</div>;
+function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-header"
+      className={cn(
+        "group/card-header @container/card-header grid auto-rows-min items-start gap-1 rounded-t-xl px-4 group-data-[size=sm]/card:px-3 has-data-[slot=card-action]:grid-cols-[1fr_auto] has-data-[slot=card-description]:grid-rows-[auto_auto] [.border-b]:pb-4 group-data-[size=sm]/card:[.border-b]:pb-3",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function CardBody({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
-  return <div style={style}>{children}</div>;
+function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-title"
+      className={cn(
+        "font-heading text-base leading-snug font-medium group-data-[size=sm]/card:text-sm",
+        className
+      )}
+      {...props}
+    />
+  )
 }
 
-export function CardFooter({ children, style }: { children: ReactNode; style?: React.CSSProperties }) {
-  return <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--dungeon-border, #4a5568)', ...style }}>{children}</div>;
+function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-description"
+      className={cn("text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-action"
+      className={cn(
+        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function CardContent({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-content"
+      className={cn("px-4 group-data-[size=sm]/card:px-3", className)}
+      {...props}
+    />
+  )
+}
+
+function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="card-footer"
+      className={cn(
+        "flex items-center rounded-b-xl border-t bg-muted/50 p-4 group-data-[size=sm]/card:p-3",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export {
+  Card,
+  CardHeader,
+  CardFooter,
+  CardTitle,
+  CardAction,
+  CardDescription,
+  CardContent,
 }

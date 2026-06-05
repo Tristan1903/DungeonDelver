@@ -228,12 +228,12 @@ export default function SessionPage() {
   };
 
   return (
-    <div style={{ padding: '2rem', color: 'white', display: 'flex', gap: '20px', minHeight: 'calc(100vh - 4rem)' }}>
+    <div style={{ padding: '2rem', color: '#e8dcc8', display: 'flex', gap: '20px', minHeight: 'calc(100vh - 4rem)' }}>
       {/* Session sidebar */}
       <div style={{ width: '240px', flexShrink: 0 }}>
-        <Link href="/dm" style={{ color: '#a0aec0', display: 'block', marginBottom: '12px' }}>← DM Hub</Link>
-        <h2 style={{ color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif', fontSize: '1rem', margin: '0 0 10px' }}>Sessions</h2>
-        <button onClick={createSession} style={{ width: '100%', padding: '8px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', marginBottom: '10px', fontSize: '0.85rem' }}>
+        <Link href="/dm" style={{ color: '#8a7e6a', display: 'block', marginBottom: '12px' }}>← DM Hub</Link>
+        <h2 style={{ color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', fontSize: '1rem', margin: '0 0 10px' }}>Sessions</h2>
+        <button onClick={createSession} style={{ width: '100%', padding: '8px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', marginBottom: '10px', fontSize: '0.85rem' }}>
           + New Session
         </button>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -241,17 +241,17 @@ export default function SessionPage() {
             <div key={s.id} style={{
               display: 'flex', alignItems: 'center', gap: '4px',
               padding: '8px', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem',
-              background: s.id === store.activeSessionId ? '#2d3748' : 'transparent',
-              border: `1px solid ${s.id === store.activeSessionId ? '#6366f1' : 'transparent'}`,
+              background: s.id === store.activeSessionId ? '#1a1714' : 'transparent',
+              border: `1px solid ${s.id === store.activeSessionId ? '#c9a84c' : 'transparent'}`,
             }} onClick={() => persist({ ...store, activeSessionId: s.id })}>
               <span style={{ flex: 1 }}>{s.name}</span>
-              <span style={{ fontSize: '0.7rem', color: '#718096' }}>{s.date}</span>
+              <span style={{ fontSize: '0.7rem', color: '#5a5248' }}>{s.date}</span>
               <button onClick={(e) => { e.stopPropagation(); deleteSession(s.id); }}
-                style={{ background: 'none', border: 'none', color: '#e53e3e', cursor: 'pointer', fontSize: '0.8rem', padding: '0 2px' }}>×</button>
+                style={{ background: 'none', border: 'none', color: '#a83232', cursor: 'pointer', fontSize: '0.8rem', padding: '0 2px' }}>×</button>
             </div>
           ))}
           {store.sessions.length === 0 && (
-            <p style={{ color: '#718096', fontSize: '0.8rem' }}>No sessions yet.</p>
+            <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>No sessions yet.</p>
           )}
         </div>
       </div>
@@ -259,7 +259,7 @@ export default function SessionPage() {
       {/* Session detail */}
       <div style={{ flex: 1 }}>
         {!activeSession ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#718096' }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#5a5248' }}>
             Create a session to get started.
           </div>
         ) : (
@@ -270,117 +270,117 @@ export default function SessionPage() {
                 {editing ? (
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <input value={activeSession.name} onChange={e => updateSession({ ...activeSession, name: e.target.value })}
-                      style={{ padding: '6px 10px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '1.2rem' }} />
+                      style={{ padding: '6px 10px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '1.2rem' }} />
                     <input value={activeSession.date} onChange={e => updateSession({ ...activeSession, date: e.target.value })}
-                      style={{ padding: '6px 10px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem', width: '120px' }} />
-                    <button onClick={() => setEditing(false)} style={{ background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem' }}>Done</button>
+                      style={{ padding: '6px 10px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem', width: '120px' }} />
+                    <button onClick={() => setEditing(false)} style={{ background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem' }}>Done</button>
                   </div>
                 ) : (
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'baseline' }}>
-                    <h1 style={{ color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif', margin: 0 }}>{activeSession.name}</h1>
-                    <span style={{ color: '#718096', fontSize: '0.85rem' }}>{activeSession.date}</span>
-                    <button onClick={() => setEditing(true)} style={{ background: 'none', border: 'none', color: '#a0aec0', cursor: 'pointer', fontSize: '0.75rem', padding: 0 }}>✎</button>
+                    <h1 style={{ color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', margin: 0 }}>{activeSession.name}</h1>
+                    <span style={{ color: '#5a5248', fontSize: '0.85rem' }}>{activeSession.date}</span>
+                    <button onClick={() => setEditing(true)} style={{ background: 'none', border: 'none', color: '#8a7e6a', cursor: 'pointer', fontSize: '0.75rem', padding: 0 }}>✎</button>
                   </div>
                 )}
               </div>
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button onClick={saveToFile} style={{ padding: '8px 16px', background: '#b8860b', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Export JSON</button>
-                <button onClick={loadFromFile} style={{ padding: '8px 16px', background: '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Import JSON</button>
+                <button onClick={saveToFile} style={{ padding: '8px 16px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Export JSON</button>
+                <button onClick={loadFromFile} style={{ padding: '8px 16px', background: '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>Import JSON</button>
               </div>
             </div>
 
             {/* XP summary bar */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', padding: '12px 16px', background: '#2d3748', borderRadius: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', padding: '12px 16px', background: '#1a1714', borderRadius: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
               <div><strong>Total XP:</strong> {activeSession.xpTotal || 0}</div>
               <div><strong>Encounters:</strong> {activeSession.encounters.length}</div>
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                <label style={{ fontSize: '0.8rem', color: '#a0aec0' }}>Players:</label>
+                <label style={{ fontSize: '0.8rem', color: '#8a7e6a' }}>Players:</label>
                 <input type="number" min={1} max={20} value={playerCount} onChange={e => setPlayerCount(Math.max(1, parseInt(e.target.value) || 1))}
-                  style={{ width: '50px', padding: '4px 6px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} />
-                <label style={{ fontSize: '0.8rem', color: '#a0aec0' }}>Avg Lvl:</label>
+                  style={{ width: '50px', padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem' }} />
+                <label style={{ fontSize: '0.8rem', color: '#8a7e6a' }}>Avg Lvl:</label>
                 <input type="number" min={1} max={20} value={avgLevel} onChange={e => setAvgLevel(Math.max(1, parseInt(e.target.value) || 1))}
-                  style={{ width: '50px', padding: '4px 6px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} />
+                  style={{ width: '50px', padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem' }} />
               </div>
               {activeSession.xpTotal && activeSession.xpTotal > 0 && (
-                <div style={{ fontSize: '0.8rem', color: '#ecc94b' }}>
+                <div style={{ fontSize: '0.8rem', color: '#c9a84c' }}>
                   Difficulty: <strong>{estimateDifficulty(activeSession.xpTotal, playerCount, avgLevel)}</strong>
-                  <span style={{ color: '#718096' }}> ({Math.round(activeSession.xpTotal / playerCount)} XP/player)</span>
+                  <span style={{ color: '#5a5248' }}> ({Math.round(activeSession.xpTotal / playerCount)} XP/player)</span>
                 </div>
               )}
             </div>
 
             {/* Session notes */}
             <div style={{ marginBottom: '20px' }}>
-              <h3 style={{ color: '#a0aec0', fontSize: '0.9rem', margin: '0 0 6px' }}>Session Notes</h3>
+              <h3 style={{ color: '#8a7e6a', fontSize: '0.9rem', margin: '0 0 6px' }}>Session Notes</h3>
               <textarea value={activeSession.notes || ''} onChange={e => updateSession({ ...activeSession, notes: e.target.value })}
                 placeholder="DM notes, story hooks, player decisions..."
-                style={{ width: '100%', minHeight: '80px', padding: '10px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem', resize: 'vertical' }} />
+                style={{ width: '100%', minHeight: '80px', padding: '10px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem', resize: 'vertical' }} />
             </div>
 
             {/* Encounters */}
             <div style={{ marginBottom: '20px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h3 style={{ color: '#a0aec0', fontSize: '0.9rem', margin: 0 }}>Encounters</h3>
-                <button onClick={addEncounter} style={{ padding: '6px 14px', background: '#48bb78', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>+ Add Encounter</button>
+                <h3 style={{ color: '#8a7e6a', fontSize: '0.9rem', margin: 0 }}>Encounters</h3>
+                <button onClick={addEncounter} style={{ padding: '6px 14px', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem' }}>+ Add Encounter</button>
               </div>
               {activeSession.encounters.map(enc => (
-                <div key={enc.id} style={{ background: '#1a202c', padding: '12px', borderRadius: '6px', marginBottom: '8px', border: '1px solid #2d3748' }}>
+                <div key={enc.id} style={{ background: '#0c0e14', padding: '12px', borderRadius: '6px', marginBottom: '8px', border: '1px solid #1a1714' }}>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                     <input value={enc.name} onChange={e => updateEncounter(enc.id, { name: e.target.value })}
-                      style={{ padding: '4px 8px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', width: '180px' }} />
+                      style={{ padding: '4px 8px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', width: '180px' }} />
                     <div style={{ display: 'flex', gap: '4px', alignItems: 'center', fontSize: '0.8rem' }}>
-                      <span style={{ color: '#718096' }}>XP:</span>
+                      <span style={{ color: '#5a5248' }}>XP:</span>
                       <input type="number" min={0} value={enc.xp || ''} onChange={e => updateEncounter(enc.id, { xp: parseInt(e.target.value) || 0 })}
-                        style={{ width: '70px', padding: '4px 6px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem' }} />
+                        style={{ width: '70px', padding: '4px 6px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem' }} />
                     </div>
                     <div style={{ display: 'flex', gap: '4px', alignItems: 'center', fontSize: '0.8rem' }}>
-                      <span style={{ color: '#718096' }}>XP/player:</span>
+                      <span style={{ color: '#5a5248' }}>XP/player:</span>
                       <span style={{ fontWeight: 'bold' }}>{Math.round((enc.xp || 0) / Math.max(1, playerCount))}</span>
                     </div>
                     <select value={enc.outcome || 'ongoing'} onChange={e => updateEncounter(enc.id, { outcome: e.target.value as any })}
-                      style={{ padding: '4px 8px', background: '#2d3748', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.8rem' }}>
+                      style={{ padding: '4px 8px', background: '#1a1714', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.8rem' }}>
                       <option value="ongoing">Ongoing</option>
                       <option value="victory">Victory</option>
                       <option value="defeat">Defeat</option>
                       <option value="fled">Fled</option>
                     </select>
                     <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
-                      <button onClick={() => loadToCombat(enc)} style={{ padding: '4px 10px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Load to Combat</button>
-                      <button onClick={() => removeEncounter(enc.id)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #e53e3e', color: '#e53e3e', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>×</button>
+                      <button onClick={() => loadToCombat(enc)} style={{ padding: '4px 10px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>Load to Combat</button>
+                      <button onClick={() => removeEncounter(enc.id)} style={{ padding: '4px 8px', background: 'transparent', border: '1px solid #a83232', color: '#a83232', borderRadius: '4px', cursor: 'pointer', fontSize: '0.75rem' }}>×</button>
                     </div>
                   </div>
                   <div style={{ marginTop: '6px' }}>
                     <textarea value={enc.notes || ''} onChange={e => updateEncounter(enc.id, { notes: e.target.value })}
                       placeholder="Encounter notes, tactics, loot..."
-                      style={{ width: '100%', minHeight: '36px', padding: '6px 8px', background: '#1a202c', border: '1px solid #2d3748', color: '#cbd5e0', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical' }} />
+                      style={{ width: '100%', minHeight: '36px', padding: '6px 8px', background: '#0c0e14', border: '1px solid #1a1714', color: '#8a7e6a', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical' }} />
                   </div>
                 </div>
               ))}
               {activeSession.encounters.length === 0 && (
-                <p style={{ color: '#718096', fontSize: '0.8rem' }}>No encounters yet.</p>
+                <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>No encounters yet.</p>
               )}
             </div>
 
             {/* Journal */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <h3 style={{ color: '#a0aec0', fontSize: '0.9rem', margin: 0 }}>Journal</h3>
+                <h3 style={{ color: '#8a7e6a', fontSize: '0.9rem', margin: 0 }}>Journal</h3>
               </div>
 
               {/* Add journal entry form */}
-              <div style={{ background: '#2d3748', padding: '12px', borderRadius: '6px', marginBottom: '12px' }}>
+              <div style={{ background: '#1a1714', padding: '12px', borderRadius: '6px', marginBottom: '12px' }}>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                   <select value={newEntryType} onChange={e => setNewEntryType(e.target.value as SessionJournalEntry['type'])}
-                    style={{ padding: '6px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.8rem' }}>
+                    style={{ padding: '6px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.8rem' }}>
                     {entryTypeOptions.map(o => <option key={o.value} value={o.value}>{typeIcons[o.value]} {o.label}</option>)}
                   </select>
                   <input value={newEntryTitle} onChange={e => setNewEntryTitle(e.target.value)} placeholder="Entry title..."
-                    style={{ flex: 1, padding: '6px 10px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.85rem', minWidth: '150px' }} />
+                    style={{ flex: 1, padding: '6px 10px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.85rem', minWidth: '150px' }} />
                 </div>
                 <textarea value={newEntryContent} onChange={e => setNewEntryContent(e.target.value)} placeholder="Details..."
-                  style={{ width: '100%', minHeight: '50px', padding: '6px 10px', background: '#1a202c', border: '1px solid #4a5568', color: 'white', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical', marginBottom: '8px' }} />
+                  style={{ width: '100%', minHeight: '50px', padding: '6px 10px', background: '#0c0e14', border: '1px solid #3d3528', color: '#e8dcc8', borderRadius: '4px', fontSize: '0.8rem', resize: 'vertical', marginBottom: '8px' }} />
                 <button onClick={addJournalEntry} disabled={!newEntryTitle.trim()}
-                  style={{ padding: '6px 16px', background: newEntryTitle.trim() ? '#6366f1' : '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: newEntryTitle.trim() ? 'pointer' : 'not-allowed', fontSize: '0.8rem', opacity: newEntryTitle.trim() ? 1 : 0.5 }}>
+                  style={{ padding: '6px 16px', background: newEntryTitle.trim() ? '#c9a84c' : '#3d3528', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: newEntryTitle.trim() ? 'pointer' : 'not-allowed', fontSize: '0.8rem', opacity: newEntryTitle.trim() ? 1 : 0.5 }}>
                   Add Entry
                 </button>
               </div>
@@ -388,23 +388,23 @@ export default function SessionPage() {
               {/* Journal entries */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {(activeSession.entries || []).slice().reverse().map(entry => (
-                  <div key={entry.id} style={{ background: '#1a202c', padding: '10px 14px', borderRadius: '6px', border: '1px solid #2d3748' }}>
+                  <div key={entry.id} style={{ background: '#0c0e14', padding: '10px 14px', borderRadius: '6px', border: '1px solid #1a1714' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <span style={{ fontSize: '1rem' }}>{typeIcons[entry.type] || '📝'}</span>
-                        <strong style={{ color: '#e2e8f0' }}>{entry.title}</strong>
-                        <span style={{ color: '#718096', fontSize: '0.75rem' }}>{formatTimestamp(entry.timestamp)}</span>
+                        <strong style={{ color: '#e8dcc8' }}>{entry.title}</strong>
+                        <span style={{ color: '#5a5248', fontSize: '0.75rem' }}>{formatTimestamp(entry.timestamp)}</span>
                       </div>
                       <button onClick={() => removeJournalEntry(entry.id)}
-                        style={{ background: 'none', border: 'none', color: '#718096', cursor: 'pointer', fontSize: '0.8rem', padding: '0 4px' }}>×</button>
+                        style={{ background: 'none', border: 'none', color: '#5a5248', cursor: 'pointer', fontSize: '0.8rem', padding: '0 4px' }}>×</button>
                     </div>
                     {entry.content && (
-                      <div style={{ marginTop: '4px', fontSize: '0.85rem', color: '#a0aec0', whiteSpace: 'pre-wrap' }}>{entry.content}</div>
+                      <div style={{ marginTop: '4px', fontSize: '0.85rem', color: '#8a7e6a', whiteSpace: 'pre-wrap' }}>{entry.content}</div>
                     )}
                   </div>
                 ))}
                 {(!activeSession.entries || activeSession.entries.length === 0) && (
-                  <p style={{ color: '#718096', fontSize: '0.8rem' }}>No journal entries yet.</p>
+                  <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>No journal entries yet.</p>
                 )}
               </div>
             </div>

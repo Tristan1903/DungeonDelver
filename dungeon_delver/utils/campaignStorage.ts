@@ -7,11 +7,11 @@ export interface CampaignEntry {
   createdAt: string;
 }
 
-export function getActiveCampaign(): string {
+export function getActiveCampaign(): string | null {
   try {
-    return localStorage.getItem(ACTIVE_KEY) || 'default';
+    return localStorage.getItem(ACTIVE_KEY) || null;
   } catch {
-    return 'default';
+    return null;
   }
 }
 
@@ -19,8 +19,19 @@ export function setActiveCampaign(id: string): void {
   try { localStorage.setItem(ACTIVE_KEY, id); } catch { /* noop */ }
 }
 
+export function ensureActiveCampaign(): string {
+  const id = getActiveCampaign();
+  if (id) return id;
+  const campaigns = getCampaigns();
+  if (campaigns.length > 0) {
+    setActiveCampaign(campaigns[0].id);
+    return campaigns[0].id;
+  }
+  return 'default';
+}
+
 export function campaignKey(base: string, overrideId?: string): string {
-  const campaignId = overrideId || getActiveCampaign();
+  const campaignId = overrideId || ensureActiveCampaign();
   return `dd-${campaignId}-${base}`;
 }
 
@@ -54,8 +65,9 @@ export function renameCampaign(id: string, name: string): void {
 }
 
 export function deleteCampaign(id: string): void {
-  if (id === 'default') return;
   const list = getCampaigns().filter(c => c.id !== id);
   saveCampaigns(list);
-  if (getActiveCampaign() === id) setActiveCampaign('default');
+  if (getActiveCampaign() === id) {
+    setActiveCampaign(list.length > 0 ? list[0].id : 'default');
+  }
 }

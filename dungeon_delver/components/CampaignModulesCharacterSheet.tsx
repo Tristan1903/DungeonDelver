@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import { Character, ModuleData } from '../lib/character';
 import { getCampaigns, campaignKey, type CampaignEntry } from '../utils/campaignStorage';
 import { useRole } from '../context/RoleContext';
+import { loadCampaignConfig, CAMPAIGN_PANTHEONS, getDeitiesInPantheon, type CustomDeity } from '../utils/campaignEngine';
+import { DataEngine } from '../utils/dataLoader';
 
 const colors = {
   gold: '#f6e05e', textDim: '#718096', textMuted: '#a0aec0',
@@ -83,6 +85,21 @@ export function HonorSanityStats({ char, onCharChange, enabled }: { char: Charac
 }
 
 export function PietySection({ char, onCharChange, enabled }: { char: Character; onCharChange: (c: Character) => void; enabled: boolean }) {
+  const [allDeities, setAllDeities] = useState<any[]>([]);
+  const [deityOptions, setDeityOptions] = useState<string[]>([]);
+  useEffect(() => {
+    if (!enabled || !char.campaignId) return;
+    const cfg = loadCampaignConfig(char.campaignId);
+    if (!cfg.pantheonSetting) return;
+    const preset = CAMPAIGN_PANTHEONS.find(p => p.id === cfg.pantheonSetting);
+    if (!preset || preset.pantheons.length === 0) return;
+    DataEngine.getDeities().then(data => {
+      const filtered = getDeitiesInPantheon(preset.pantheons, data);
+      const names = filtered.map((d: any) => d.name);
+      const customs = (cfg.customDeities || []).map((d: CustomDeity) => d.name);
+      setDeityOptions([...new Set([...names, ...customs])].sort());
+    });
+  }, [enabled, char.campaignId]);
   if (!enabled) return null;
   const data = char.moduleData?.piety || { deity: '', score: 3 };
   return (
@@ -91,8 +108,18 @@ export function PietySection({ char, onCharChange, enabled }: { char: Character;
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <div>
           <span style={{ fontSize: '0.65rem', color: colors.textDim }}>Deity</span>
-          <input value={data.deity} onChange={(e) => onCharChange(setModuleData(char, 'piety', { ...data, deity: e.target.value }))}
-            style={{ ...inputStyle, width: 150, display: 'block', marginTop: 2 }} placeholder="Unknown" />
+          {deityOptions.length > 0 ? (
+            <select value={deityOptions.includes(data.deity) ? data.deity : '__other__'} onChange={(e) => onCharChange(setModuleData(char, 'piety', { ...data, deity: e.target.value === '__other__' ? '' : e.target.value }))}
+              style={{ ...inputStyle, width: 170, display: 'block', marginTop: 2, cursor: 'pointer', padding: '4px 6px' }}>
+              <option value="">— Select —</option>
+              {deityOptions.map(d => <option key={d} value={d}>{d}</option>)}
+              <option value="__other__">Other (type below)</option>
+            </select>
+          ) : null}
+          {(deityOptions.length === 0 || data.deity && !deityOptions.includes(data.deity)) && (
+            <input value={data.deity} onChange={(e) => onCharChange(setModuleData(char, 'piety', { ...data, deity: e.target.value }))}
+              style={{ ...inputStyle, width: 150, display: 'block', marginTop: 2 }} placeholder="Unknown" />
+          )}
         </div>
         <div>
           <span style={{ fontSize: '0.65rem', color: colors.textDim }}>Piety Score</span>

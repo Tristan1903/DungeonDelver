@@ -17,10 +17,10 @@ const LAYOUT_NAMES: Record<ZoneLayoutKey, string> = {
 };
 
 const styles = {
-  page: { padding: '2rem', color: 'white', fontFamily: 'serif', maxWidth: '1200px', margin: '0 auto' } as const,
-  header: { fontSize: '2rem', color: '#b8860b', marginBottom: '4px' } as const,
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
-  panel: { background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
+  page: { padding: '2rem', color: '#e8dcc8', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', maxWidth: '1200px', margin: '0 auto' } as const,
+  header: { fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' } as const,
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' } as const,
+  panel: { background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem', marginBottom: '1rem' } as const,
 };
 
 function rollD20(mod: number): { total: number; rolls: number[] } {
@@ -128,30 +128,30 @@ export default function ZoneCombatPage() {
       {/* Controls bar */}
       <div style={{ ...styles.panel, display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
         <select value={layoutKey} onChange={e => handleLayoutChange(e.target.value as ZoneLayoutKey)}
-          style={{ padding: '6px 10px', background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '4px', fontSize: '0.75rem' }}>
+          style={{ padding: '6px 10px', background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '4px', fontSize: '0.75rem' }}>
           {Object.entries(LAYOUT_NAMES).map(([k, v]) => (
             <option key={k} value={k}>{v}</option>
           ))}
         </select>
         {!isActive ? (
           <button onClick={handleRollInit}
-            style={{ padding: '8px 20px', background: '#6366f1', border: 'none', color: 'white', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}>
+            style={{ padding: '8px 20px', background: '#c9a84c', border: 'none', color: '#e8dcc8', borderRadius: '4px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 'bold' }}>
             Roll Initiative & Start
           </button>
         ) : (
           <>
-            <span style={{ fontSize: '0.8rem', color: '#f6e05e', fontWeight: 'bold' }}>
+            <span style={{ fontSize: '0.8rem', color: '#c9a84c', fontWeight: 'bold' }}>
               Turn: {turnOrder[currentTurn]?.name}
             </span>
-            <button onClick={nextTurn} style={{ padding: '6px 14px', background: '#ecc94b', border: 'none', color: 'black', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
+            <button onClick={nextTurn} style={{ padding: '6px 14px', background: '#c9a84c', border: 'none', color: '#0c0e14', borderRadius: '4px', cursor: 'pointer', fontSize: '0.7rem' }}>
               Next Turn →
             </button>
           </>
         )}
         {combatants.length === 0 && (
-          <span style={{ fontSize: '0.75rem', color: '#718096' }}>
+          <span style={{ fontSize: '0.75rem', color: '#5a5248' }}>
             No pending encounter —{' '}
-            <a href="/dm/party" style={{ color: '#6366f1' }}>push from Party Management</a>
+            <a href="/dm/party" style={{ color: '#c9a84c' }}>push from Party Management</a>
           </span>
         )}
       </div>
@@ -171,60 +171,60 @@ export default function ZoneCombatPage() {
                   onDrop={e => { e.preventDefault(); if (dragId) { moveToZone(dragId, zone.id); setDragId(null); } }}
                   style={{
                     background: `${zone.color}15`,
-                    border: `2px solid ${isTurnsActive ? '#f6e05e' : zone.color}`,
+                    border: `2px solid ${isTurnsActive ? '#c9a84c' : zone.color}`,
                     borderRadius: '12px', padding: '1rem', minHeight: '250px',
                     transition: 'border-color 0.2s',
                   }}>
                   <div style={{ textAlign: 'center', marginBottom: '10px' }}>
                     <span style={{ fontSize: '1.5rem' }}>{zone.icon}</span>
                     <div style={{ fontWeight: 'bold', fontSize: '0.85rem', color: zone.color }}>{zone.name}</div>
-                    <div style={{ fontSize: '0.6rem', color: '#718096' }}>{zone.description}</div>
-                    <div style={{ fontSize: '0.6rem', color: '#718096', marginTop: '2px' }}>{occupants.length} combatant{occupants.length !== 1 ? 's' : ''}</div>
+                    <div style={{ fontSize: '0.6rem', color: '#5a5248' }}>{zone.description}</div>
+                    <div style={{ fontSize: '0.6rem', color: '#5a5248', marginTop: '2px' }}>{occupants.length} combatant{occupants.length !== 1 ? 's' : ''}</div>
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     {alive.map(c => (
                       <div key={c.id} draggable onDragStart={() => setDragId(c.id)}
                         style={{
-                          background: c.isPc ? '#2b6cb0' : '#742a2a',
+                          background: c.isPc ? '#1a1714' : '#0c0e14',
                           borderRadius: '6px', padding: '6px 8px', cursor: 'grab', fontSize: '0.7rem',
-                          border: isActive && turnOrder[currentTurn]?.id === c.id ? '2px solid #f6e05e' : '1px solid transparent',
+                          border: isActive && turnOrder[currentTurn]?.id === c.id ? '2px solid #c9a84c' : '1px solid transparent',
                           transition: 'border 0.15s',
                         }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontWeight: 'bold', fontSize: '0.75rem' }}>{c.name}</span>
-                          <span style={{ fontSize: '0.6rem', color: c.hp <= c.maxHp * 0.25 ? '#fc8181' : '#a0aec0' }}>
+                          <span style={{ fontSize: '0.6rem', color: c.hp <= c.maxHp * 0.25 ? '#a83232' : '#8a7e6a' }}>
                             {c.hp}/{c.maxHp}
-                            {gmOverlay.enabled && gmOverlay.showStats && <span style={{ color: '#b794f4', marginLeft: '4px' }}>AC {c.ac}</span>}
+                            {gmOverlay.enabled && gmOverlay.showStats && <span style={{ color: '#8a7e6a', marginLeft: '4px' }}>AC {c.ac}</span>}
                             {' '}❤
                           </span>
                         </div>
                         <div style={{ display: 'flex', gap: '4px', marginTop: '4px', flexWrap: 'wrap' }}>
                           {initRolls[c.id] !== undefined && (
-                            <span style={{ fontSize: '0.55rem', color: '#f6e05e' }}>Init: {initRolls[c.id]}</span>
+                            <span style={{ fontSize: '0.55rem', color: '#c9a84c' }}>Init: {initRolls[c.id]}</span>
                           )}
                           {c.conditions.map(cond => (
-                            <span key={cond} style={{ fontSize: '0.5rem', padding: '1px 5px', background: '#e53e3e', borderRadius: '3px', color: 'white' }}>
+                            <span key={cond} style={{ fontSize: '0.5rem', padding: '1px 5px', background: '#a83232', borderRadius: '3px', color: '#e8dcc8' }}>
                               {cond}
                             </span>
                           ))}
                           <select value="" onChange={e => { if (e.target.value) { toggleCondition(c.id, e.target.value); e.target.value = ''; }}}
-                            style={{ fontSize: '0.5rem', padding: '1px 4px', background: '#2d3748', color: 'white', border: '1px solid #4a5568', borderRadius: '3px' }}>
+                            style={{ fontSize: '0.5rem', padding: '1px 4px', background: '#1a1714', color: '#e8dcc8', border: '1px solid #3d3528', borderRadius: '3px' }}>
                             <option value="">+Cond</option>
                             {['Prone', 'Stunned', 'Blinded', 'Charmed', 'Frightened', 'Grappled', 'Incapacitated', 'Invisible', 'Paralyzed', 'Petrified', 'Poisoned', 'Restrained', 'Unconscious'].map(cond => (
                               <option key={cond} value={cond}>{cond}</option>
                             ))}
                           </select>
-                          <button onClick={() => handleDamage(c.id, 1)} style={{ fontSize: '0.5rem', background: '#e53e3e', border: 'none', color: 'white', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>−1</button>
-                          <button onClick={() => handleDamage(c.id, 5)} style={{ fontSize: '0.5rem', background: '#c53030', border: 'none', color: 'white', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>−5</button>
-                          <button onClick={() => handleHeal(c.id, 5)} style={{ fontSize: '0.5rem', background: '#48bb78', border: 'none', color: 'white', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>+5</button>
+                          <button onClick={() => handleDamage(c.id, 1)} style={{ fontSize: '0.5rem', background: '#a83232', border: 'none', color: '#e8dcc8', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>−1</button>
+                          <button onClick={() => handleDamage(c.id, 5)} style={{ fontSize: '0.5rem', background: '#a83232', border: 'none', color: '#e8dcc8', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>−5</button>
+                          <button onClick={() => handleHeal(c.id, 5)} style={{ fontSize: '0.5rem', background: '#16a34a', border: 'none', color: '#e8dcc8', borderRadius: '3px', cursor: 'pointer', padding: '1px 6px' }}>+5</button>
                         </div>
                       </div>
                     ))}
                     {dead.map(c => (
-                      <div key={c.id} style={{ opacity: 0.4, background: '#1a202c', borderRadius: '6px', padding: '4px 8px', fontSize: '0.65rem' }}>
+                      <div key={c.id} style={{ opacity: 0.4, background: '#0c0e14', borderRadius: '6px', padding: '4px 8px', fontSize: '0.65rem' }}>
                         <span style={{ textDecoration: 'line-through' }}>{c.name}</span>
-                        <span style={{ color: '#718096', marginLeft: '6px' }}>0/{c.maxHp}</span>
+                        <span style={{ color: '#5a5248', marginLeft: '6px' }}>0/{c.maxHp}</span>
                       </div>
                     ))}
                   </div>
@@ -236,12 +236,12 @@ export default function ZoneCombatPage() {
           {/* Turn order */}
           {isActive && (
             <div style={styles.panel}>
-              <div style={{ fontSize: '0.7rem', color: '#718096', fontWeight: 'bold', marginBottom: '6px' }}>INITIATIVE ORDER</div>
+              <div style={{ fontSize: '0.7rem', color: '#5a5248', fontWeight: 'bold', marginBottom: '6px' }}>INITIATIVE ORDER</div>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 {turnOrder.map((c, i) => (
                   <div key={c.id} style={{
                     padding: '4px 10px', borderRadius: '4px', fontSize: '0.65rem',
-                    background: i === currentTurn ? '#f6e05e' : '#2d3748',
+                    background: i === currentTurn ? '#c9a84c' : '#1a1714',
                     color: i === currentTurn ? 'black' : 'white',
                     fontWeight: i === currentTurn ? 'bold' : 'normal',
                   }}>
@@ -257,9 +257,9 @@ export default function ZoneCombatPage() {
       {/* Combat log */}
       {log.length > 0 && (
         <div style={{ ...styles.panel, maxHeight: '200px', overflowY: 'auto' }}>
-          <div style={{ fontSize: '0.7rem', color: '#718096', fontWeight: 'bold', marginBottom: '6px' }}>COMBAT LOG</div>
+          <div style={{ fontSize: '0.7rem', color: '#5a5248', fontWeight: 'bold', marginBottom: '6px' }}>COMBAT LOG</div>
           {log.map((entry, i) => (
-            <div key={i} style={{ fontSize: '0.65rem', color: '#a0aec0', padding: '2px 0', borderBottom: '1px solid #2d3748' }}>{entry}</div>
+            <div key={i} style={{ fontSize: '0.65rem', color: '#8a7e6a', padding: '2px 0', borderBottom: '1px solid #1a1714' }}>{entry}</div>
           ))}
         </div>
       )}

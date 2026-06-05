@@ -7,7 +7,6 @@ import { campaignKey } from '../../utils/campaignStorage';
 const STORAGE_KEY = 'quests';
 function sk(key: string) { return campaignKey(key); }
 type SessionLike = { id: string; name: string; date: string; entries?: Array<{ type: string; title: string }> };
-const sectionCard: React.CSSProperties = { background: '#1a202c', border: '1px solid #2d3748', borderRadius: '8px', padding: '14px' };
 
 export default function CharacterHubPage() {
   const [quests, setQuests] = useState<Quest[]>([]);
@@ -29,41 +28,69 @@ export default function CharacterHubPage() {
   const storylineHighlights = useMemo(() => active.slice(0, 3).map((q) => ({ id: q.id, title: q.name, openObjectives: q.objectives.filter((o) => !o.completed).length })), [active]);
 
   return (
-    <div style={{ padding: '2rem', color: 'white', maxWidth: '1100px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '20px' }}>
-        <h1 style={{ color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif', marginBottom: '6px' }}>Player Hub</h1>
-        <p style={{ color: '#718096', margin: 0 }}>Your campaign command center: progression, objectives, notes, and session context.</p>
+    <div className="p-6 lg:p-8 max-w-6xl mx-auto animate-fade-in">
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold mb-1" style={{ fontFamily: '"MedievalSharp", serif', color: '#c9a84c' }}>
+          Player Hub
+        </h1>
+        <p className="text-muted-foreground text-sm m-0">
+          Your campaign command center: progression, objectives, notes, and session context.
+        </p>
       </header>
 
-      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px', marginBottom: '18px' }}>
-        <div style={sectionCard}><div style={{ color: '#718096', fontSize: '0.8rem' }}>Active Storylines</div><div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{active.length}</div><div style={{ color: '#a0aec0', fontSize: '0.8rem' }}>{completed.length} completed</div></div>
-        <div style={sectionCard}><div style={{ color: '#718096', fontSize: '0.8rem' }}>Current Session</div><div style={{ fontSize: '1.05rem', fontWeight: 700 }}>{activeSession?.name || 'None selected'}</div><div style={{ color: '#a0aec0', fontSize: '0.8rem' }}>{activeSession ? activeSession.date : 'DM has not activated a session'}</div></div>
-        <div style={sectionCard}>
-          <div style={{ color: '#718096', fontSize: '0.8rem' }}>Quick Actions</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginTop: '8px' }}>
-            <Link href="/character-sheet" style={{ color: '#90cdf4', textDecoration: 'none', fontSize: '0.85rem' }}>Open Character Sheet</Link>
-            <Link href="/notes" style={{ color: '#90cdf4', textDecoration: 'none', fontSize: '0.85rem' }}>Open Notes</Link>
-            <Link href="/library" style={{ color: '#90cdf4', textDecoration: 'none', fontSize: '0.85rem' }}>Browse Library</Link>
+      {/* Stats row */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-xs text-muted-foreground mb-1">Active Storylines</div>
+          <div className="text-xl font-bold text-foreground">{active.length}</div>
+          <div className="text-xs text-muted-foreground">{completed.length} completed</div>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-xs text-muted-foreground mb-1">Current Session</div>
+          <div className="text-base font-bold text-foreground">{activeSession?.name || 'None selected'}</div>
+          <div className="text-xs text-muted-foreground">{activeSession ? activeSession.date : 'DM has not activated a session'}</div>
+        </div>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <div className="text-xs text-muted-foreground mb-1">Quick Actions</div>
+          <div className="flex flex-col gap-1.5 mt-2">
+            <Link href="/character-sheet" className="text-xs hover:text-primary transition-colors underline underline-offset-2" style={{ color: '#8a7e6a' }}>Open Character Sheet</Link>
+            <Link href="/notes" className="text-xs hover:text-primary transition-colors underline underline-offset-2" style={{ color: '#8a7e6a' }}>Open Notes</Link>
+            <Link href="/library" className="text-xs hover:text-primary transition-colors underline underline-offset-2" style={{ color: '#8a7e6a' }}>Browse Library</Link>
           </div>
         </div>
       </section>
 
-      <section style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px' }}>
-        <div style={sectionCard}>
-          <h2 style={{ color: '#f6e05e', marginTop: 0, fontSize: '1rem' }}>Active Storyline Board</h2>
-          {storylineHighlights.length === 0 && <p style={{ color: '#718096', fontSize: '0.85rem' }}>No active storylines currently.</p>}
-          <div style={{ display: 'grid', gap: '8px' }}>
-            {storylineHighlights.map((item) => (<div key={item.id} style={{ background: '#2d3748', borderRadius: '6px', padding: '10px' }}><div style={{ fontWeight: 700 }}>{item.title}</div><div style={{ color: '#a0aec0', fontSize: '0.8rem', marginTop: '3px' }}>{item.openObjectives} objective(s) remaining</div></div>))}
+      {/* Main content */}
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 bg-card border border-border rounded-lg p-4">
+          <h2 className="text-base font-bold mt-0 mb-3" style={{ color: '#c9a84c' }}>Active Storyline Board</h2>
+          {storylineHighlights.length === 0 && <p className="text-muted-foreground text-xs">No active storylines currently.</p>}
+          <div className="grid gap-2">
+            {storylineHighlights.map((item) => (
+              <div key={item.id} className="bg-muted/50 rounded-md p-3 border border-border">
+                <div className="font-bold text-sm text-foreground">{item.title}</div>
+                <div className="text-xs text-muted-foreground mt-1">{item.openObjectives} objective(s) remaining</div>
+              </div>
+            ))}
           </div>
-          <Link href="/dm/quests" style={{ display: 'inline-block', marginTop: '10px', color: '#90cdf4', fontSize: '0.82rem', textDecoration: 'none' }}>View full quest tracker</Link>
+          <Link href="/dm/quests" className="inline-block mt-3 text-xs underline underline-offset-2 hover:text-primary transition-colors" style={{ color: '#8a7e6a' }}>
+            View full quest tracker
+          </Link>
         </div>
-        <div style={sectionCard}>
-          <h2 style={{ color: '#f6e05e', marginTop: 0, fontSize: '1rem' }}>Session Feed</h2>
+        <div className="bg-card border border-border rounded-lg p-4">
+          <h2 className="text-base font-bold mt-0 mb-3" style={{ color: '#c9a84c' }}>Session Feed</h2>
           {activeSession?.entries?.length ? (
-            <div style={{ display: 'grid', gap: '6px' }}>
-              {activeSession.entries.slice(-6).reverse().map((entry, idx) => (<div key={`${entry.title}-${idx}`} style={{ background: '#2d3748', borderRadius: '6px', padding: '8px 10px' }}><div style={{ color: '#cbd5e0', fontWeight: 600, fontSize: '0.83rem' }}>{entry.title}</div><div style={{ color: '#718096', fontSize: '0.72rem', textTransform: 'uppercase' }}>{entry.type}</div></div>))}
+            <div className="grid gap-2">
+              {activeSession.entries.slice(-6).reverse().map((entry, idx) => (
+                <div key={`${entry.title}-${idx}`} className="bg-muted/50 rounded-md p-2.5 border border-border">
+                  <div className="font-semibold text-xs text-foreground">{entry.title}</div>
+                  <div className="text-[0.65rem] text-muted-foreground uppercase mt-0.5">{entry.type}</div>
+                </div>
+              ))}
             </div>
-          ) : (<p style={{ color: '#718096', fontSize: '0.85rem' }}>No recent entries yet.</p>)}
+          ) : (
+            <p className="text-muted-foreground text-xs">No recent entries yet.</p>
+          )}
         </div>
       </section>
     </div>

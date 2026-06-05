@@ -15,12 +15,12 @@ interface SyncState {
 }
 
 const styles = {
-  page: { padding: '2rem', color: 'white', maxWidth: '1000px', margin: '0 auto' },
-  h1: { fontFamily: 'serif', fontSize: '2rem', color: '#b8860b', marginBottom: '4px' },
-  sub: { color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1.5rem' },
-  card: { background: '#1a202c', border: '1px solid #4a5568', borderRadius: '8px', padding: '1rem', marginBottom: '0.75rem' },
+  page: { padding: '2rem', color: '#e8dcc8', maxWidth: '1000px', margin: '0 auto' },
+  h1: { fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', fontSize: '2rem', color: '#c9a84c', marginBottom: '4px' },
+  sub: { color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1.5rem' },
+  card: { background: '#0c0e14', border: '1px solid #3d3528', borderRadius: '8px', padding: '1rem', marginBottom: '0.75rem' },
   btn: { padding: '8px 16px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 },
-  input: { width: '100%', padding: '8px', background: '#2d3748', border: '1px solid #4a5568', borderRadius: '4px', color: 'white', fontSize: '0.85rem' },
+  input: { width: '100%', padding: '8px', background: '#1a1714', border: '1px solid #3d3528', borderRadius: '4px', color: '#e8dcc8', fontSize: '0.85rem' },
 };
 
 async function pickVaultFolder(): Promise<string | null> {
@@ -395,12 +395,12 @@ export default function ObsidianSyncPage() {
 
   function statusLabel(status: SyncState['status']): { text: string; color: string } {
     switch (status) {
-      case 'synced': return { text: 'Synced', color: '#48bb78' };
-      case 'local-newer': return { text: 'Local Newer', color: '#ecc94b' };
-      case 'md-newer': return { text: 'MD Newer', color: '#63b3ed' };
-      case 'conflict': return { text: 'Conflict', color: '#e53e3e' };
-      case 'new': return { text: 'New', color: '#9f7aea' };
-      case 'no-file': return { text: 'No MD File', color: '#718096' };
+      case 'synced': return { text: 'Synced', color: '#16a34a' };
+      case 'local-newer': return { text: 'Local Newer', color: '#c9a84c' };
+      case 'md-newer': return { text: 'MD Newer', color: '#8a7e6a' };
+      case 'conflict': return { text: 'Conflict', color: '#a83232' };
+      case 'new': return { text: 'New', color: '#c9a84c' };
+      case 'no-file': return { text: 'No MD File', color: '#5a5248' };
     }
   }
 
@@ -410,53 +410,53 @@ export default function ObsidianSyncPage() {
       <p style={styles.sub}>Sync characters between Dungeon Delver and your Obsidian vault via Markdown files.</p>
 
       <div style={styles.card}>
-        <label style={{ color: '#b8860b', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Vault Folder</label>
+        <label style={{ color: '#c9a84c', fontWeight: 600, display: 'block', marginBottom: '8px' }}>Vault Folder</label>
         <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
           <input style={{ ...styles.input, flex: 1 }} value={vaultPath} onChange={e => saveVaultPath(e.target.value)} placeholder="C:/Users/.../Obsidian Vault" />
-          <button onClick={handlePickVault} style={{ ...styles.btn, background: '#6366f1', color: 'white', whiteSpace: 'nowrap' }}>Browse</button>
+          <button onClick={handlePickVault} style={{ ...styles.btn, background: '#c9a84c', color: '#e8dcc8', whiteSpace: 'nowrap' }}>Browse</button>
         </div>
-        <label style={{ color: '#a0aec0', fontSize: '0.8rem', display: 'block', marginBottom: '4px' }}>Character Subdirectory</label>
+        <label style={{ color: '#8a7e6a', fontSize: '0.8rem', display: 'block', marginBottom: '4px' }}>Character Subdirectory</label>
         <input style={{ ...styles.input, maxWidth: '300px' }} value={charDir} onChange={e => saveCharDir(e.target.value)} placeholder="Characters" />
       </div>
 
       {vaultPath && (
         <>
           <div style={{ display: 'flex', gap: '4px', marginBottom: '1rem' }}>
-            <button onClick={() => setActiveTab('sync')} style={{ ...styles.btn, background: activeTab === 'sync' ? '#b8860b' : '#2d3748', color: 'white', fontSize: '0.85rem' }}>Character Sync</button>
-            <button onClick={() => { setActiveTab('scan'); scanVault(); }} style={{ ...styles.btn, background: activeTab === 'scan' ? '#b8860b' : '#2d3748', color: 'white', fontSize: '0.85rem' }}>Vault Scanner</button>
+            <button onClick={() => setActiveTab('sync')} style={{ ...styles.btn, background: activeTab === 'sync' ? '#c9a84c' : '#1a1714', color: '#e8dcc8', fontSize: '0.85rem' }}>Character Sync</button>
+            <button onClick={() => { setActiveTab('scan'); scanVault(); }} style={{ ...styles.btn, background: activeTab === 'scan' ? '#c9a84c' : '#1a1714', color: '#e8dcc8', fontSize: '0.85rem' }}>Vault Scanner</button>
           </div>
 
           {activeTab === 'sync' && (
             <>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
-                <button onClick={syncAll} disabled={isSyncing} style={{ ...styles.btn, background: '#48bb78', color: 'white', opacity: isSyncing ? 0.6 : 1 }}>
+                <button onClick={syncAll} disabled={isSyncing} style={{ ...styles.btn, background: '#16a34a', color: '#e8dcc8', opacity: isSyncing ? 0.6 : 1 }}>
                   {isSyncing ? 'Working...' : 'Sync All to Vault'}
                 </button>
-                <button onClick={importAll} disabled={isSyncing} style={{ ...styles.btn, background: '#63b3ed', color: 'white', opacity: isSyncing ? 0.6 : 1 }}>
+                <button onClick={importAll} disabled={isSyncing} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8', opacity: isSyncing ? 0.6 : 1 }}>
                   {isSyncing ? 'Working...' : 'Import All from Vault'}
                 </button>
-                <button onClick={scanSyncStates} disabled={isSyncing} style={{ ...styles.btn, background: '#4a5568', color: 'white' }}>Refresh</button>
+                <button onClick={scanSyncStates} disabled={isSyncing} style={{ ...styles.btn, background: '#3d3528', color: '#e8dcc8' }}>Refresh</button>
               </div>
-              {statusMsg && <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1rem' }}>{statusMsg}</p>}
-              <h2 style={{ fontFamily: 'serif', fontSize: '1.3rem', color: '#b8860b', marginBottom: '0.5rem' }}>Characters</h2>
-              {syncStates.length === 0 && <p style={{ color: '#718096' }}>No characters found. Create one on the Character Sheet first.</p>}
+              {statusMsg && <p style={{ color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1rem' }}>{statusMsg}</p>}
+              <h2 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', fontSize: '1.3rem', color: '#c9a84c', marginBottom: '0.5rem' }}>Characters</h2>
+              {syncStates.length === 0 && <p style={{ color: '#5a5248' }}>No characters found. Create one on the Character Sheet first.</p>}
               {syncStates.map(s => {
                 const st = statusLabel(s.status);
                 return (
                   <div key={s.charId} style={{ ...styles.card, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
-                      <strong style={{ color: 'white' }}>{s.charName}</strong>
+                      <strong style={{ color: '#e8dcc8' }}>{s.charName}</strong>
                       <span style={{ marginLeft: '12px', color: st.color, fontSize: '0.8rem', fontWeight: 600 }}>{st.text}</span>
-                      <span style={{ marginLeft: '12px', color: '#718096', fontSize: '0.75rem' }}>v{s.localVersion} / v{s.mdVersion}</span>
+                      <span style={{ marginLeft: '12px', color: '#5a5248', fontSize: '0.75rem' }}>v{s.localVersion} / v{s.mdVersion}</span>
                     </div>
                     <div style={{ display: 'flex', gap: '6px' }}>
-                      {s.status === 'local-newer' && <button onClick={() => handleSyncOne(s)} style={{ ...styles.btn, background: '#48bb78', color: 'white', fontSize: '0.75rem' }}>Push</button>}
-                      {s.status === 'md-newer' && <button onClick={() => handleImportOne(s)} style={{ ...styles.btn, background: '#63b3ed', color: 'white', fontSize: '0.75rem' }}>Pull</button>}
-                      {s.status === 'no-file' && <button onClick={() => handleSyncOne(s)} style={{ ...styles.btn, background: '#9f7aea', color: 'white', fontSize: '0.75rem' }}>Create</button>}
+                      {s.status === 'local-newer' && <button onClick={() => handleSyncOne(s)} style={{ ...styles.btn, background: '#16a34a', color: '#e8dcc8', fontSize: '0.75rem' }}>Push</button>}
+                      {s.status === 'md-newer' && <button onClick={() => handleImportOne(s)} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8', fontSize: '0.75rem' }}>Pull</button>}
+                      {s.status === 'no-file' && <button onClick={() => handleSyncOne(s)} style={{ ...styles.btn, background: '#c9a84c', color: '#e8dcc8', fontSize: '0.75rem' }}>Create</button>}
                       {(s.status === 'local-newer' || s.status === 'md-newer') && (
-                        <button onClick={() => showConflict(s)} style={{ ...styles.btn, background: '#e53e3e', color: 'white', fontSize: '0.75rem' }}>Diff</button>
+                        <button onClick={() => showConflict(s)} style={{ ...styles.btn, background: '#a83232', color: '#e8dcc8', fontSize: '0.75rem' }}>Diff</button>
                       )}
-                      {s.status === 'synced' && <span style={{ color: '#48bb78', fontSize: '0.75rem' }}>✓</span>}
+                      {s.status === 'synced' && <span style={{ color: '#16a34a', fontSize: '0.75rem' }}>✓</span>}
                     </div>
                   </div>
                 );
@@ -467,56 +467,56 @@ export default function ObsidianSyncPage() {
           {activeTab === 'scan' && (
             <div>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
-                <button onClick={scanVault} disabled={isScanning} style={{ ...styles.btn, background: '#9f7aea', color: 'white', opacity: isScanning ? 0.6 : 1 }}>
+                <button onClick={scanVault} disabled={isScanning} style={{ ...styles.btn, background: '#c9a84c', color: '#e8dcc8', opacity: isScanning ? 0.6 : 1 }}>
                   {isScanning ? 'Scanning...' : 'Scan Vault'}
                 </button>
                 {scanResults.characters.length > 0 && (
-                  <button onClick={importDiscoveredCharacters} disabled={isSyncing} style={{ ...styles.btn, background: '#48bb78', color: 'white', opacity: isSyncing ? 0.6 : 1 }}>
+                  <button onClick={importDiscoveredCharacters} disabled={isSyncing} style={{ ...styles.btn, background: '#16a34a', color: '#e8dcc8', opacity: isSyncing ? 0.6 : 1 }}>
                     Import {scanResults.characters.length} Characters
                   </button>
                 )}
                 {scanResults.journal.length > 0 && (
-                  <button onClick={importDiscoveredJournal} style={{ ...styles.btn, background: '#63b3ed', color: 'white' }}>
+                  <button onClick={importDiscoveredJournal} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8' }}>
                     Import {scanResults.journal.length} Journal Entries
                   </button>
                 )}
               </div>
-              {scanMsg && <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1rem' }}>{scanMsg}</p>}
-              {scanResults.total === 0 && !isScanning && <p style={{ color: '#718096' }}>Click "Scan Vault" to discover files.</p>}
+              {scanMsg && <p style={{ color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1rem' }}>{scanMsg}</p>}
+              {scanResults.total === 0 && !isScanning && <p style={{ color: '#5a5248' }}>Click "Scan Vault" to discover files.</p>}
               {scanResults.characters.length > 0 && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <h3 style={{ color: '#48bb78', fontFamily: 'serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Characters ({scanResults.characters.length})</h3>
+                  <h3 style={{ color: '#16a34a', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Characters ({scanResults.characters.length})</h3>
                   {scanResults.characters.slice(0, 20).map((c, i) => (
                     <div key={i} style={{ ...styles.card, padding: '0.5rem 1rem' }}>
-                      <strong style={{ color: 'white', fontSize: '0.9rem' }}>{c.name}</strong>
-                      <span style={{ color: '#718096', fontSize: '0.75rem', marginLeft: '8px' }}>{c.path.replace(vaultPath, '')}</span>
+                      <strong style={{ color: '#e8dcc8', fontSize: '0.9rem' }}>{c.name}</strong>
+                      <span style={{ color: '#5a5248', fontSize: '0.75rem', marginLeft: '8px' }}>{c.path.replace(vaultPath, '')}</span>
                     </div>
                   ))}
-                  {scanResults.characters.length > 20 && <p style={{ color: '#718096', fontSize: '0.8rem' }}>...and {scanResults.characters.length - 20} more</p>}
+                  {scanResults.characters.length > 20 && <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>...and {scanResults.characters.length - 20} more</p>}
                 </div>
               )}
               {scanResults.journal.length > 0 && (
                 <div style={{ marginBottom: '1rem' }}>
-                  <h3 style={{ color: '#63b3ed', fontFamily: 'serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Journal Entries ({scanResults.journal.length})</h3>
+                  <h3 style={{ color: '#8a7e6a', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Journal Entries ({scanResults.journal.length})</h3>
                   {scanResults.journal.slice(0, 15).map((e, i) => (
                     <div key={i} style={{ ...styles.card, padding: '0.5rem 1rem', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#e2e8f0', fontSize: '0.85rem' }}>{e.title}</span>
-                      <span style={{ color: '#718096', fontSize: '0.75rem' }}>{e.type}</span>
+                      <span style={{ color: '#e8dcc8', fontSize: '0.85rem' }}>{e.title}</span>
+                      <span style={{ color: '#5a5248', fontSize: '0.75rem' }}>{e.type}</span>
                     </div>
                   ))}
-                  {scanResults.journal.length > 15 && <p style={{ color: '#718096', fontSize: '0.8rem' }}>...and {scanResults.journal.length - 15} more</p>}
+                  {scanResults.journal.length > 15 && <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>...and {scanResults.journal.length - 15} more</p>}
                 </div>
               )}
               {scanResults.unknown.length > 0 && (
                 <div>
-                  <h3 style={{ color: '#718096', fontFamily: 'serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Unknown Files ({scanResults.unknown.length})</h3>
-                  <p style={{ color: '#718096', fontSize: '0.75rem' }}>Files without recognizable frontmatter.</p>
+                  <h3 style={{ color: '#5a5248', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Unknown Files ({scanResults.unknown.length})</h3>
+                  <p style={{ color: '#5a5248', fontSize: '0.75rem' }}>Files without recognizable frontmatter.</p>
                 </div>
               )}
               {scanResults.totalLinks > 0 && (
                 <div style={{ ...styles.card, marginTop: '0.5rem' }}>
-                  <span style={{ color: '#ecc94b', fontWeight: 600 }}>Wiki-link Stats</span>
-                  <span style={{ color: '#a0aec0', fontSize: '0.85rem', marginLeft: '12px' }}>{scanResults.totalLinks} total links across vault</span>
+                  <span style={{ color: '#c9a84c', fontWeight: 600 }}>Wiki-link Stats</span>
+                  <span style={{ color: '#8a7e6a', fontSize: '0.85rem', marginLeft: '12px' }}>{scanResults.totalLinks} total links across vault</span>
                 </div>
               )}
             </div>
@@ -526,21 +526,21 @@ export default function ObsidianSyncPage() {
 
       {conflictChar && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#1a202c', border: '2px solid #e53e3e', borderRadius: '12px', padding: '2rem', maxWidth: '600px', width: '90%', maxHeight: '80vh', overflowY: 'auto' }}>
-            <h2 style={{ color: '#e53e3e', fontFamily: 'serif', marginBottom: '1rem' }}>Conflict: {conflictChar.name}</h2>
-            <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '1rem' }}>Differences found between local and Obsidian versions:</p>
-            {conflictChar.diffs.length === 0 && <p style={{ color: '#48bb78' }}>No meaningful differences found (metadata only).</p>}
+          <div style={{ background: '#0c0e14', border: '2px solid #a83232', borderRadius: '12px', padding: '2rem', maxWidth: '600px', width: '90%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <h2 style={{ color: '#a83232', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', marginBottom: '1rem' }}>Conflict: {conflictChar.name}</h2>
+            <p style={{ color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1rem' }}>Differences found between local and Obsidian versions:</p>
+            {conflictChar.diffs.length === 0 && <p style={{ color: '#16a34a' }}>No meaningful differences found (metadata only).</p>}
             {conflictChar.diffs.map((d: any, i: number) => (
-              <div key={i} style={{ padding: '0.5rem', marginBottom: '0.5rem', background: '#2d3748', borderRadius: '4px', fontSize: '0.8rem' }}>
-                <strong style={{ color: '#b8860b' }}>{d.field}</strong>
-                <div style={{ color: '#48bb78', marginTop: '2px' }}>Local: {JSON.stringify(d.local)}</div>
-                <div style={{ color: '#63b3ed' }}>MD: {JSON.stringify(d.obsidian)}</div>
+              <div key={i} style={{ padding: '0.5rem', marginBottom: '0.5rem', background: '#1a1714', borderRadius: '4px', fontSize: '0.8rem' }}>
+                <strong style={{ color: '#c9a84c' }}>{d.field}</strong>
+                <div style={{ color: '#16a34a', marginTop: '2px' }}>Local: {JSON.stringify(d.local)}</div>
+                <div style={{ color: '#8a7e6a' }}>MD: {JSON.stringify(d.obsidian)}</div>
               </div>
             ))}
             <div style={{ display: 'flex', gap: '8px', marginTop: '1rem' }}>
-              <button onClick={() => resolveConflict('local')} style={{ ...styles.btn, background: '#48bb78', color: 'white' }}>Keep Local</button>
-              <button onClick={() => resolveConflict('obsidian')} style={{ ...styles.btn, background: '#63b3ed', color: 'white' }}>Keep Obsidian</button>
-              <button onClick={() => setConflictChar(null)} style={{ ...styles.btn, background: '#4a5568', color: 'white' }}>Cancel</button>
+              <button onClick={() => resolveConflict('local')} style={{ ...styles.btn, background: '#16a34a', color: '#e8dcc8' }}>Keep Local</button>
+              <button onClick={() => resolveConflict('obsidian')} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8' }}>Keep Obsidian</button>
+              <button onClick={() => setConflictChar(null)} style={{ ...styles.btn, background: '#3d3528', color: '#e8dcc8' }}>Cancel</button>
             </div>
           </div>
         </div>
