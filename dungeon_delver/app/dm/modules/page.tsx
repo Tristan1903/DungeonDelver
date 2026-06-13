@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/modules/page.tsx =====
+// 🎯 PURPOSE: Campaign module configuration — enable/disable optional subsystems, apply presets,
+//   import/export campaign JSON, and configure per-module settings via ModulePanel.
+// 🧠 REACT CONCEPT: Form Persistence + Schema Normalization — demonstrates loading/saving campaign
+//   config to localStorage with normalization to handle legacy or invalid data. Uses useMemo for
+//   health checks and computed display names.
+// =====
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import ModulePanel from '../../../components/modules/ModulePanel';

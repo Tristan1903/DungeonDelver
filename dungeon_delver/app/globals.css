@@ -1,35 +1,88 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+/* =============================================================================
+   📘 FILE: app/globals.css
+   =============================================================================
+   🎯 PURPOSE: Global styles for the entire app. Defines:
+      1. The dark RPG visual theme (CSS custom properties / variables)
+      2. Tailwind CSS v4 integration (@import, @theme, @layer)
+      3. Scrollbar styling, responsive utilities, animations
 
+   🧠 REACT CONCEPT: CSS in React
+      Next.js (App Router) automatically loads globals.css — you don't import
+      it in components. The CSS variables defined here (like --rpg-gold) can be
+      used in ANY component's className via Tailwind (e.g., `bg-[--rpg-gold]`)
+      or in inline styles (e.g., `style={{ color: 'var(--rpg-gold)' }}`).
+
+   🧠 CSS VARIABLES (Custom Properties):
+      CSS variables (--name: value) are like React state for CSS. You define
+      them once in :root and use them everywhere with var(--name). Change the
+      value in one place, and the whole theme updates.
+
+   🔧 HOW TO ALTER:
+      - Change colors: Modify the --rpg-* or --color-* values in :root
+      - Add a new color: Add --my-color: #hex; then reference with var(--my-color)
+      - Add a new animation: Write @keyframes + a utility class below
+      - Change fonts: Edit the --font-sans / --font-mono values in @theme
+   ============================================================================= */
+
+/* ── Tailwind v4 + shadcn/ui imports ── */
+@import "tailwindcss";          /* Tailwind's core utility classes */
+@import "tw-animate-css";       /* Animation utilities (from tailwindcss-animate) */
+@import "shadcn/tailwind.css";  /* shadcn/ui's base component styles */
+
+/* 🧠 `@custom-variant` — Tailwind v4 way to define a custom variant.
+   This creates a `.dark *` selector variant so Tailwind knows when dark mode
+   is active. In this app, the `<html>` tag has `className="dark"` hardcoded
+   in layout.tsx, so dark mode is ALWAYS on (this is a dark-themed app). */
 @custom-variant dark (&:is(.dark *));
 
 /* ── Classic RPG Dark Theme ── */
+/* 🧠 `:root` — The CSS pseudo-class for the <html> element. Variables defined
+   here are GLOBAL — any element can access them via var(--name).
+   💡 Think of :root as a "global CSS state" — all variables declared here
+   are available app-wide, just like React Context makes state available to
+   all components. */
 :root {
+  /* 🧠 CSS Variable naming conventions:
+     --background     → Main page background
+     --foreground     → Main text color
+     --card           → Card/surface background
+     --card-foreground → Text on cards
+     --primary        → Primary accent color (the RPG gold)
+     --secondary      → Secondary surface color
+     --muted          → Dim/less important surfaces
+     --destructive    → Danger/error color
+     --border         → Border color for panels
+     --ring           → Focus ring color (when tabbing through inputs)
+     
+     These follow the shadcn/ui naming convention so shadcn components
+     automatically use them. */
+
   --background: #0c0e14;
   --foreground: #e8dcc8;
   --card: #1a1714;
   --card-foreground: #e8dcc8;
   --popover: #1a1714;
   --popover-foreground: #e8dcc8;
-  --primary: #c9a84c;
-  --primary-foreground: #1a1714;
+  --primary: #c9a84c;           /* Gold — main accent */
+  --primary-foreground: #1a1714; /* Dark text on gold backgrounds */
   --secondary: #2a2520;
   --secondary-foreground: #e8dcc8;
   --muted: #2a2520;
-  --muted-foreground: #8a7e6a;
+  --muted-foreground: #8a7e6a;  /* Dimmer text for less important info */
   --accent: #c9a84c;
   --accent-foreground: #1a1714;
-  --destructive: #a83232;
-  --border: #3d3528;
+  --destructive: #a83232;       /* Blood red for danger/damage */
+  --border: #3d3528;            /* Stone-like border color */
   --input: #3d3528;
-  --ring: #c9a84c;
-  --chart-1: #c9a84c;
+  --ring: #c9a84c;              /* Focus ring matches gold accent */
+  --chart-1: #c9a84c;           /* Chart/stat colors */
   --chart-2: #6b8a5e;
   --chart-3: #8b5e3c;
   --chart-4: #5a7a9a;
   --chart-5: #9a5a7a;
-  --radius: 0.5rem;
+  --radius: 0.5rem;             /* Border radius for rounded corners */
+
+  /* Sidebar-specific colors */
   --sidebar: #0f1118;
   --sidebar-foreground: #e8dcc8;
   --sidebar-primary: #c9a84c;
@@ -39,16 +92,19 @@
   --sidebar-border: #3d3528;
   --sidebar-ring: #c9a84c;
 
-  /* RPG custom tokens */
+  /* ── RPG custom tokens ── */
+  /* 🧠 These are ADDITIONAL theme colors specific to this D&D app.
+     They don't conflict with shadcn — they're used by custom components
+     that need "parchment" or "blood" or "mana" colors. */
   --rpg-parchment: #f0e6c8;
   --rpg-ink: #2c1810;
   --rpg-gold: #c9a84c;
   --rpg-gold-dim: #8a6e2f;
   --rpg-gold-bright: #e8c84c;
   --rpg-blood: #a83232;
-  --rpg-mana: #4a6fa5;
-  --rpg-nature: #6b8a5e;
-  --rpg-stone: #3d3528;
+  --rpg-mana: #4a6fa5;         /* Blue for magic */
+  --rpg-nature: #6b8a5e;       /* Green for nature/poison */
+  --rpg-stone: #3d3528;        /* Stone/brown for earth */
   --rpg-parchment-bg: #1a1714;
   --rpg-dark: #0c0e14;
   --rpg-panel: #1a1714;
@@ -89,6 +145,13 @@
   --dungeon-surface: #1a1714;
 }
 
+/* 🧠 `@theme inline` — Tailwind v4 syntax for custom theme values.
+   This registers the CSS variables as Tailwind utility classes.
+   After this, you can use `bg-primary`, `text-foreground`, `border-border`
+   and Tailwind will map them to the CSS variables above.
+   
+   💡 Example: `className="bg-primary text-primary-foreground"`
+   → background becomes gold (#c9a84c), text becomes dark (#1a1714) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -121,6 +184,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Border radius utilities: rounded-sm, rounded-md, rounded-lg, etc. */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -128,11 +193,19 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* 🧠 Font families registered as Tailwind utilities:
+     `font-sans` → MedievalSharp (headings)
+     `font-mono` → Geist Mono (code/stat blocks)
+     `font-heading` → MedievalSharp (custom utility for headings) */
   --font-sans: "MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif;
   --font-mono: "Geist Mono", "Courier New", monospace;
   --font-heading: "MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif;
 }
 
+/* 🧠 `body` — Direct element styling (not a Tailwind class).
+   Sets the background color and text color globally, with a serif font
+   for the RPG feel. Tailwind's `font-sans` uses MedievalSharp for headings. */
 body {
   background: var(--background);
   color: var(--foreground);
@@ -140,9 +213,16 @@ body {
 }
 
 /* ── Base layer ── */
+/* 🧠 `@layer base` — Tailwind v4's base layer. Styles here are applied
+   to raw HTML elements (<div>, <body>, etc.) rather than utility classes. */
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* 🧠 `@apply` — Tailwind's "inline" syntax. Equivalent to writing:
+       border-color: var(--border);
+       outline-color: color-mix(in srgb, var(--ring) 50%, transparent);
+       This applies border-border color to ALL elements, and a 50% opacity
+       ring outline for focus states. */
   }
   body {
     @apply bg-background text-foreground;
@@ -153,22 +233,27 @@ body {
 }
 
 /* ── Scrollbar ── */
+/* 🧠 Custom scrollbar styling using webkit pseudo-elements.
+   Only works in Chrome/Edge/Safari, not Firefox (Firefox has different
+   scrollbar properties). */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 8px;     /* Vertical scrollbar width */
+  height: 8px;    /* Horizontal scrollbar height */
 }
 ::-webkit-scrollbar-track {
-  background: #0c0e14;
+  background: #0c0e14;  /* Track = the background area the thumb slides on */
 }
 ::-webkit-scrollbar-thumb {
-  background: #3d3528;
+  background: #3d3528;   /* Thumb = the draggable handle */
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #5a5248;
+  background: #5a5248;   /* Darker when hovering */
 }
 
 /* ── Touch targets ── */
+/* 🧠 Ensures interactive elements are large enough for touch screens.
+   44x44px is Apple's recommended minimum touch target size. */
 .touch-target {
   min-width: 44px;
   min-height: 44px;
@@ -176,6 +261,8 @@ body {
   cursor: pointer;
 }
 
+/* 🧠 `@media (pointer: coarse)` — Detects touch devices (where you can't
+   hover precisely). On these devices, ALL buttons get the 44px minimum. */
 @media (pointer: coarse) {
   button,
   .touch-target {
@@ -185,25 +272,60 @@ body {
 }
 
 /* ── Responsive ── */
+/* 🧠 `.responsive-grid` — A CSS Grid that auto-adjusts columns based on
+   available width. `auto-fit` fills the row, `minmax(280px, 1fr)` makes each
+   column at least 280px but can grow to fill space. On a 900px screen: 3 cols.
+   On 400px: 1 col. ✨ Magic! */
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 12px;
 }
 
+/* 🧠 `.page-container` — Standard page layout: centered content with padding,
+   max-width to prevent overly wide text on large screens. */
 .page-container {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* 🧠 Media query: on screens narrower than 768px (tablets/phones),
+   reduce padding so content doesn't get squished against edges. */
 @media (max-width: 768px) {
   .page-container {
     padding: 1rem;
   }
 }
 
+/* ── Safe area support ── */
+/* These use env(safe-area-inset-*) for notched/rounded-screen devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.safe-area-left {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.safe-area-right {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+@media (max-width: 400px) {
+  .page-container {
+    padding: 0.75rem;
+  }
+  .responsive-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  }
+}
+
 /* ── RPG ornamental utilities ── */
+/* 🧠 Decorative visual elements for the RPG theme */
+
+/* Fancy horizontal divider with gold gradient that fades at the edges */
 .rpg-divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, var(--rpg-gold-dim), transparent);
@@ -211,10 +333,12 @@ body {
   margin: 1rem 0;
 }
 
+/* Gold glow effect for important UI elements (buttons, cards) */
 .rpg-glow {
   box-shadow: 0 0 12px rgba(201, 168, 76, 0.15), inset 0 1px 0 rgba(201, 168, 76, 0.08);
 }
 
+/* Standard panel style — dark background, subtle border, rounded corners */
 .rpg-panel {
   background: var(--rpg-panel);
   border: 1px solid var(--rpg-panel-border);
@@ -222,20 +346,30 @@ body {
 }
 
 /* ── Animations ── */
+/* 🧠 `@keyframes` — Defines reusable animation sequences.
+   Unlike CSS transitions (which go from A to B), keyframes can have
+   multiple steps and more complex behavior. */
+
+/* Simple spin animation (used for loading spinners) */
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
+/* Fade in with a slight upward slide — used when new content appears */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Slide in from the left — used for sidebar/menu entries appearing */
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
 }
 
+/* 🧠 Utility classes that apply the animations.
+   Usage: <div className="animate-fade-in">...</div>
+   The animation plays once when the element mounts. */
 .animate-fade-in {
   animation: fadeIn 0.2s ease-out;
 }

@@ -1,5 +1,31 @@
-// utils/dataLoader.ts
+// =============================================================================
+// 📘 FILE: utils/dataLoader.ts
+// =============================================================================
+// 🎯 PURPOSE: Loads ALL game data from the JSON files in `public/data/`.
+//    Provides a `DataEngine` singleton object with methods for every data type:
+//    bestiary, items, spells, races, classes, backgrounds, feats, conditions, etc.
+//
+// 🧠 REACT CONCEPT: Singleton + Async Data Loading
+//    This is a SINGLETON — one object (`DataEngine`) with methods that fetch
+//    data. All the methods return Promises because they use `fetch()` to load
+//    JSON files. Components call these in useEffect and store results in state.
+//
+//    💡 The "Engine" pattern: a plain object (not a class, not React state)
+//    that encapsulates all data-loading logic. This keeps components clean —
+//    they just call DataEngine.getSpells() and get back data.
+//
+// 🧠 Caching: Some methods cache results in module-level variables
+//    (like `allSpellsCache`) to avoid re-fetching the same files on every call.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new data source: add a new method (e.g., getMagicSchools())
+//    - Change load paths: modify the fetch paths in loadLocalJson
+//    - Change merge logic: modify the dedup loops (like items' XPHB preference)
+//    - Add new data transformation: add processing steps before returning
+// =============================================================================
 
+// 🧠 generateItemFallback — Creates a human-readable description for items
+//    that don't have an "entries" field. Parses weapon/armor properties into text.
 function generateItemFallback(item: any): string[] {
   const parts: string[] = [];
   if (item.weapon) {
@@ -29,15 +55,19 @@ function generateItemFallback(item: any): string[] {
   return parts.length ? parts : [`${item.name || 'Item'}.`];
 }
 
+// 🧠 Module-level cache variables — persist across function calls
 const spellCache: Record<string, any[]> = {};
 let allSpellsCache: any[] | null = null;
 
+// 🧠 The DataEngine singleton — an object literal with methods.
+//    This is called "module pattern" or "singleton pattern."
 export const DataEngine = {
-  // Use this to fetch ANY JSON file from your 'data' folder
+  // 🧠 Core fetch function — loads any JSON file from public/data/
+  //    Uses fetch() which returns a Promise (async).
+  //    The path is relative to the web root, so 'data/items.json' fetches
+  //    from '/data/items.json' which maps to 'public/data/items.json' at build time.
   loadLocalJson: async (relativePath: string) => {
     try {
-      // In Tauri, relative paths often start from the project root
-      // We use the fetch API for the dev server, which is much faster than FS
       const response = await fetch(`/${relativePath}`);
       if (!response.ok) throw new Error("Could not find file");
       return await response.json();
@@ -47,11 +77,17 @@ export const DataEngine = {
     }
   },
 
+  // 🧠 Each data type has its own loader method:
+
   getBestiary: async () => {
     const data = await DataEngine.loadLocalJson('data/bestiary/bestiary-mm.json');
     return data?.monster || [];
   },
 
+  // 🧠 getItems — Interesting merge/dedup logic.
+  //    Loads items from MULTIPLE sources (base items, magic items, book-specific).
+  //    Deduplicates by NAME, preferring XPHB (2024 PHB) source.
+  //    If XPHB has no entries, uses legacy entries.
   getItems: async () => {
     const baseData = await DataEngine.loadLocalJson('data/items-base.json');
     const magicData = await DataEngine.loadLocalJson('data/items.json');
@@ -67,7 +103,6 @@ export const DataEngine = {
 
     const processedBase = baseItems.map((i: any) => ({ ...i, rarity: 'none' }));
 
-    // Deduplicate by name, preferring XPHB source
     const allItems = [...processedBase, ...magicItems, ...ghpgItems, ...ghmgItems, ...ghcgItems];
     const seen = new Map<string, any>();
     for (const item of allItems) {
@@ -76,7 +111,6 @@ export const DataEngine = {
       if (!existing) {
         seen.set(key, item);
       } else if (item.source === 'XPHB' && existing.source !== 'XPHB') {
-        // XPHB wins, but carry over entries from the old version if XPHB has none
         const mergedEntries = item.entries?.length ? item.entries : (existing.entries || []);
         seen.set(key, {
           ...existing,
@@ -90,12 +124,11 @@ export const DataEngine = {
 
   getRacesData: async () => {
     const data = await DataEngine.loadLocalJson('data/races.json');
-    return {
-      races: data?.race || [],
-      subraces: data?.subrace || [] // This is what was missing!
-    };
+    return { races: data?.race || [], subraces: data?.subrace || [] };
   },
 
+  // 🧠 getClassFullData — Loads a class's data file, also merges in any
+  //    Grim Hollow (GHPG) subclass features for that class.
   getClassFullData: async (className: string) => {
     const filename = `data/class/class-${className.toLowerCase()}.json`;
     const data = await DataEngine.loadLocalJson(filename);
@@ -111,25 +144,28 @@ export const DataEngine = {
     };
   },
 
+  // 🧠 Spells are stored in SEPARATE FILES per sourcebook.
+  //    The index.json file maps source codes to filenames.
   getSpellsIndex: async () => {
     return (await DataEngine.loadLocalJson('data/spells/index.json')) as Record<string, string> | null;
   },
 
   getSpellsBySource: async (source: string) => {
-    if (spellCache[source]) return spellCache[source];
+    if (spellCache[source]) return spellCache[source];  // Already cached
     const index = await DataEngine.getSpellsIndex();
     const file = index?.[source];
     if (!file) return [];
     const data = await DataEngine.loadLocalJson(`data/spells/${file}`);
     const spells = data?.spell || [];
-    spellCache[source] = spells;
+    spellCache[source] = spells;  // Cache for future calls
     return spells;
   },
 
+  // 🧠 getSpells — Loads spells from multiple sources, merges, deduplicates.
+  //    Caches globally (allSpellsCache) so subsequent calls are instant.
   getSpells: async (sources: string[] = ['PHB', 'XPHB']) => {
     if (allSpellsCache) return allSpellsCache;
     const merged: Map<string, any> = new Map();
-    // Load from spell index sources
     for (const src of sources) {
       const spells = await DataEngine.getSpellsBySource(src);
       for (const s of spells) {
@@ -138,11 +174,11 @@ export const DataEngine = {
         if (!existing) {
           merged.set(key, s);
         } else if (src === 'XPHB' && existing.source !== 'XPHB') {
-          merged.set(key, s);
+          merged.set(key, s);  // XPHB overrides older sources
         }
       }
     }
-    // Also load GHPG spells from the book file
+    // Also load GHPG spells
     try {
       const ghpgData = await DataEngine.loadLocalJson('data/book/book-ghpg.json');
       const ghpgSpells = ghpgData?.spell || [];
@@ -215,14 +251,15 @@ export const DataEngine = {
     return data?.monster || [];
   },
 
+  // 🧠 getAllBestiary — Loads ALL monster data from ALL sourcebooks.
+  //    First core sources (MM, VGM, MTF, etc.), then expansion books,
+  //    then Grim Hollow books. Each monster gets tagged with its source.
   getAllBestiary: async () => {
     const index = await DataEngine.getBooks();
     const sourceFiles: Record<string, string> = {};
-    // Map book sources to bestiary file names
     for (const book of index) {
       if (book.source) sourceFiles[book.source] = book.source.toLowerCase();
     }
-    // Load core sources first, then the rest
     const coreSources = ['MM', 'VGM', 'MTF', 'MPMM', 'XPHB', 'TCE', 'XGE'];
     const allSources = [...coreSources, ...Object.keys(sourceFiles).filter(s => !coreSources.includes(s))];
     const allMonsters: any[] = [];
@@ -232,7 +269,6 @@ export const DataEngine = {
         if (data?.monster) allMonsters.push(...data.monster.map((m: any) => ({ ...m, source: m.source || src })));
       } catch { /* skip missing files */ }
     }
-    // Also load Grim Hollow monsters from book files
     try {
       const ghpgData = await DataEngine.loadLocalJson('data/book/book-ghpg.json');
       if (ghpgData?.monster) allMonsters.push(...ghpgData.monster.map((m: any) => ({ ...m, source: m.source || 'GHPG' })));
@@ -249,88 +285,51 @@ export const DataEngine = {
   },
 
   getClassesList: () => {
-    // Standard 5e classes based on your file list
+    // Hard-coded list of all supported classes
     return [
-      "Artificer",
-      "Barbarian",
-      "Bard",
-      "Blood Hunter",
-      "Cleric",
-      "Druid",
-      "Fighter",
-      "Illrigger",
-      "Monk",
-      "Monster Hunter",
-      "Mystic",
-      "Paladin",
-      "Pugilist",
-      "Ranger",
-      "Rogue",
-      "Sorcerer",
-      "Warlock",
-      "Wizard"
+      "Artificer", "Barbarian", "Bard", "Blood Hunter", "Cleric", "Druid",
+      "Fighter", "Illrigger", "Monk", "Monster Hunter", "Mystic", "Paladin",
+      "Pugilist", "Ranger", "Rogue", "Sorcerer", "Warlock", "Wizard"
     ];
   },
 
+  // 🧠 getMergedRaces — Combines race mechanics with flavor text (fluff).
+  //    Uses multi-step name matching (exact, parenthesized, partial).
   getMergedRaces: async () => {
     const raceData = await DataEngine.loadLocalJson('data/races.json');
     const fluffData = await DataEngine.loadLocalJson('data/fluff-races.json');
     const ghpgData = await DataEngine.loadLocalJson('data/book/book-ghpg.json');
-
     const races = raceData?.race || [];
     const fluff = fluffData?.raceFluff || [];
-    // Include GHPG races if present
     const ghpgRaces = ghpgData?.race || [];
-
     const allRaces = [...races, ...ghpgRaces];
-
     return allRaces.map((r: any) => {
       const cleanName = r.name.trim();
-
-      // 1. Try exact match (e.g. "Astral Elf")
       let match = fluff.find((f: any) => f.name === cleanName);
-
-      // 2. Try stripping parentheses (e.g. "Human (Zendikar)" -> "Human")
       if (!match && cleanName.includes('(')) {
         const baseName = cleanName.split(' (')[0];
         match = fluff.find((f: any) => f.name === baseName);
       }
-
-      // 3. Try matching the end of the name (e.g. "Sea Elf" matches "Elf")
       if (!match && cleanName.includes(' ')) {
         const parts = cleanName.split(' ');
         const lastPart = parts[parts.length - 1];
         match = fluff.find((f: any) => f.name === lastPart);
       }
-
-      return {
-        ...r,
-        // Fallback to mechanical entries if lore is missing
-        description: match?.entries || r.entries || []
-      };
+      return { ...r, description: match?.entries || r.entries || [] };
     });
   },
 
-  // Add or Update in utils/dataLoader.ts
   getMergedBackgrounds: async () => {
     const bgData = await DataEngine.loadLocalJson('data/backgrounds.json');
     const fluffData = await DataEngine.loadLocalJson('data/fluff-backgrounds.json');
     const ghpgData = await DataEngine.loadLocalJson('data/book/book-ghpg.json');
-
     const backgrounds = bgData?.background || [];
     const fluff = fluffData?.backgroundFluff || [];
-    // Include GHPG backgrounds if present
     const ghpgBgs = ghpgData?.background || [];
-
     const allBgs = [...backgrounds, ...ghpgBgs];
-
     return allBgs.map((b: any) => {
-      // Find lore by name and source
       const match = fluff.find((f: any) => f.name === b.name && f.source === b.source);
-      return {
-        ...b,
-        description: match?.entries || b.entries || [] // Fallback to mechanics if no fluff
-      };
+      return { ...b, description: match?.entries || b.entries || [] };
     });
   },
 
@@ -339,4 +338,3 @@ export const DataEngine = {
     return data?.deity || [];
   },
 };
-

@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: components/ui/navigation-menu.tsx
+// =============================================================================
+// 🎯 PURPOSE: A responsive navigation menu built on @base-ui/react's
+//    NavigationMenu primitive. Supports multi-level menus with viewport-
+//    based content display, animated transitions, and keyboard navigation.
+//
+// 🧠 REACT CONCEPT: Compound Component + Animated Viewport
+//    NavigationMenu is unique among the UI components because it uses a
+//    VIEWPORT — instead of each submenu popping up independently, all
+//    content panels share a single viewport that animates between them.
+//    The Positioner manages the viewport position and size transitions.
+//
+//    NavigationMenuPositioner is rendered INSIDE NavigationMenu (not by
+//    the consumer) — this is an example of "internal compound components"
+//    where the parent controls its own children for layout coordination.
+//
+// 🔧 HOW TO ALTER:
+//    - Change viewport animation: modify duration/easing classes
+//    - Change trigger style: modify navigationMenuTriggerStyle
+//    - Change content width: modify w-(--popup-width) in the Popup
+//    - Change position: modify side/sideOffset on NavigationMenuPositioner
+// =============================================================================
+
 import { NavigationMenu as NavigationMenuPrimitive } from "@base-ui/react/navigation-menu"
 import { cva } from "class-variance-authority"
 

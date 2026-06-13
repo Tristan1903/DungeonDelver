@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/SpellDetail.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal overlay displaying a spell's full details: level, school,
+//    source, casting time, range, components, duration, description entries,
+//    higher-level scaling, and class list. Used in the Library and spell
+//    selection UI.
+//
+// 🧠 REACT CONCEPT: Helper Functions for Data Formatting
+//    `getSchoolName`, `formatTime`, `formatRange`, `componentLabel`,
+//    `formatDuration` are imported utilities that normalize the raw 5e data
+//    format into human-readable strings, keeping the JSX clean.
+// =============================================================================
 import { getSchoolName, formatTime, formatRange, componentLabel, formatDuration, renderEntries } from '../utils/libraryHelpers';
 
 const overlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };

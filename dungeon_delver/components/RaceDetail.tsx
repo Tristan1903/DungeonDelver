@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/RaceDetail.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal overlay displaying race details: size, source, speed,
+//    ability bonuses, description/entries, and language proficiencies. Used in
+//    the Library race browser.
+//
+// 🧠 REACT CONCEPT: Inline Modal (same pattern as other *Detail components)
+//    Fixed overlay + centered panel with stopPropagation on the inner div.
+//    This consistent pattern appears in BackgroundDetail, ItemDetail,
+//    MonsterDetail, SpellDetail, and RaceDetail — demonstrating component
+//    consistency in a codebase.
+// =============================================================================
 import { formatSpeed, renderEntries } from '../utils/libraryHelpers';
 
 const overlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };

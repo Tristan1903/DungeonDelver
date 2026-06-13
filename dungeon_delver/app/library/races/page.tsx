@@ -1,12 +1,21 @@
 'use client';
+// ===== 📘 FILE: app/library/races/page.tsx =====
+// 🎯 PURPOSE: Races library — searchable grid of playable races with images, size/source,
+//   speed display, and a detail modal via RaceDetail component.
+// 🧠 REACT CONCEPT: Search + Image Fallback + Detail Modal — consistent pattern with other
+//   library pages: useEffect load on mount, client-side search filter, grid with error-resilient
+//   images, and modal detail view.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { formatSpeed } from '../../../utils/libraryHelpers';
 import { raceImgPath } from '../../../utils/imgPaths';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 import RaceDetail from '../../../components/RaceDetail';
 
 export default function RacesPage() {
+  const isMobile = useIsMobile();
   const [allRaces, setAllRaces] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -22,7 +31,7 @@ export default function RacesPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Races
         </h1>

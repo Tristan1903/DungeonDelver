@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: SiegeConfig.tsx =====
+// 🎯 PURPOSE: Configures siege weapons — each weapon has name, AC, HP, damage dice, crew count,
+//   and range string.
+// 🧠 REACT CONCEPT: Diverse Input Types in Array CRUD — each weapon item contains numbers, strings,
+//   and dice notation, all updated immutably through a single `update` helper.
+// =====
 export interface SiegeConfigValue {
   weapons: { name: string; ac: number; hp: number; dmg: string; crew: number; range: string }[];
 }

@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: components/ui/tooltip.tsx
+// =============================================================================
+// 🎯 PURPOSE: A tooltip component built on @base-ui/react's Tooltip primitive.
+//    Shows a floating label on hover/focus with position control (side, align,
+//    offset) and an arrow indicator.
+//
+// 🧠 REACT CONCEPT: Compound Component + Portal + Floating UI
+//    TooltipProvider wraps the app (or section) to set global defaults like
+//    delay. TooltipTrigger marks the element that shows the tooltip.
+//    TooltipContent renders in a Portal with a Positioner for auto-flipping
+//    and collision detection.
+//
+//    The `data-[state=delayed-open]` animation classes create a smooth
+//    entrance after the configured delay. The Arrow component renders a
+//    small rotated square that points at the trigger.
+//
+// 🔧 HOW TO ALTER:
+//    - Change appearance delay: modify the `delay` prop on TooltipProvider
+//    - Change tooltip position: modify side/sideOffset/align props
+//    - Change arrow style: modify TooltipPrimitive.Arrow className
+//    - Change animation: adjust data-open/data-closed classes
+// =============================================================================
+
 "use client"
 
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"

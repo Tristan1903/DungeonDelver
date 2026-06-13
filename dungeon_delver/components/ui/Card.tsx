@@ -1,5 +1,37 @@
-import * as React from "react"
+// =============================================================================
+// 📘 FILE: components/ui/card.tsx
+// =============================================================================
+// 🎯 PURPOSE: A composite card component built from multiple sub-components:
+//    Card (container), CardHeader, CardTitle, CardDescription, CardAction,
+//    CardContent, and CardFooter. Supports a "sm" size variant.
+//
+// 🧠 REACT CONCEPT: Compound Component Pattern
+//    Card is a "compound component" — multiple sub-components that work
+//    together but can be composed flexibly by the parent:
+//
+//    ```tsx
+//    <Card size="sm">
+//      <CardHeader>
+//        <CardTitle>Title</CardTitle>
+//        <CardDescription>Subtitle</CardDescription>
+//      </CardHeader>
+//      <CardContent>Body</CardContent>
+//      <CardFooter>Actions</CardFooter>
+//    </Card>
+//    ```
+//
+//    The parent Card uses CSS `group/card` and `group-data-[size=sm]`
+//    selectors to coordinate styling across all children without prop
+//    drilling. This is Tailwind's "group" pattern — a parent sets a
+//    group name, children reference it.
+//
+// 🔧 HOW TO ALTER:
+//    - Change card padding: modify the className in Card or CardContent
+//    - Add a new size: add to the `size` prop and update group selectors
+//    - Change header/footer styles: modify CardHeader/CardFooter classNames
+// =============================================================================
 
+import * as React from "react"
 import { cn } from "@/lib/utils"
 
 function Card({

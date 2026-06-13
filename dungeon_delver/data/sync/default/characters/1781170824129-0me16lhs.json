@@ -1,0 +1,391 @@
+{
+  "id": "1781170824129-0me16lhs",
+  "name": "Ttt",
+  "expertise": [
+    "insight",
+    "religion"
+  ],
+  "race": "Centaur",
+  "class": "Artificer",
+  "classes": [
+    "Artificer"
+  ],
+  "background": "Acolyte",
+  "classLevels": [
+    {
+      "className": "Artificer",
+      "level": 1
+    }
+  ],
+  "totalLevel": 1,
+  "level": 1,
+  "xp": 0,
+  "levelingMode": "individual",
+  "baseStats": {
+    "str": 8,
+    "dex": 10,
+    "con": 12,
+    "int": 13,
+    "wis": 14,
+    "cha": 15
+  },
+  "hp": {
+    "current": 9,
+    "max": 9
+  },
+  "inventory": [
+    {
+      "id": "auto-0-light crossbow",
+      "name": "light crossbow",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "Simple weapon.",
+        "Damage: 1d8 P (80/320 ft).",
+        "Properties: A, LD, 2H.",
+        "Mastery: Slow.",
+        "Weight: 5 lb.",
+        "Value: 25 gp."
+      ],
+      "weight": 5,
+      "type": "R|XPHB",
+      "dmg1": "1d8"
+    },
+    {
+      "id": "auto-1-crossbow bolt",
+      "name": "crossbow bolt",
+      "equipped": false,
+      "quantity": 20,
+      "entries": [],
+      "weight": 0.075,
+      "type": "A"
+    },
+    {
+      "id": "auto-2-thieves' tools",
+      "name": "thieves' tools",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        {
+          "type": "list",
+          "style": "list-hang-notitle",
+          "items": [
+            {
+              "name": "Ability:",
+              "type": "item",
+              "entries": [
+                "Dexterity"
+              ]
+            },
+            {
+              "name": "Utilize:",
+              "type": "item",
+              "entries": [
+                "Pick a lock ({@dc 15}), or disarm a trap ({@dc 15})"
+              ]
+            }
+          ]
+        }
+      ],
+      "weight": 1,
+      "type": "T|XPHB"
+    },
+    {
+      "id": "auto-3-backpack",
+      "name": "backpack",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Backpack holds up to 30 pounds within 1 cubic foot. It can also serve as a saddlebag."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-4-caltrops",
+      "name": "caltrops",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "As a {@action Utilize|XPHB} action, you can spread Caltrops from their bag to cover a 5-foot-square area within 5 feet of yourself. A creature that enters this area for the first time on a turn must succeed on a {@dc 15} Dexterity saving throw or take 1 Piercing damage and have its {@variantrule Speed|XPHB} reduced to 0 until the start of its next turn. It takes 10 minutes to recover the Caltrops."
+      ],
+      "weight": 2,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-5-crowbar",
+      "name": "crowbar",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "Using a Crowbar gives you {@variantrule Advantage|XPHB} on Strength checks where the Crowbar's leverage can be applied."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-6-oil",
+      "name": "oil",
+      "equipped": false,
+      "quantity": 2,
+      "entries": [
+        "You can douse a creature, object, or space with Oil or use it as fuel, as detailed below.",
+        {
+          "name": "Dousing a Creature or an Object",
+          "type": "entries",
+          "entries": [
+            "When you take the {@action Attack|XPHB} action, you can replace one of your attacks with throwing an Oil flask. Target one creature or object within 20 feet of yourself. The target must succeed on a Dexterity saving throw ({@dc 8} plus your Dexterity modifier and {@variantrule Proficiency|XPHB|Proficiency Bonus}) or be covered in oil. If the target takes Fire damage before the oil dries (after 1 minute), the target takes an extra 5 Fire damage from burning oil."
+          ]
+        },
+        {
+          "name": "Dousing a Space",
+          "type": "entries",
+          "entries": [
+            "You can take the {@action Utilize|XPHB} action to pour an Oil flask on level ground to cover a 5-foot-square area within 5 feet of yourself. If lit, the oil burns until the end of the turn 2 rounds from when the oil was lit (or 12 seconds) and deals 5 Fire damage to any creature that enters the area or ends its turn there. A creature can take this damage only once per turn."
+          ]
+        },
+        {
+          "name": "Fuel",
+          "type": "entries",
+          "entries": [
+            "Oil serves as fuel for Lamps and Lanterns. Once lit, a flask of Oil burns for 6 hours in a Lamp or Lantern. That duration doesn't need to be consecutive; you can extinguish the burning Oil (as a {@action Utilize|XPHB} action) and rekindle it again until it has burned for a total of 6 hours."
+          ]
+        }
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-7-rations",
+      "name": "rations",
+      "equipped": false,
+      "quantity": 10,
+      "entries": [
+        "Rations consist of travel-ready food, including jerky, dried fruit, hardtack, and nuts. See \"{@hazard Malnutrition|XPHB}\" for the risks of not eating."
+      ],
+      "weight": 2,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-8-rope",
+      "name": "rope",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "As a {@action Utilize|XPHB} action, you can tie a knot with Rope if you succeed on a {@dc 10} Dexterity ({@skill Sleight of Hand|XPHB}) check. The Rope can be burst with a successful {@dc 20} Strength ({@skill Athletics|XPHB}) check.",
+        "You can bind an unwilling creature with the Rope only if the creature has the {@condition Grappled|XPHB}, {@condition Incapacitated|XPHB}, or {@condition Restrained|XPHB} condition. If the creature's legs are bound, the creature has the {@condition Restrained|XPHB} condition until it escapes. Escaping the Rope requires the creature to make a successful {@dc 15} Dexterity ({@skill Acrobatics|XPHB}) check as an action."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-9-tinderbox",
+      "name": "tinderbox",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Tinderbox is a small container holding flint, fire steel, and tinder (usually dry cloth soaked in light oil) used to kindle a fire. Using it to light a {@item Candle|XPHB}, {@item Lamp|XPHB}, {@item Hooded Lantern|XPHB|Lantern}, or {@item Torch|XPHB}—or anything else with exposed fuel—takes a {@variantrule Bonus Action|XPHB}. Lighting any other fire takes 1 minute."
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-10-torch",
+      "name": "torch",
+      "equipped": false,
+      "quantity": 10,
+      "entries": [
+        "A Torch burns for 1 hour, casting {@variantrule Bright Light|XPHB} in a 20-foot radius and {@variantrule Dim Light|XPHB} for an additional 20 feet. When you take the {@action Attack|XPHB} action, you can attack with the Torch, using it as a Simple Melee weapon. On a hit, the target takes 1 Fire damage."
+      ],
+      "weight": 1,
+      "type": "G|XPHB"
+    },
+    {
+      "id": "auto-11-waterskin",
+      "name": "waterskin",
+      "equipped": false,
+      "quantity": 1,
+      "entries": [
+        "A Waterskin holds up to 4 pints. If you don't drink sufficient water, you risk dehydration."
+      ],
+      "weight": 5,
+      "type": "G|XPHB"
+    }
+  ],
+  "proficiencies": [
+    "insight",
+    "religion",
+    "investigation",
+    "perception"
+  ],
+  "features": [
+    {
+      "name": "Spellcasting",
+      "level": 1,
+      "source": "Artificer",
+      "entries": [
+        "You have learned how to channel magical energy through objects. See the {@book Player's Handbook|XPHB} for the rules on spellcasting. The information below details how you use those rules with Artificer spells, which appear in the {@filter Artificer spell list|spells|class=Artificer} later in the class's description.",
+        {
+          "type": "entries",
+          "entries": [
+            {
+              "type": "entries",
+              "name": "Tools Required",
+              "entries": [
+                "You produce your Artificer spells through tools. You can use {@item Thieves' Tools|XPHB}, {@item Tinker's Tools|XPHB}, or another kind of {@item Artisan's Tools|XPHB} with which you have proficiency as a {@variantrule Spellcasting Focus|XPHB}, and you must have one of those focuses in hand when you cast an Artificer spell (meaning the spell has an {@i M} component when you cast it)."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Cantrips",
+              "entries": [
+                "You know two {@filter Artificer cantrips|spells|level=0|class=Artificer} of your choice. {@spell Acid Splash|XPHB} and {@spell Prestidigitation|XPHB} are recommended.",
+                "Whenever you finish a {@variantrule Long Rest|XPHB}, you can replace one of your cantrips from this feature with another Artificer cantrip of your choice.",
+                "When you reach Artificer levels 10 and 14, you learn another Artificer cantrip of your choice, as shown in the Cantrips column of the Artificer Features table."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Spell Slots",
+              "entries": [
+                "The Artificer Features table shows how many spell slots you have to cast your level 1+ spells. You regain all expended slots when you finish a {@variantrule Long Rest|XPHB}."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Prepared Spells of Level 1+",
+              "entries": [
+                "You prepare the list of level 1+ spells that are available for you to cast with this feature. To start, choose two {@filter level 1 Artificer spells|spells|level=1|class=Artificer}. {@spell Cure Wounds|XPHB} and {@spell Grease|XPHB} are recommended.",
+                "The number of spells on your list increases as you gain Artificer levels, as shown in the Prepared Spells column of the Artificer Features table. Whenever that number increases, choose additional {@filter Artificer spells|spells|class=Artificer} until the number of spells on your list matches the number on the table. The chosen spells must be of a level for which you have spell slots. For example, if you're a level 5 Artificer, your list of prepared spells can include six Artificer spells of levels 1 and 2 in any combination.",
+                "If another Artificer feature gives you spells that you always have prepared, those don't count against the number of spells you can prepare with this feature, but those spells otherwise count as Artificer spells for you."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Changing Your Prepared Spells",
+              "entries": [
+                "Whenever you finish a {@variantrule Long Rest|XPHB}, you can change your list of prepared spells, replacing any of the spells there with other Artificer spells for which you have spell slots."
+              ]
+            },
+            {
+              "type": "entries",
+              "name": "Spellcasting Ability",
+              "entries": [
+                "Intelligence is your spellcasting ability for your Artificer spells."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tinker's Magic",
+      "level": 1,
+      "source": "Artificer",
+      "entries": [
+        "You know the {@spell Mending|XPHB} cantrip.",
+        "As a {@action Magic|XPHB} action while holding {@item Tinker's Tools|XPHB}, you can create one item in an unoccupied space within 5 feet of yourself, choosing the item from the following list:",
+        {
+          "type": "list",
+          "style": "list-hang",
+          "columns": 3,
+          "items": [
+            "{@item Ball Bearings|XPHB}",
+            "{@item Basket|XPHB}",
+            "{@item Bedroll|XPHB}",
+            "{@item Bell|XPHB}",
+            "{@item Blanket|XPHB}",
+            "{@item Block and Tackle|XPHB}",
+            "{@item Glass Bottle|XPHB|Bottle, Glass}",
+            "{@item Bucket|XPHB}",
+            "{@item Caltrops|XPHB}",
+            "{@item Candle|XPHB}",
+            "{@item Crowbar|XPHB}",
+            "{@item Flask|XPHB}",
+            "{@item Grappling Hook|XPHB}",
+            "{@item Hunting Trap|XPHB}",
+            "{@item Jug|XPHB}",
+            "{@item Lamp|XPHB}",
+            "{@item Manacles|XPHB}",
+            "{@item Net|XPHB}",
+            "{@item Oil|XPHB}",
+            "{@item Paper|XPHB}",
+            "{@item Parchment|XPHB}",
+            "{@item Pole|XPHB}",
+            "{@item Pouch|XPHB}",
+            "{@item Rope|XPHB}",
+            "{@item Sack|XPHB}",
+            "{@item Shovel|XPHB}",
+            "{@item Iron Spikes|XPHB|Spikes, Iron}",
+            "{@item String|XPHB}",
+            "{@item Tinderbox|XPHB}",
+            "{@item Torch|XPHB}",
+            "{@item Vial|XPHB}"
+          ]
+        },
+        "See the rules for the item in the {@book Player's Handbook|XPHB}. The item lasts until you finish a {@variantrule Long Rest|XPHB}, at which point it vanishes.",
+        "You can use this feature a number of times equal to your Intelligence modifier (minimum of once), and you regain all expended uses when you finish a {@variantrule Long Rest|XPHB}."
+      ]
+    },
+    {
+      "name": "Magical Tinkering",
+      "level": 1,
+      "source": "Artificer",
+      "entries": [
+        "{@i 1st-level artificer feature}",
+        "You've learned how to invest a spark of magic into mundane objects. To use this ability, you must have {@item thieves' tools|PHB} or {@item artisan's tools|PHB} in hand. You then touch a Tiny nonmagical object as an action and give it one of the following magical properties of your choice:",
+        {
+          "type": "list",
+          "items": [
+            "The object sheds bright light in a 5-foot radius and dim light for an additional 5 feet.",
+            "Whenever tapped by a creature, the object emits a recorded message that can be heard up to 10 feet away. You utter the message when you bestow this property on the object, and the recording can be no more than 6 seconds long.",
+            "The object continuously emits your choice of an odor or a nonverbal sound (wind, waves, chirping, or the like). The chosen phenomenon is perceivable up to 10 feet away.",
+            "A static visual effect appears on one of the object's surfaces. This effect can be a picture, up to 25 words of text, lines and shapes, or a mixture of these elements, as you like."
+          ]
+        },
+        "The chosen property lasts indefinitely. As an action, you can touch the object and end the property early.",
+        "You can bestow magic on multiple objects, touching one object each time you use this feature, though a single object can only bear one property at a time. The maximum number of objects you can affect with this feature at one time is equal to your Intelligence modifier (minimum of one object). If you try to exceed your maximum, the oldest property immediately ends, and then the new property applies."
+      ]
+    },
+    {
+      "name": "Optional Rule: Firearm Proficiency",
+      "level": 1,
+      "source": "Artificer",
+      "entries": [
+        "The secrets of creating and operating gunpowder weapons have been discovered in various corners of the D&D multiverse. If your Dungeon Master uses the rules on firearms in {@book chapter 9|DMG|9|Firearms} of the {@book Dungeon Master's Guide|DMG} and your artificer has been exposed to the operation of such weapons, your artificer is proficient with them."
+      ]
+    }
+  ],
+  "resources": {},
+  "classFeaturePicks": {},
+  "spells": {
+    "cantrips": [
+      "Acid Splash",
+      "Dancing Lights"
+    ],
+    "known": [],
+    "prepared": [
+      "Cure Wounds"
+    ]
+  },
+  "spellSlots": {
+    "1": {
+      "max": 2,
+      "used": 0
+    }
+  },
+  "concentratingOn": null,
+  "personalityTraits": "I see omens in every event and action. The gods try to speak to us, we just need to listen.",
+  "languages": [
+    "Common",
+    "Sylvan",
+    "Gnomish",
+    "Goblin"
+  ],
+  "backstory": "",
+  "organizations": [],
+  "allies": [],
+  "enemies": [],
+  "notes": "",
+  "last_sync": "2026-06-12T04:58:14.500Z"
+}

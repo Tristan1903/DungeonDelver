@@ -1,4 +1,12 @@
 'use client';
+// ===== 📘 FILE: TransformationsConfig.tsx =====
+// 🎯 PURPOSE: Configures Grim Hollow transformations — each type has 4 tiers (levels 3/6/10/14)
+//   with editable boons, flaws, and features. Supports expand/collapse per type and inline editing.
+// 🧠 REACT CONCEPT: Complex Nested State Management — manages a deeply nested data structure (types →
+//   tiers → boons/flaws/features → { name, description }) using immutable update functions with
+//   find/map patterns. Also demonstrates local UI state (expandedType, editingTier) alongside
+//   lifted config state.
+// =====
 import { useState } from 'react';
 import type { TransformationsConfig } from '../../../utils/campaignEngine';
 

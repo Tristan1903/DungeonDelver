@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/monsters/page.tsx =====
+// 🎯 PURPOSE: Monster manager — multi-source bestiary browser with search, type/CR filters,
+//   a full statblock modal with rollable actions, multi-select for batch push to combat.
+// 🧠 REACT CONCEPT: Multi-Source Data Loading + Checkbox Selection — dynamically loads monster
+//   data from multiple source files on-demand, filters client-side with type/CR/search, and
+//   manages a Set of selected IDs for batch operations (push to combat tracker).
+// =====
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

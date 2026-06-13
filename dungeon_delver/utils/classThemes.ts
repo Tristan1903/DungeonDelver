@@ -1,15 +1,50 @@
+// =============================================================================
+// 📘 FILE: utils/classThemes.ts
+// =============================================================================
+// 🎯 PURPOSE: Defines visual themes for each class — colors, taglines, flavor
+//    text, recommended gear, and pill labels. Used throughout the UI to give
+//    each class a distinct visual identity.
+//
+// 🧠 REACT CONCEPT: Static Configuration Data
+//    This is PURE DATA — no functions, no logic, no React. It's an object
+//    (CLASS_THEMES) that maps class names to their visual config.
+//
+//    Components import CLASS_THEMES and use it like:
+//      const theme = CLASS_THEMES[character.class];
+//      <div style={{ borderColor: theme.color }}>...content</div>
+//
+// 💡 By separating theme data from component code, you can:
+//    - Change the color scheme for a class in ONE place
+//    - Add new classes just by adding an entry
+//    - Let designers edit this file without touching component code
+//
+// 🔧 HOW TO ALTER:
+//    - Change a class color: modify the `color` value (the hex)
+//    - Change tagline: modify the `tagline` string
+//    - Add a new class: add a new entry to CLASS_THEMES
+//    - Change pills: modify the `pills` array
+// =============================================================================
+
+// 🧠 ClassTheme — Describes the visual identity of a class.
 export interface ClassTheme {
-  color: string;
-  tagline_color: string;
-  tagline: string;
-  highlights: string[];
-  gear: string[];
-  pills: { short: string; full: string }[];
+  color: string;              // Main accent color (with transparency for backgrounds)
+  tagline_color: string;      // Solid version for text
+  tagline: string;            // One-line flavor description
+  highlights: string[];       // Three key selling points
+  gear: string[];             // Three recommended items
+  pills: { short: string; full: string }[];  // Key stat/role labels (short + full versions)
 }
 
+// 🧠 CLASS_THEMES — The master theme registry.
+//    Every supported class has an entry. Each entry is a complete visual theme.
+//
+//    🧠 The #XXXXXX7c hex codes include ALPHA (transparency).
+//    7c in hex = 124 decimal = ~48% opacity.
+//    This allows `color: theme.color` to give a semi-transparent background
+//    and `borderColor: theme.tagline_color` for solid borders.
 export const CLASS_THEMES: Record<string, ClassTheme> = {
   Artificer: {
-    color: '#00a8967c', // Teal/Copper
+    color: '#00a8967c',
     tagline_color: '#00dec7',
     tagline: 'A Master of Magical Invention and Artifice',
     highlights: ['Infuse mundane items with powerful magical properties.', 'Engineer incredible gadgets to aid in and out of combat.', 'Utilize specialized tools to craft a solution for any problem.'],

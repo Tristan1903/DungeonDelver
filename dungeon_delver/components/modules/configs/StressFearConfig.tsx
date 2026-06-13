@@ -1,4 +1,9 @@
 'use client';
+// ===== 📘 FILE: StressFearConfig.tsx =====
+// 🎯 PURPOSE: Configures Stress/Fear system — two DC thresholds: Frightened and Horrified.
+// 🧠 REACT CONCEPT: Simple Scalar Controlled Inputs — two number inputs with min/max constraints,
+//   each parsing string→number before calling the parent's onChange handler.
+// =====
 export interface StressFearConfigValue { stressFrightenedDC: number; stressHorrifiedDC: number; }
 export default function StressFearConfig({ value, onChange }: { value: StressFearConfigValue; onChange: (v: StressFearConfigValue) => void }) {
   return (

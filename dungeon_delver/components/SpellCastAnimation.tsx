@@ -1,4 +1,21 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/SpellCastAnimation.tsx
+// =============================================================================
+// 🎯 PURPOSE: A full-screen animation overlay that shows a spell GIF when a
+//    spell name is provided. Automatically closes after 3 seconds. The GIF
+//    path is resolved from `getSpellGifPath` in cardEngine.
+//
+// 🧠 REACT CONCEPT: useRef for Latest Callback
+//    `onCloseRef` holds the latest `onClose` callback without triggering a
+//    re-render or stale closure in the setTimeout. The timer captures
+//    `onCloseRef.current`, ensuring it always calls the newest version.
+//
+// 🧠 REACT CONCEPT: Keyed Effect with Cleanup
+//    The effect returns a `clearTimeout` cleanup function. React calls it when
+//    the component unmounts *or* when `spellName` changes, preventing orphaned
+//    timers from firing on stale data.
+// =============================================================================
 import { useEffect, useState, useRef } from 'react';
 import { getSpellGifPath } from '../utils/cardEngine';
 

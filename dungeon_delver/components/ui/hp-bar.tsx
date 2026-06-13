@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/hp-bar.tsx
+// =============================================================================
+// 🎯 PURPOSE: A custom hit point progress bar specific to the D&D character
+//    sheet. Shows current/max HP with color thresholds (green > 60%, amber
+//    > 30%, red ≤ 30%) and configurable size. Not a shadcn/ui wrapper —
+//    built from scratch for this app.
+//
+// 🧠 REACT CONCEPT: Derived State + Conditional Styling
+//    The bar's color and width are derived from props (current, max) using
+//    pure functions (hpColor, hpColorVar). This is "derived state" — values
+//    computed from other values, not stored separately.
+//
+//    The component also conditionally renders the HP label as a sub-component
+//    based on the `showLabel` prop. This is "conditional rendering" —
+//    one of React's most fundamental patterns.
+//
+// 🔧 HOW TO ALTER:
+//    - Change color thresholds: modify hpColor / hpColorVar
+//    - Change bar sizes: modify heights / fontSizes objects
+//    - Change animation: modify `transition-all duration-300` class
+// =============================================================================
+
 "use client"
 
 import { cn } from "@/lib/utils"

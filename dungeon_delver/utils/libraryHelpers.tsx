@@ -1,8 +1,39 @@
+// =============================================================================
+// 📘 FILE: utils/libraryHelpers.tsx
+// =============================================================================
+// 🎯 PURPOSE: Formatting and rendering helpers for the Library browser pages
+//    (items, spells, monsters, features). Contains school name lookups,
+//    monster type labels, CR/Speed/AC formatters, component/duration display,
+//    item type classification, monster type colors/emojis, and a recursive
+//    entry renderer for 5eTools data structures.
+//
+// 🧠 REACT CONCEPT: Utility Functions + JSX Renderers
+//    This file mixes pure formatting functions (getSchoolName, formatCR) with
+//    a JSX component (renderEntries). The renderEntries function is a RECURSIVE
+//    component — it calls itself to render nested data structures (lists within
+//    lists, tables, etc.).
+//
+//    The ITEM_TYPE_LABELS and MONSTER_TYPE_COLORS are CONSTANT maps used by
+//    components for display — they're "configuration as data" just like
+//    campaignEngine.ts.
+//
+// 🔧 HOW TO ALTER:
+//    - Add school codes: modify SCHOOL_NAMES
+//    - Add item types: modify ITEM_TYPE_LABELS
+//    - Add monster type colors: modify MONSTER_TYPE_COLORS
+//    - Change entry rendering: modify renderEntries
+//    - Change display formats: modify formatSpeed, formatAC, etc.
+// =============================================================================
+
 import { cleanString } from './formatters';
 
 export const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 export const ABILITY_LABELS = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 
+// 🧠 SCHOOL_NAMES: maps short spell school codes to full names.
+//    5eTools data uses single-letter codes (A, C, D, E, etc.) for schools.
+//    Note: there are multiple codes that map to the same school
+//    (e.g. 'V' and 'Evo' both mean Evocation).
 export const SCHOOL_NAMES: Record<string, string> = {
   A: 'Abjuration', C: 'Conjuration', D: 'Divination', E: 'Enchantment',
   Evo: 'Evocation', I: 'Illusion', N: 'Necromancy', T: 'Transmutation',
@@ -17,6 +48,8 @@ export function getSchoolName(code: string): string {
   return SCHOOL_NAMES[upper] || upper;
 }
 
+// 🧠 Monster formatting helpers — handle the varied data shapes from 5eTools.
+//    Monster `type` can be a string, an object, or an object with `choose`.
 export function getTypeLabel(monster: any): string {
   const t = monster.type;
   if (typeof t === 'string') return t;
@@ -35,6 +68,8 @@ export function formatCR(cr: any): string {
   return '—';
 }
 
+// 🧠 formatSpeed: monster speed can be a string ("30 ft.") or an object
+//    ({ walk: 30, fly: 60, choose: { from: [...], amount: 30 } }).
 export function formatSpeed(speed: any): string {
   if (!speed) return '—';
   if (typeof speed === 'string') return speed;
@@ -59,6 +94,8 @@ export function formatAC(ac: any): string {
   return first.from ? `${val} (${first.from.join(', ')})` : `${val}`;
 }
 
+// 🧠 Spell formatting helpers — handle varied data shapes for time, range,
+//    components, and duration.
 export function formatTime(time: any): string {
   if (!time) return '—';
   if (typeof time === 'string') return time;
@@ -114,6 +151,8 @@ export function formatDuration(duration: any): string {
   return duration.type || '—';
 }
 
+// 🧠 Item type labels and ranking — used for sorting and display in the item library.
+//    The base type is extracted from strings like "LA|XPHB" → "LA".
 export const ITEM_TYPE_LABELS: Record<string, string> = {
   'M': 'Melee Weapons', 'R': 'Ranged Weapons', 'A': 'Ammunition',
   'LA': 'Light Armor', 'MA': 'Medium Armor', 'HA': 'Heavy Armor', 'S': 'Shields',
@@ -139,6 +178,7 @@ export function getItemTypeRank(typeStr: string | undefined): number {
   return idx >= 0 ? idx : 999;
 }
 
+// 🧠 Monster type colors and emojis — used for colored badges in the UI.
 export const MONSTER_TYPE_COLORS: Record<string, string> = {
   aberration: '#9b59b6', beast: '#8b6914', celestial: '#f1c40f', construct: '#7f8c8d',
   dragon: '#e74c3c', elemental: '#3498db', fey: '#e91e8f', fiend: '#c0392b',
@@ -162,6 +202,18 @@ export function getMonsterTypeEmoji(type: string): string {
   return MONSTER_TYPE_EMOJI[type.toLowerCase()] || '❓';
 }
 
+// 🧠 renderEntries: a recursive React component that renders 5eTools entry
+//    data structures. Entries can be:
+//    - A plain string (rendered as paragraph)
+//    - An array (each element rendered recursively)
+//    - An object with items (rendered as <ul>)
+//    - An object with entries (rendered as nested divs, optionally with a name header)
+//    - An object with type 'list' (rendered as <ul>)
+//    - An object with type 'table' (rendered as <table>)
+//    - Anything else (rendered as JSON string)
+//
+//    This pattern is called a "recursive renderer" — the component calls
+//    itself to handle arbitrarily nested data.
 export function renderEntries(entries: any): React.ReactNode {
   if (!entries) return null;
   if (typeof entries === 'string') return <p style={{ margin: '4px 0' }}>{cleanString(entries)}</p>;

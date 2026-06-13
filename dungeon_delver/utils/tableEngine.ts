@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: utils/tableEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Random table rolling engine. Loads data tables from
+//    `/data/tables.json` and manages user-created custom tables in
+//    localStorage. Handles roll range parsing, die expressions, and
+//    weighted random selection.
+//
+// 🧠 REACT CONCEPT: Async Data Loading + Caching
+//    loadDataTables() uses a cache (`dataTablesCache`) to avoid fetching
+//    the same JSON file on every render. This is a simple manual version
+//    of what React Query or SWR do automatically — components call it
+//    and get cached results on subsequent calls.
+//
+//    Custom tables use localStorage CRUD (create, read, update, delete),
+//    the same pattern seen across the entire app.
+//
+// 🔧 HOW TO ALTER:
+//    - Add new tables: edit `public/data/tables.json`
+//    - Change roll logic: modify rollOnTable or parseRollRange
+//    - Change table display: modify clean5eToolsUrl for different link formats
+// =============================================================================
+
 export interface TableRow {
   roll: string;
   result: string;
@@ -23,6 +46,8 @@ const CUSTOM_TABLES_KEY = 'custom-tables';
 function sk(key: string) { return campaignKey(key); }
 let dataTablesCache: NamedTable[] | null = null;
 
+// 🧠 parseRollRange: converts a roll string like "1-5" or "10" to
+//    { min, max }. Returns null if it can't parse (e.g. "Any" or "Special").
 function parseRollRange(roll: string): { min: number; max: number } | null {
   const clean = roll.replace(/[,. ]/g, '');
   if (/^\d+$/.test(clean)) {
@@ -47,6 +72,9 @@ function rollDie(spec: string): number {
   return total;
 }
 
+// 🧠 rollOnTable: given an array of rows, picks one randomly.
+//    It tries three strategies: numeric range rows (1-5), die expression rows
+//    (1d12), and plain rows (equal probability). Falls back to first match.
 export function rollOnTable(rows: TableRow[]): { result: string; rollValue: number; row: TableRow } {
   const simpleRows = rows.filter(r => parseRollRange(r.roll) !== null);
   const dieRows = rows.filter(r => r.roll.match(/^\d+d\d+/));
@@ -81,10 +109,15 @@ export function rollOnTable(rows: TableRow[]): { result: string; rollValue: numb
   return { result: '(empty table)', rollValue: 0, row: { roll: '', result: '(empty table)' } };
 }
 
+// 🧠 clean5eToolsUrl: strips 5eTools markup like {@atk mw,rw} and pipe
+//    references like |xphb| from table text. Returns plain readable text.
 function clean5eToolsUrl(text: string): string {
   return text.replace(/\{@\w+ ([^}]+)\}/g, '$1').replace(/\|(?:phb|xmm|psx|xphb|mm)\}/g, '}').replace(/[|}]/g, '');
 }
 
+// 🧠 loadDataTables: fetches the game's random tables from JSON.
+//    Uses a module-level cache so subsequent calls don't re-fetch.
+//    This is a basic "fetch once, use everywhere" pattern.
 export async function loadDataTables(): Promise<NamedTable[]> {
   if (dataTablesCache) return dataTablesCache;
   try {
@@ -113,6 +146,7 @@ export async function loadDataTables(): Promise<NamedTable[]> {
   }
 }
 
+// 🧠 Custom tables CRUD — same pattern as NPCs and other localStorage entities.
 export function loadCustomTables(): CustomTable[] {
   try {
     const raw = localStorage.getItem(sk(CUSTOM_TABLES_KEY));
@@ -133,6 +167,9 @@ export function deleteCustomTable(id: string): void {
   localStorage.setItem(sk(CUSTOM_TABLES_KEY), JSON.stringify(list));
 }
 
+// 🧠 combineTables: merges data tables and custom tables into one array.
+//    This is a "selector" pattern — it derives display-ready data from
+//    two sources. In React terms: `const all = useMemo(() => combine(a, b), [a, b])`.
 export function combineTables(data: NamedTable[], custom: CustomTable[]): NamedTable[] {
   const customs: NamedTable[] = custom.map(c => ({
     id: c.id,

@@ -1,4 +1,21 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/GmOverlayToggle.tsx
+// =============================================================================
+// 🎯 PURPOSE: A floating GM overlay panel (bottom-right, z-index 300) that
+//    toggles visibility of monster stats, hidden names, and a GM notes textarea.
+//    The GM can enable/disable the overlay and expand/collapse the notes panel.
+//
+// 🧠 REACT CONCEPT #1: useRef + Click-Outside Detection
+//    `panelRef` is attached to the panel <div>. A mousedown listener on
+//    `document` checks if the click target is *outside* the panel, and if so
+//    collapses the expanded notes section. This avoids the need for a modal.
+//
+// 🧠 REACT CONCEPT #2: Effect Cleanup with onGmOverlayChange
+//    `useEffect` registers a subscriber callback and returns the unsubscribe
+//    function. This is the standard pattern for subscribing to external stores
+//    (like the gmOverlayEngine singleton) in React.
+// =============================================================================
 import { useState, useEffect, useRef } from 'react';
 import { loadGmOverlay, saveGmOverlay, toggleGmOverlay, onGmOverlayChange, GmOverlayState } from '../utils/gmOverlayEngine';
 

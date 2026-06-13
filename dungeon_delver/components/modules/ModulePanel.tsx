@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: ModulePanel.tsx =====
+// 🎯 PURPOSE: Campaign module toggle & configuration hub — lists all optional modules with on/off toggles
+//   and lazy-loads the per-module config panel (e.g. PietyConfig, DarkGiftsConfig) when expanded.
+// 🧠 REACT CONCEPT: Lifting State Up + Conditional Rendering — the panel receives enabled modules and
+//   config from the parent via props, and delegates per-module state changes upward. This is a
+//   "control panel" pattern where the parent owns the data and the child only fires change callbacks.
+// =====
 import { useState } from 'react';
 import { OPTIONAL_MODULES, MODULE_CONFIG_DEFAULTS, ModuleConfigMap, ModuleId } from '../../utils/campaignEngine';
 import PietyConfig from './configs/PietyConfig';

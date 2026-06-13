@@ -1,4 +1,12 @@
 'use client';
+// ===== 📘 FILE: app/dm/npcs/page.tsx =====
+// 🎯 PURPOSE: NPC generator — generates random NPCs with names, stats, appearance, personality,
+//   ideals/bonds/flaws. Supports batch generation (up to 50), species/template filters,
+//   and saving/deleting generated NPCs to localStorage.
+// 🧠 REACT CONCEPT: Generator Pattern + Save/Load — demonstrates calling a utility function
+//   (generateNPC) to produce random data, then rendering it in a styled statblock. Saved NPCs
+//   are stored in localStorage with species/template filtering.
+// =====
 import { useState } from 'react';
 import {
   GeneratedNPC, STAT_TEMPLATES,

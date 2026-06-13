@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: utils/influenceEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Social interaction system for the DM. Tracks NPC dispositions
+//    (hostile → helpful), calculates influence DCs for persuasion/deception/
+//    intimidation checks, provides reaction rolls (2d6), and manages social
+//    NPC + group records in campaign-scoped localStorage.
+//
+// 🧠 REACT CONCEPT: State Machines + Pure Functions
+//    Dispositions form a linear state machine (hostile → unfriendly →
+//    indifferent → friendly → helpful). Functions like adjustDisposition
+//    and getInfluenceDC are pure — they take a state and return a new one
+//    without side effects.
+//
+//    The localStorage CRUD follows the same pattern as other engines
+//    (homebrewEngine, npcGenerator, tableEngine).
+//
+// 🔧 HOW TO ALTER:
+//    - Change disposition order: modify DISPOSITION_ORDER
+//    - Change influence DCs: modify getInfluenceDC
+//    - Change reaction roll: modify reactionRoll
+//    - Add fields to NPCs: update SocialNPC interface + save/load
+// =============================================================================
+
 export type Disposition = 'hostile' | 'unfriendly' | 'indifferent' | 'friendly' | 'helpful';
 
 export const DISPOSITION_ORDER: Disposition[] = ['hostile', 'unfriendly', 'indifferent', 'friendly', 'helpful'];
@@ -26,6 +50,9 @@ const STORAGE_NPCS = 'social-npcs';
 const STORAGE_GROUPS = 'social-groups';
 function sk(key: string) { return campaignKey(key); }
 
+// 🧠 getInfluenceDC: returns the DC for a social check based on the NPC's
+//    current disposition. Helpful NPCs auto-succeed (no roll needed).
+//    Major concessions (asking for something big) have a higher DC.
 export function getInfluenceDC(disposition: Disposition, majorConcession = false): number | null {
   switch (disposition) {
     case 'helpful': return null;
@@ -45,12 +72,18 @@ export function getDCDescription(dc: number | null): string {
   return `DC ${dc}`;
 }
 
+// 🧠 adjustDisposition: moves disposition up or down the order.
+//    Uses Math.max/Math.min to clamp to valid range — no index out of bounds.
+//    This is the "state transition" function for the disposition state machine.
 export function adjustDisposition(current: Disposition, steps: number): Disposition {
   const idx = DISPOSITION_ORDER.indexOf(current);
   const next = Math.max(0, Math.min(DISPOSITION_ORDER.length - 1, idx + steps));
   return DISPOSITION_ORDER[next];
 }
 
+// 🧠 reactionRoll: simulates a 2d6 reaction check (DMG rule).
+//    Returns the total, the resulting disposition, and the individual die rolls
+//    (useful for displaying in the UI).
 export function reactionRoll(modifier = 0): { total: number; disposition: Disposition; rolls: number[] } {
   const rolls = [
     Math.floor(Math.random() * 6) + 1,
@@ -66,6 +99,7 @@ export function reactionRoll(modifier = 0): { total: number; disposition: Dispos
   return { total, disposition, rolls };
 }
 
+// 🧠 Social NPC CRUD — same localStorage pattern as other engines.
 export function loadSocialNPCs(): SocialNPC[] {
   try {
     const raw = localStorage.getItem(sk(STORAGE_NPCS));
@@ -86,6 +120,7 @@ export function deleteSocialNPC(id: string): void {
   localStorage.setItem(sk(STORAGE_NPCS), JSON.stringify(list));
 }
 
+// 🧠 Social Group CRUD — groups contain references to NPCs by ID.
 export function loadSocialGroups(): SocialGroup[] {
   try {
     const raw = localStorage.getItem(sk(STORAGE_GROUPS));

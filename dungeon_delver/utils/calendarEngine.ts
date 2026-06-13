@@ -1,3 +1,28 @@
+// =============================================================================
+// 📘 FILE: utils/calendarEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Fantasy calendar system supporting 9 different calendar
+//    definitions (Harptos, Gregorian, Exandria, Eberron, Greyhawk,
+//    Dragonlance, Dark Sun, Golarion, Middle-earth). Provides date
+//    arithmetic, leap year rules, extra-day festivals, seasons, and
+//    calendar event tracking in campaign-scoped localStorage.
+//
+// 🧠 REACT CONCEPT: Data Definitions + Pure Date Functions
+//    The calendar definitions (CalendarDefinition objects) are static data —
+//    they never change at runtime. Pure functions like getDaysInMonth,
+//    isLeapYear, advanceDate operate on them. The "state" part is just
+//    CalendarState (current year/month/day).
+//
+//    Events use standard localStorage CRUD. This separation means calendar
+//    math is easy to test without any UI or state management.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new calendar: create a CalendarDefinition object and add to CALENDARS
+//    - Modify a calendar: edit month names, days, extraDays, etc.
+//    - Change date calculations: modify advanceDate, getDaysInMonth, etc.
+//    - Change event storage: modify loadEvents/saveEvents
+// =============================================================================
+
 export interface CalendarMonth {
   name: string;
   days: number;
@@ -36,6 +61,10 @@ import { campaignKey } from './campaignStorage';
 const STORAGE_CONFIG = 'calendar-config';
 const STORAGE_EVENTS = 'calendar-events';
 function sk(key: string) { return campaignKey(key); }
+
+// 🧠 Calendar definitions — each is a full CalendarDefinition object.
+//    These are "static config" like the data in campaignEngine.ts.
+//    They never change after the app loads.
 
 export const HARPTOS: CalendarDefinition = {
   id: 'harptos',
@@ -282,6 +311,8 @@ export const MIDDLE_EARTH: CalendarDefinition = {
   dayNames: ['Sterday', 'Sunday', 'Monday', 'Trewsday', 'Hevensday', 'Mersday', 'Highday'],
 };
 
+// 🧠 CALENDARS: a lookup record keyed by calendar ID.
+//    Components can look up any calendar by ID: CALENDARS['harptos']
 export const CALENDARS: Record<string, CalendarDefinition> = {
   harptos: HARPTOS,
   gregorian: GREGORIAN,
@@ -294,6 +325,7 @@ export const CALENDARS: Record<string, CalendarDefinition> = {
   middleearth: MIDDLE_EARTH,
 };
 
+// 🧠 Calendar utility functions — all pure, no side effects.
 export function getCalendarDef(id: string): CalendarDefinition {
   return CALENDARS[id] || HARPTOS;
 }
@@ -355,6 +387,7 @@ export function getMonthDays(def: CalendarDefinition, month: number, year?: numb
   return result;
 }
 
+// 🧠 Calendar state CRUD — save/load the current date.
 export function loadCalendarState(): CalendarState {
   try {
     const raw = localStorage.getItem(sk(STORAGE_CONFIG));
@@ -367,6 +400,8 @@ export function saveCalendarState(state: CalendarState): void {
   localStorage.setItem(sk(STORAGE_CONFIG), JSON.stringify(state));
 }
 
+// 🧠 advanceDate: pure function that adds days while handling month/year
+//    boundaries. Returns a NEW state object (immutable update pattern).
 export function advanceDate(state: CalendarState, days: number): CalendarState {
   const def = getCalendarDef(state.definitionId);
   let { currentYear, currentMonth, currentDay } = state;
@@ -398,6 +433,7 @@ export function dateString(state: CalendarState): string {
   return `${state.currentMonth + 1}/${state.currentDay}/${state.currentYear}`;
 }
 
+// 🧠 Calendar events CRUD.
 export function loadEvents(): CalendarEvent[] {
   try {
     const raw = localStorage.getItem(sk(STORAGE_EVENTS));

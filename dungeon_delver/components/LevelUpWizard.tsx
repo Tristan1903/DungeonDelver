@@ -1,3 +1,29 @@
+// =============================================================================
+// ?? FILE: components/LevelUpWizard.tsx
+// =============================================================================
+// ?? PURPOSE: Standalone level-up wizard (976 lines). Separated from
+//    CharacterWizard so it can be used as a full-page route at
+//    /character-sheet/level-up?id=<uuid>. Covers the same 4-phase flow:
+//    Picker (choose which class to level / add a new class) ? Intro (what
+//    you gain) ? Choices (HP mode, subclass, ASI/feat, feature picks) ?
+//    Confirm (summary view with spell selection for casters).
+//
+// ?? REACT CONCEPT: State Machine + Conditional Rendering
+//    Uses a levelUpPhase state ('picker' | 'intro' | 'choices' | 'confirm')
+//    to drive which sub-view renders. This is a simple finite state machine
+//    pattern: transitions are explicit (setLevelUpPhase('confirm')) and
+//    validation is checked before each transition.
+//
+//    The component also shows how embedded mode works: when used inside
+//    CharacterWizard, the wrapping layout is omitted (no sidebar, no
+//    fullscreen container). When standalone, it renders its own layout.
+//
+// ?? HOW TO ALTER:
+//    - Add a new phase: add a value to levelUpPhase type + sub-view + render
+//    - Change HP formula: modify getHPGainDisplay usage
+//    - Change ASI/feat logic: modify the button handlers in asiAvailable block
+// =============================================================================
+
 'use client';
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../utils/dataLoader';
@@ -77,6 +103,13 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
   const [creationStage, setCreationStage] = useState<'levelup' | 'spells'>('levelup');
   const [viewingFeatureDetail, setViewingFeatureDetail] = useState<any | null>(null);
   const [hpRollAnimation, setHpRollAnimation] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Initialize from existingChar
   useEffect(() => {
@@ -135,6 +168,7 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     DataEngine.getFeats().then(setAllFeats);
   }, []);
 
+  // --- FINALIZATION: assemble final character and call onComplete ---
   const finishWizard = async (spells?: Character['spells'], hpGainOverride?: number) => {
     const className = draft.class;
     if (!className) return;
@@ -243,10 +277,10 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     };
 
     return (
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
+      <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100%' }}>
         <div style={{ maxWidth: '720px', width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h1 style={{ fontFamily: 'serif', color: '#f6e05e', margin: '0 0 8px 0', fontSize: '2.5rem' }}>Level Up</h1>
+            <h1 style={{ fontFamily: 'serif', color: '#f6e05e', margin: '0 0 8px 0', fontSize: isMobile ? '1.8rem' : '2.5rem' }}>Level Up</h1>
             <p style={{ color: '#a0aec0', fontSize: '1.1rem' }}>Total: Level {newTotalLevel - 1} → <span style={{ color: '#48bb78' }}>Level {newTotalLevel}</span></p>
           </div>
           <div style={{ marginBottom: '32px' }}>
@@ -277,7 +311,7 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
           </div>
           <div>
             <h3 style={{ color: '#718096', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 12px 0' }}>OR ADD A NEW CLASS</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: '8px' }}>
               {DataEngine.getClassesList()
                 .filter((cls: string) => !classList.includes(cls))
                 .map(cls => {
@@ -332,14 +366,14 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     const hpGainValue = hpDisplay.average;
 
     return (
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100%' }}>
+      <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100%' }}>
         <div style={{ maxWidth: '680px', width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', marginBottom: '16px' }}>
-              <img src={`/img/classes/Icons/${draft.class}.png`} style={{ width: '80px', height: '80px', borderRadius: '10px', border: `2px solid ${theme.tagline_color}` }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+              <img src={`/img/classes/Icons/${draft.class}.png`} style={{ width: isMobile ? '56px' : '80px', height: isMobile ? '56px' : '80px', borderRadius: '10px', border: `2px solid ${theme.tagline_color}` }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
               {isNewClass && <span style={{ fontSize: '0.8rem', color: '#48bb78', padding: '4px 12px', background: 'rgba(72,187,120,0.15)', borderRadius: '6px', fontWeight: 'bold' }}>NEW CLASS</span>}
             </div>
-            <h1 style={{ fontFamily: 'serif', color: theme.tagline_color, margin: '0 0 8px 0', fontSize: '2.5rem' }}>Level Up</h1>
+            <h1 style={{ fontFamily: 'serif', color: theme.tagline_color, margin: '0 0 8px 0', fontSize: isMobile ? '1.8rem' : '2.5rem' }}>Level Up</h1>
             <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', alignItems: 'center', fontSize: '1.6rem' }}>
               {isNewClass ? (
                 <>
@@ -472,9 +506,9 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     const availablePicks = selectedClassData ? getAvailablePicks(targetClass || draft.class, newClassLevel, allPickedOptions) : [];
 
     return (
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+      <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
         <div style={{ maxWidth: '720px', width: '100%', margin: '0 auto' }}>
-          <h1 style={{ fontFamily: 'serif', color: theme.tagline_color, fontSize: '2rem', marginBottom: '24px', textAlign: 'center' }}>
+          <h1 style={{ fontFamily: 'serif', color: theme.tagline_color, fontSize: isMobile ? '1.4rem' : '2rem', marginBottom: '24px', textAlign: 'center' }}>
             {isNewClass ? `Starting ${draft.class}` : `${draft.class} Level ${newClassLevel}`}
           </h1>
 
@@ -632,7 +666,7 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
                 </div>
               )}
               {(!asiConfirmed && asiMode !== 'feat') && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr 1fr' : '1fr 1fr', gap: '8px' }}>
                   {['str', 'dex', 'con', 'int', 'wis', 'cha'].map(stat => {
                     const isPicked = asiPicks.find(p => p.stat === stat);
                     const isSelected = selectedASIStat === stat;
@@ -736,9 +770,9 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     }).filter(Boolean);
 
     return (
-      <div style={{ flex: 1, padding: '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
+      <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
         <div style={{ maxWidth: '620px', width: '100%', margin: '0 auto' }}>
-          <h2 style={{ color: theme.tagline_color, margin: '0 0 4px 0', fontSize: '1.3rem' }}>Confirm Level Up</h2>
+          <h2 style={{ color: theme.tagline_color, margin: '0 0 4px 0', fontSize: isMobile ? '1.1rem' : '1.3rem' }}>Confirm Level Up</h2>
           <p style={{ color: '#a0aec0', margin: '0 0 24px 0', fontSize: '0.85rem' }}>
             {targetClass} {isNewClass ? `1` : `${existingClassLevel} → ${newClassLevel}`} · Total Level {existingChar?.totalLevel || 1} → {(existingChar?.totalLevel || 1) + 1}
           </p>
@@ -847,9 +881,9 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100%', background: '#0d1117', color: 'white', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', height: '100vh', width: '100%', background: '#0d1117', color: 'white', position: 'relative' }}>
       {/* Main content */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: isMobile ? 'auto' : 'hidden' }}>
         {levelUpPhase === 'picker' && <LevelUpClassPicker />}
         {levelUpPhase === 'intro' && <LevelUpIntroView />}
         {levelUpPhase === 'choices' && <LevelUpView />}
@@ -863,9 +897,14 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
             newCantripsCount={newCantripsCount}
             newSpellsCount={newSpellsCount}
             newSpellLevels={newSpellLevels}
-            onConfirm={(spells) => {
+            onConfirm={async (spells) => {
               setPendingSpells(spells);
-              finishWizard(spells, pendingHpGain);
+              try {
+                await finishWizard(spells, pendingHpGain);
+              } catch (e) {
+                console.error('finishWizard error:', e);
+                alert('Error completing level up: ' + (e instanceof Error ? e.message : 'Unknown error'));
+              }
             }}
             onBack={() => setCreationStage('levelup')}
           />
@@ -873,7 +912,7 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
       </div>
 
       {/* Sidebar */}
-      <div style={sidebarStyle}>
+      <div style={isMobile ? { ...sidebarStyle, width: '100%', borderLeft: 'none', borderTop: '1px solid #2d3748', padding: '8px 12px', flexDirection: 'row', alignItems: 'center', gap: '8px', flexShrink: 0 } : sidebarStyle}>
         <button
           style={{
             padding: '12px 20px',
@@ -887,14 +926,24 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
             color: 'white',
             opacity: (levelUpPhase === 'intro' || levelUpPhase === 'picker') ? 0.4 : 1,
           }}
-          onClick={() => {
+          onClick={async () => {
             if (levelUpPhase === 'intro' || levelUpPhase === 'picker') return;
             if (levelUpPhase === 'confirm') {
+              if (!draft.class) {
+                console.error('No class selected (draft.class is empty)');
+                alert('No class selected. Please go back and select a class.');
+                return;
+              }
               const classInfo = selectedClassData?.info;
               if (classInfo && isSpellcaster(classInfo)) {
                 setCreationStage('spells');
               } else {
-                finishWizard(undefined, pendingHpGain);
+                try {
+                  await finishWizard(undefined, pendingHpGain);
+                } catch (e) {
+                  console.error('finishWizard error:', e);
+                  alert('Error completing level up: ' + (e instanceof Error ? e.message : 'Unknown error'));
+                }
               }
               return;
             }
@@ -941,7 +990,7 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
       {/* Feature detail modal */}
       {viewingFeatureDetail && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300 }}>
-          <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', width: '500px', maxHeight: '70vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
+          <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '28px', borderRadius: '12px', width: isMobile ? '95vw' : '500px', maxHeight: '70vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
             <h2 style={{ color: '#f6e05e', margin: '0 0 4px 0', fontFamily: 'serif' }}>{viewingFeatureDetail.name}</h2>
             <div style={{ fontSize: '0.75rem', color: '#718096', marginBottom: '16px' }}>
               {viewingFeatureDetail.featureType?.join(', ') || 'Feature'} · {viewingFeatureDetail.source || ''}
@@ -974,3 +1023,4 @@ export default function LevelUpWizard({ existingChar, onComplete, onClose, embed
     </div>
   );
 }
+

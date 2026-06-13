@@ -1,6 +1,44 @@
+// =============================================================================
+// 📘 FILE: utils/spellcastingEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Handles ALL spellcasting math — slot tables for full/half/third/pact
+//    casters, multiclass caster level combination, prepared/know spell counts,
+//    spell save DC, concentration checks, and slot reset logic.
+//
+// 🧠 REACT CONCEPT: Pure Functions + Data Tables
+//    This is ALL math — no React, no state, no side effects. Pure functions
+//    take numbers in, return numbers out. The spell slot tables (2D arrays)
+//    encode the D&D 5e rules for what slots each caster type gets at each level.
+//
+//    💡 This separation of "rule logic" from "UI" is what makes the app
+//    maintainable. If Wizards of the Coast changes the slot progression,
+//    you only edit the tables here, not the character sheet component.
+//
+// 🔧 HOW TO ALTER:
+//    - Change slot progression: modify FULL_CASTER_SLOTS / HALF_CASTER_SLOTS
+//    - Change pact magic: modify PACT_SLOTS
+//    - Add new caster type: add handling in getCasterType + getCombinedCasterLevel
+//    - Change spell save DC formula: modify getSpellSaveDC
+// =============================================================================
+
 import { Character, SpellSlotState } from '../lib/character';
 import { getAbilityModifier } from './characterProgression';
 
+// ============================================================
+// SPELL SLOT TABLES (D&D 5e 2024 rules)
+// ============================================================
+
+// 🧠 FULL_CASTER_SLOTS — Spell slot progression for full casters (Bard, Cleric,
+//    Druid, Sorcerer, Wizard). Index = character level, value = array of slots
+//    per spell level.
+//
+//    Example: FULL_CASTER_SLOTS[5] = [4, 3, 2]
+//    → At level 5: 4 first-level slots, 3 second-level, 2 third-level
+//
+//    🧠 This is a "jagged array" (every row has a different length).
+//    Row 0 (unused): []
+//    Row 3: [4, 2] — 4 slots at level 1, 2 slots at level 2
+//    Row 20: [4, 3, 3, 3, 3, 2, 2, 1, 1] — slots for levels 1-9
 export const FULL_CASTER_SLOTS: number[][] = [
   [], // 0
   [2], // 1
@@ -25,6 +63,9 @@ export const FULL_CASTER_SLOTS: number[][] = [
   [4, 3, 3, 3, 3, 2, 2, 1, 1], // 20
 ];
 
+// 🧠 HALF_CASTER_SLOTS — For Paladins and Rangers.
+//    Progresses at HALF the speed of full casters (rounded down).
+//    First spell slots at level 2. Max level-5 spells at level 18+.
 export const HALF_CASTER_SLOTS: number[][] = [
   [],
   [],
@@ -49,6 +90,10 @@ export const HALF_CASTER_SLOTS: number[][] = [
   [4, 3, 3, 3, 2],
 ];
 
+// 🧠 PACT_SLOTS — Warlock pact magic. Different from regular slots:
+//    - All slots are the SAME level (which increases with Warlock level)
+//    - Very few slots (1-4), but recover on SHORT rest
+//    - Keys = Warlock level, values = { slots, level }
 export const PACT_SLOTS: Record<number, { slots: number; level: number }> = {
   1: { slots: 1, level: 1 },
   2: { slots: 2, level: 1 },
@@ -72,14 +117,13 @@ export const PACT_SLOTS: Record<number, { slots: number; level: number }> = {
   20: { slots: 4, level: 5 },
 };
 
-/**
- * Get the caster progression type for a class.
- * - 'full': Bard, Cleric, Druid, Sorcerer, Wizard
- * - 'half': Paladin, Ranger
- * - 'third': Eldritch Knight, Arcane Trickster
- * - 'pact': Warlock
- * - null: non-caster
- */
+// ============================================================
+// CASTER TYPE DETECTION
+// ============================================================
+
+// 🧠 getCasterType — Determines what kind of caster a class is.
+//    Reads the `casterProgression` field from the class data.
+//    Returns null for non-casters (Barbarian, Fighter without EK, etc.).
 export function getCasterType(classInfo: any): 'full' | 'half' | 'third' | 'pact' | null {
   if (!classInfo?.casterProgression) return null;
   const prog = classInfo.casterProgression;
@@ -89,14 +133,19 @@ export function getCasterType(classInfo: any): 'full' | 'half' | 'third' | 'pact
   return 'full';
 }
 
-/**
- * Compute the combined caster level for a multiclass character.
- * - Full casters contribute 1:1
- * - Half casters (Paladin, Ranger) contribute 1:2 (round down)
- * - Third casters (EK, AT) contribute 1:3 (round down)
- * - Artificers contribute 1:2 (round UP)
- * - Pact magic (Warlock) does NOT combine, returns separately
- */
+// ============================================================
+// MULTICLASS CASTER LEVEL COMPUTATION
+// ============================================================
+
+// 🧠 getCombinedCasterLevel — The key multiclass function.
+//    Per D&D 5e 2024 rules:
+//    - Full caster levels add 1:1
+//    - Half caster levels add 1:2 (round down) — Artificer rounds UP
+//    - Third caster levels add 1:3 (round down)
+//    - Pact magic is SEPARATE (Warlock slots don't combine)
+//
+//    The combined level determines your spell slots (from the full caster table).
+//    The pact level determines your pact slots (from the pact table).
 export function getCombinedCasterLevel(
   classLevels: { className: string; level: number }[],
   classDataMap: Record<string, any>
@@ -114,20 +163,20 @@ export function getCombinedCasterLevel(
     } else if (type === 'full') {
       combined += cl.level;
     } else if (type === 'half') {
-      // Artificer rounds up; other half-casters round down
       if (cl.className === 'Artificer') {
-        combined += Math.ceil(cl.level / 2);
+        combined += Math.ceil(cl.level / 2);   // Artificer rounds UP
       } else {
-        combined += Math.floor(cl.level / 2);
+        combined += Math.floor(cl.level / 2);  // Others round DOWN
       }
     } else if (type === 'third') {
-      combined += Math.floor(cl.level / 3);
+      combined += Math.floor(cl.level / 3);    // EK/AT: 1/3 of level
     }
   }
 
   return { combinedLevel: Math.min(combined, 20), pactLevel: Math.min(pactLevel, 20), hasPact };
 }
 
+// 🧠 getMaxSpellLevel — What's the highest level spell you can cast?
 export function getMaxSpellLevel(classInfo: any, level: number): number {
   if (!classInfo) return 0;
   const prog = classInfo.casterProgression;
@@ -148,12 +197,16 @@ export function isSpellcaster(classInfo: any): boolean {
   );
 }
 
+// 🧠 getCantripsKnown — Looks up the cantrip progression for a class.
 export function getCantripsKnown(classInfo: any, level: number): number {
   const prog = classInfo?.cantripProgression;
   if (!prog?.length) return 0;
   return prog[Math.min(level, prog.length) - 1] ?? 0;
 }
 
+// 🧠 getSpellsKnownAtLevel — For "spells known" casters (Bard, Sorcerer, Ranger).
+//    Some classes have a cumulative total (spellsKnownProgression).
+//    Some have an incremental table (spellsKnownProgressionFixed).
 export function getSpellsKnownAtLevel(classInfo: any, level: number): number | null {
   const prog = classInfo?.spellsKnownProgression;
   if (prog?.length) return prog[Math.min(level, prog.length) - 1] ?? null;
@@ -164,16 +217,18 @@ export function getSpellsKnownAtLevel(classInfo: any, level: number): number | n
   return null;
 }
 
+// 🧠 getPreparedCount — How many spells can a "prepared" caster prepare?
+//    2024 classes use preparedSpellsProgression (array per level).
+//    Legacy classes use a formula string like "<$level$> + <$wis_mod$>"
+//    which we evaluate at runtime using Function() — a creative approach!
 export function getPreparedCount(
   classInfo: any,
   level: number,
   abilityScore: number
 ): number {
-  // XPHB-style flat per-level progression array
   const prog = classInfo?.preparedSpellsProgression;
   if (prog?.length) return prog[Math.min(level, prog.length) - 1] ?? 0;
 
-  // PHB-style formula like "<$level$> + <$wis_mod$>"
   const formula: string = classInfo?.preparedSpells || '';
   if (!formula) return 0;
   const mod = getAbilityModifier(abilityScore);
@@ -195,21 +250,24 @@ export function usesPreparedSpells(classInfo: any): boolean {
 }
 
 export function usesKnownSpells(classInfo: any): boolean {
-  return Boolean(
-    classInfo?.spellsKnownProgression
-  );
+  return Boolean(classInfo?.spellsKnownProgression);
 }
 
+// 🧠 getSpellcastingAbility — Returns which ability score this class uses
+//    for spellcasting (INT for Wizard, WIS for Cleric, CHA for Sorcerer).
+//    Defaults to INT if not found.
 export function getSpellcastingAbility(classInfo: any): keyof Character['baseStats'] {
   const ab = (classInfo?.spellcastingAbility || 'int').toLowerCase();
   if (['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(ab)) return ab as keyof Character['baseStats'];
   return 'int';
 }
 
-/**
- * Compute spell slots for a multiclass character by combining all caster levels.
- * Returns slots for both regular casting and pact magic (if any).
- */
+// ============================================================
+// SPELL SLOT COMPUTATION
+// ============================================================
+
+// 🧠 computeMulticlassSpellSlots — Computes ALL spell slots for a multiclass
+//    character using the combined caster level. Handles regular + pact slots.
 export function computeMulticlassSpellSlots(
   classLevels: { className: string; level: number }[],
   classDataMap: Record<string, any>
@@ -217,7 +275,7 @@ export function computeMulticlassSpellSlots(
   const { combinedLevel, pactLevel, hasPact } = getCombinedCasterLevel(classLevels, classDataMap);
   const slots: Record<number, SpellSlotState> = {};
 
-  // Regular slots from combined caster level (full caster table)
+  // Regular slots from the full caster table
   if (combinedLevel > 0) {
     const row = FULL_CASTER_SLOTS[Math.min(20, combinedLevel)] || [];
     row.forEach((max, idx) => {
@@ -225,13 +283,10 @@ export function computeMulticlassSpellSlots(
     });
   }
 
-  // Pact magic slots (separate)
+  // Pact slots are ADDITIVE to regular slots at the same level
   if (hasPact && pactLevel > 0) {
     const pact = PACT_SLOTS[Math.min(20, pactLevel)] || PACT_SLOTS[1];
-    // Pact slots go into a special key "pact{level}" or reuse the slot level key
-    // Standard approach: put pact slots at their slot level (e.g., level 2 pact slots → key 2)
     if (slots[pact.level]) {
-      // If regular slots already exist at this level, add pact slots (they're separate resources)
       slots[pact.level] = { max: slots[pact.level].max + pact.slots, used: 0 };
     } else {
       slots[pact.level] = { max: pact.slots, used: 0 };
@@ -241,6 +296,8 @@ export function computeMulticlassSpellSlots(
   return slots;
 }
 
+// 🧠 buildSpellSlots — For single-class characters, just looks up the table.
+//    Third casters (EK/AT) use the half-caster table -1 at each level.
 export function buildSpellSlots(classInfo: any, level: number): Record<number, SpellSlotState> {
   const progression = classInfo?.casterProgression;
   const slots: Record<number, SpellSlotState> = {};
@@ -265,15 +322,19 @@ export function buildSpellSlots(classInfo: any, level: number): Record<number, S
   return slots;
 }
 
+// ============================================================
+// COMBAT FORMULAS
+// ============================================================
+
 export function getSpellSaveDC(char: Character, classInfo: any): number {
   const ab = getSpellcastingAbility(classInfo);
   const mod = getAbilityModifier(char.baseStats[ab]);
-  return 8 + char.level + mod;
+  return 8 + char.level + mod;  // 8 + proficiency + ability mod
 }
 
 export function getSpellAttackBonus(char: Character, classInfo: any): number {
   const ab = getSpellcastingAbility(classInfo);
-  return getAbilityModifier(char.baseStats[ab]) + char.level;
+  return getAbilityModifier(char.baseStats[ab]) + char.level;  // proficiency + ability mod
 }
 
 export function resetSpellSlots(slots: Record<number, SpellSlotState>): Record<number, SpellSlotState> {
@@ -285,5 +346,5 @@ export function resetSpellSlots(slots: Record<number, SpellSlotState>): Record<n
 }
 
 export function concentrationSaveDC(damage: number): number {
-  return Math.max(10, Math.floor(damage / 2));
+  return Math.max(10, Math.floor(damage / 2));  // DC 10 or half damage, whichever higher
 }

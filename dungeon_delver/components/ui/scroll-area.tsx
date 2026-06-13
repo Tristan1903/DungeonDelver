@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/scroll-area.tsx
+// =============================================================================
+// 🎯 PURPOSE: A custom scrollable area with a styled scrollbar. Built on
+//    @base-ui/react's ScrollArea primitive. Supports both vertical and
+//    horizontal scrolling with a thin, themed scrollbar thumb.
+//
+// 🧠 REACT CONCEPT: Custom Scrollbar + Viewport Pattern
+//    The ScrollArea primitive provides a VIEWPORT (the actual scrollable
+//    container) and a separate SCROLLBAR that can be styled independently
+//    of the browser's native scrollbar. This ensures consistent appearance
+//    across browsers.
+//
+//    The viewport receives focus styles (`focus-visible:ring-3`) so keyboard
+//    users can tab to scrollable regions. The Corner component fills the
+//    gap when both scrollbars are visible.
+//
+// 🔧 HOW TO ALTER:
+//    - Change scrollbar width: modify `data-vertical:w-2.5` in ScrollBar
+//    - Change thumb color: modify `bg-border` in Thumb
+//    - Change viewport focus ring: modify `focus-visible:ring-3` classes
+// =============================================================================
+
 "use client"
 
 import * as React from "react"

@@ -1,4 +1,10 @@
 ﻿'use client';
+// ===== 📘 FILE: app/dm/page.tsx =====
+// 🎯 PURPOSE: DM Command Hub landing page — stat cards (active session, storyline load, subsystems)
+//   with quick-link grids to all DM sub-pages (session prep, quests, journal, modules, etc.).
+// 🧠 REACT CONCEPT: Dashboard Hub Pattern — loads summary data from localStorage on mount,
+//   computes derived stats with useMemo, and renders a two-column link grid with descriptive cards.
+// =====
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { OPTIONAL_MODULES, loadCampaignConfig } from '../../utils/campaignEngine';

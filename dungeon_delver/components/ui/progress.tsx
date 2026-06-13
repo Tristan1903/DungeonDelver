@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/progress.tsx
+// =============================================================================
+// 🎯 PURPOSE: A progress/loading bar built on @base-ui/react's Progress
+//    primitive. Composed of track, indicator, label, and value display.
+//    Uses the ARIA progressbar role for accessibility.
+//
+// 🧠 REACT CONCEPT: Accessible Wrapper + Internal Composition
+//    Unlike other compound components where the consumer composes children,
+//    Progress renders its own sub-components internally (ProgressTrack +
+//    ProgressIndicator are always inside the root). The consumer just
+//    provides `value` and optional children for label/value.
+//
+//    @base-ui/react's Progress primitive handles ARIA attributes
+//    (role="progressbar", aria-valuenow, aria-valuemin, aria-valuemax)
+//    automatically based on the `value` prop.
+//
+// 🔧 HOW TO ALTER:
+//    - Change bar height: modify `h-1` in ProgressTrack
+//    - Change indicator color: modify `bg-primary` in ProgressIndicator
+//    - Change label position: modify Flexbox layout in Progress.Root
+// =============================================================================
+
 "use client"
 
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress"

@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: HonorSanityConfig.tsx =====
+// 🎯 PURPOSE: Sets default Honor and Sanity ability scores (3–18) for characters when this variant
+//   rule is enabled.
+// 🧠 REACT CONCEPT: Scalar Controlled Inputs — two number inputs with min/max constraints, each
+//   parsing the string value to a number before calling the parent's onChange.
+// =====
 export interface HonorSanityConfigValue { defaultHonor: number; defaultSanity: number; }
 export default function HonorSanityConfig({ value, onChange }: { value: HonorSanityConfigValue; onChange: (v: HonorSanityConfigValue) => void }) {
   return (

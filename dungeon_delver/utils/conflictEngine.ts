@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: utils/conflictEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Conflict resolution system for syncing character data between
+//    local storage and Obsidian vaults. Provides version tracking, backup
+//    management, field-level diffing, and merge strategies (local-wins or
+//    obsidian-wins).
+//
+// 🧠 REACT CONCEPT: Optimistic Update + Conflict Resolution
+//    When two sources modify the same data, you need a strategy to resolve
+//    conflicts. This file implements "last-write-wins" per-field merging.
+//    The computeDiff function shows what changed (like git diff), and
+//    mergeLocalWins / mergeObsidianWins apply one side's changes.
+//
+//    This is similar to how React handles concurrent state updates —
+//    you queue both changes and decide which one to keep.
+//
+// 🔧 HOW TO ALTER:
+//    - Add fields to diff: add them to the FIELDS array
+//    - Change merge strategy: modify mergeLocalWins or mergeObsidianWins
+//    - Change backup limit: modify the `if (existing.length > 20)` check
+//    - Add new diff categories: add blocks like spell/feature comparison
+// =============================================================================
+
 'use client';
 
 export interface VersionedCharacter {
@@ -40,6 +64,9 @@ export function setVersion(char: any, version: number, timestamp?: string): void
   (char as any)._lastSync = timestamp || new Date().toISOString();
 }
 
+// 🧠 createBackup: deep-clones the character and stores a backup entry.
+//    `JSON.parse(JSON.stringify(char))` is a common way to deep-clone
+//    plain objects in JavaScript (it drops functions and special types).
 export function createBackup(char: any, source: 'local' | 'obsidian'): BackupEntry {
   const entry: BackupEntry = {
     version: getCurrentVersion(char),
@@ -72,6 +99,10 @@ export function clearBackups(charId: string): void {
   try { localStorage.removeItem(`${BACKUP_KEY}-${charId}`); } catch { /* noop */ }
 }
 
+// 🧠 computeDiff: compares two character objects field-by-field.
+//    Returns a list of differences with type (changed/added/removed).
+//    This is the "read" side of conflict resolution — shows the DM
+//    what would change before merging.
 export function computeDiff(local: any, obsidian: any): DiffResult[] {
   const diffs: DiffResult[] = [];
 
@@ -82,6 +113,8 @@ export function computeDiff(local: any, obsidian: any): DiffResult[] {
     'notes', 'backstory', 'personalityTraits', 'ideals', 'bonds', 'flaws',
   ];
 
+  // 🧠 getNested: accesses nested object properties via dot-separated paths.
+  //    e.g. getNested(obj, 'hp.current') → obj.hp.current
   function getNested(obj: any, path: string): any {
     return path.split('.').reduce((o, k) => (o && typeof o === 'object' ? o[k] : undefined), obj);
   }
@@ -94,7 +127,7 @@ export function computeDiff(local: any, obsidian: any): DiffResult[] {
     }
   }
 
-  // Spell changes
+  // Spell changes — compare merged spell lists (cantrips + known + prepared)
   const localSpells = [...new Set([
     ...(local.spells?.cantrips || []),
     ...(local.spells?.known || []),
@@ -119,12 +152,14 @@ export function computeDiff(local: any, obsidian: any): DiffResult[] {
   return diffs;
 }
 
-/** Merge local changes into obsidian version, preferring local for conflicts */
+// 🧠 mergeLocalWins: merges local changes into the obsidian version.
+//    For each field, the local version takes priority. This is the
+//    "optimistic" strategy — assume local is most recent.
+//    Returns a NEW object (immutable).
 export function mergeLocalWins(local: any, obsidian: any): any {
   const merged = JSON.parse(JSON.stringify(obsidian));
   const version = Math.max(getCurrentVersion(local), getCurrentVersion(obsidian)) + 1;
 
-  // Core fields: local wins
   if (local.hp) merged.hp = { ...merged.hp, ...local.hp };
   if (local.xp !== undefined) merged.xp = local.xp;
   if (local.level !== undefined) merged.level = local.level;
@@ -137,7 +172,6 @@ export function mergeLocalWins(local: any, obsidian: any): any {
   if (local.currency) merged.currency = JSON.parse(JSON.stringify(local.currency));
   if (local.resources) merged.resources = JSON.parse(JSON.stringify(local.resources));
 
-  // Notes: prefer local
   merged.notes = local.notes || obsidian.notes || '';
   merged.backstory = local.backstory || obsidian.backstory || '';
   merged.personalityTraits = local.personalityTraits || obsidian.personalityTraits || '';
@@ -149,7 +183,8 @@ export function mergeLocalWins(local: any, obsidian: any): any {
   return merged;
 }
 
-/** Merge obsidian changes into local, preferring obsidian for RPG stats */
+// 🧠 mergeObsidianWins: the reverse — obsidian takes priority for RPG stats,
+//    but local keeps combat-relevant state (temp HP).
 export function mergeObsidianWins(local: any, obsidian: any): any {
   const merged = JSON.parse(JSON.stringify(local));
   const version = Math.max(getCurrentVersion(local), getCurrentVersion(obsidian)) + 1;

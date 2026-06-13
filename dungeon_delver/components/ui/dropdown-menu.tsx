@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/dropdown-menu.tsx
+// =============================================================================
+// 🎯 PURPOSE: A comprehensive dropdown menu component built on @base-ui/react's
+//    Menu primitive. Supports items, checkable items, radio groups, submenus,
+//    separators, labels, keyboard shortcuts, and destructive variants.
+//
+// 🧠 REACT CONCEPT: Compound Component + Submenu Pattern
+//    DropdownMenu is a compound component with ~20 sub-components. The
+//    submenu pattern (DropdownMenuSub → SubTrigger → SubContent) creates
+//    nested menus that open on hover/focus. @base-ui/react manages the
+//    open/close state for each nesting level via Context.
+//
+//    Checkbox items and radio items use MenuPrimitive.CheckboxItem and
+//    MenuPrimitive.RadioItem — these are controlled inputs inside a menu.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a menu variant: modify variant prop on DropdownMenuItem
+//    - Change submenu side: modify side/sideOffset on DropdownMenuSubContent
+//    - Change animation: adjust data-open/data-closed classes
+//    - Change item padding: modify the px/py values in DropdownMenuItem
+// =============================================================================
+
 "use client"
 
 import * as React from "react"
@@ -96,6 +119,9 @@ function DropdownMenuItem({
   )
 }
 
+// 🧠 Submenu: DropdownMenuSub creates a nested menu. The SubTrigger has a
+//    ChevronRightIcon to indicate more options. SubContent opens on the
+//    right side by default.
 function DropdownMenuSub({ ...props }: MenuPrimitive.SubmenuRoot.Props) {
   return <MenuPrimitive.SubmenuRoot data-slot="dropdown-menu-sub" {...props} />
 }
@@ -145,6 +171,9 @@ function DropdownMenuSubContent({
   )
 }
 
+// 🧠 CheckboxItem and RadioItem: interactive menu items with check marks.
+//    CheckboxItem toggles independently; RadioItem belongs to a RadioGroup
+//    (only one selected at a time).
 function DropdownMenuCheckboxItem({
   className,
   children,
@@ -170,8 +199,7 @@ function DropdownMenuCheckboxItem({
         data-slot="dropdown-menu-checkbox-item-indicator"
       >
         <MenuPrimitive.CheckboxItemIndicator>
-          <CheckIcon
-          />
+          <CheckIcon />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -211,8 +239,7 @@ function DropdownMenuRadioItem({
         data-slot="dropdown-menu-radio-item-indicator"
       >
         <MenuPrimitive.RadioItemIndicator>
-          <CheckIcon
-          />
+          <CheckIcon />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}

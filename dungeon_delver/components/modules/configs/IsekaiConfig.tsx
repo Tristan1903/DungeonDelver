@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: IsekaiConfig.tsx =====
+// 🎯 PURPOSE: Configures Isekai (otherworldly origin) types — each type has an id, label, description,
+//   and bonus string. Read-only display of type definitions from campaignEngine.
+// 🧠 REACT CONCEPT: Read-Only Controlled Form — the types are displayed as cards and individual fields
+//   can be edited, updating the parent config via immutable array spread + Object.assign pattern.
+// =====
 import { IsekaiConfig as IsekaiConfigType, IsekaiTypeConfig } from '../../../utils/campaignEngine';
 
 interface Props {

@@ -1,13 +1,22 @@
 'use client';
+// ===== 📘 FILE: app/library/spells/page.tsx =====
+// 🎯 PURPOSE: Spells library — grimoire-style class-based browsing with expandable class
+//   sections, global search, spell-level grouping, and a detail modal via SpellDetail.
+// 🧠 REACT CONCEPT: Class-Grouped Expandable Browser — builds a reverse lookup from spell
+//   names to class lists, renders class cards with themed colors, and expands to show
+//   spells grouped by level within each class.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { loadHBSpells } from '../../../utils/homebrewEngine';
 import { CLASS_LIST, LEVEL_NAMES, getSchoolName, formatTime } from '../../../utils/libraryHelpers';
 import { CLASS_THEMES } from '../../../utils/classThemes';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 import SpellDetail from '../../../components/SpellDetail';
 
 export default function SpellsPage() {
+  const isMobile = useIsMobile();
   const [allSpells, setAllSpells] = useState<any[]>([]);
   const [spellClassLookup, setSpellClassLookup] = useState<Record<string, string[]>>({});
   const [expandedGrimoire, setExpandedGrimoire] = useState<string | null>(null);
@@ -66,7 +75,7 @@ export default function SpellsPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Spells — Grimoires
         </h1>

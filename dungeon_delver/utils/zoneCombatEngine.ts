@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: utils/zoneCombatEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Zone-based combat positioning system. Instead of a grid map,
+//    combatants are placed in abstract zones (Melee, Near, Far). Provides
+//    zone presets for different encounter types and loads pending encounters
+//    from sessionStorage.
+//
+// 🧠 REACT CONCEPT: Abstract State Modeling
+//    Zone combat simplifies positioning into discrete buckets rather than
+//    exact coordinates. Each ZoneCombatant has a `zoneId` that determines
+//    relative positioning. This is a form of "state normalization" —
+//    instead of storing positions as x/y coordinates, we store a zone
+//    reference and derive distance relationships from zone definitions.
+//
+//    sessionStorage is used here (not localStorage) because encounter
+//    data is temporary — it should clear when the tab closes.
+//
+// 🔧 HOW TO ALTER:
+//    - Add zone presets: add entries to ZONE_PRESETS
+//    - Change encounter loading: modify loadPendingCombatants
+//    - Change encounter clearing: modify clearPendingEncounter
+// =============================================================================
+
 export interface Zone {
   id: string;
   name: string;
@@ -19,6 +43,9 @@ export interface ZoneCombatant {
   monsterData?: any;
 }
 
+// 🧠 ZONE_PRESETS: a record of named zone layouts for different encounter types.
+//    Each preset defines a set of zones with names, descriptions, colors, and icons.
+//    Components use these to render zone labels and allow drag-between-zones.
 export const ZONE_PRESETS: Record<string, Zone[]> = {
   'melee-near-far': [
     { id: 'melee', name: 'Melee', description: 'Engaged in close combat', color: '#e53e3e', icon: '⚔' },
@@ -42,6 +69,9 @@ export const ZONE_PRESETS: Record<string, Zone[]> = {
   ],
 };
 
+// 🧠 loadPendingCombatants: reads sessionStorage for a pending encounter
+//    (pushed from the encounter builder page) and formats them as ZoneCombatants.
+//    sessionStorage persists across page navigation but clears on tab close.
 export function loadPendingCombatants(): { monsters: ZoneCombatant[]; pcs: ZoneCombatant[] } {
   const monsters: ZoneCombatant[] = [];
   const pcs: ZoneCombatant[] = [];

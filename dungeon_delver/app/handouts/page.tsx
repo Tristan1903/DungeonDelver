@@ -1,10 +1,25 @@
 'use client';
-import { useState, useCallback } from 'react';
+// ===== 📘 FILE: app/handouts/page.tsx =====
+// 🎯 PURPOSE: Printable handout card generator — search spells/items, add them to a selection,
+//   preview in a grid layout, and print as PDF. Includes print-specific CSS.
+// 🧠 REACT CONCEPT: Search + Selection Pattern — demonstrates a split-pane UI where the sidebar
+//   manages search/filter/selection state and the main area renders the selected items. Uses
+//   useCallback for the search handler to avoid unnecessary re-creation.
+// =====
+import { useState, useEffect, useCallback } from 'react';
 import { DataEngine } from '../../utils/dataLoader';
 import { loadHBItems, loadHBSpells } from '../../utils/homebrewEngine';
 import { SpellCard, ItemCard } from '../../components/HandoutCard';
+import ProjectionButton from '../../components/ProjectionButton';
 
 export default function HandoutPage() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   const [tab, setTab] = useState<'spells' | 'items'>('spells');
   const [search, setSearch] = useState('');
   const [results, setResults] = useState<any[]>([]);
@@ -36,8 +51,8 @@ export default function HandoutPage() {
   const cardCount = selected.length;
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', color: '#e2e8f0' }} className="handout-page">
-      <aside className="handout-sidebar" style={{ width: '280px', flexShrink: 0, background: '#0f1419', borderRight: '1px solid #4a5568', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', overflowY: 'auto' }}>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', minHeight: '100vh', color: '#e2e8f0' }} className="handout-page">
+      <aside className="handout-sidebar" style={{ width: isMobile ? '100%' : '280px', flexShrink: 0, background: '#0f1419', borderRight: isMobile ? 'none' : '1px solid #4a5568', borderBottom: isMobile ? '1px solid #4a5568' : 'none', padding: isMobile ? '10px' : '16px', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '8px', overflowY: 'auto', alignItems: isMobile ? 'center' : undefined, flexWrap: 'wrap' }}>
         <h2 style={{ fontFamily: 'serif', color: '#b8860b', fontSize: '1rem', margin: 0 }}>Handout Generator</h2>
 
         <div style={{ display: 'flex', gap: '4px' }}>
@@ -90,16 +105,22 @@ export default function HandoutPage() {
       <main className="handout-main" style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <h1 style={{ fontFamily: 'serif', color: '#b8860b', fontSize: '1.3rem', margin: 0 }}>Print Preview</h1>
-          <button
-            onClick={() => window.print()}
-            disabled={cardCount === 0}
-            style={{
-              padding: '10px 24px', background: cardCount > 0 ? '#b8860b' : '#4a5568',
-              border: 'none', color: 'white', borderRadius: '6px', fontSize: '0.9rem', cursor: cardCount > 0 ? 'pointer' : 'not-allowed',
-            }}
-          >
-            Print / Save PDF ({cardCount} cards)
-          </button>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <ProjectionButton contentType="handout" content={{
+              type: tab,
+              cards: selected.map(s => ({ name: s.name, source: s.source, level: s.level, type: s.type, rarity: s.rarity, text: s.text || s.description })),
+            }} label="📺 Project to Players" disabled={cardCount === 0} />
+            <button
+              onClick={() => window.print()}
+              disabled={cardCount === 0}
+              style={{
+                padding: '10px 24px', background: cardCount > 0 ? '#b8860b' : '#4a5568',
+                border: 'none', color: 'white', borderRadius: '6px', fontSize: '0.9rem', cursor: cardCount > 0 ? 'pointer' : 'not-allowed',
+              }}
+            >
+              Print / Save PDF ({cardCount} cards)
+            </button>
+          </div>
         </div>
 
         {cardCount === 0 ? (

@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: PietyConfig.tsx =====
+// 🎯 PURPOSE: Configures Piety system — deity name + a list of piety score thresholds each with
+//   a rank title and benefit description.
+// 🧠 REACT CONCEPT: Partial Update Helper — uses a `update(partial)` wrapper that merges a partial
+//   object, simplifying scalar field updates while using a separate immutable pattern for arrays.
+// =====
 export interface PietyConfigValue {
   deityName: string;
   thresholds: { score: number; rank: string; benefit: string }[];

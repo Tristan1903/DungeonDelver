@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/party-stash/page.tsx =====
+// 🎯 PURPOSE: Shared party item stash — add items from the data engine, transfer to characters,
+//   toggle "Mule Nearby" for carry capacity, and manage quantities.
+// 🧠 REACT CONCEPT: Modal + Search + Transfer Pattern — demonstrates a complex UI with an add-item
+//   search modal, a take-item character selector modal, and inline stash item rows. State is
+//   lifted to the page component and passed as callbacks to modal triggers.
+// =====
 import { useState, useEffect } from 'react';
 import { StashItem, Character } from '../../lib/character';
 import { DataEngine } from '../../utils/dataLoader';

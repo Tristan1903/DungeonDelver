@@ -1,4 +1,12 @@
 ﻿'use client';
+// ===== 📘 FILE: app/character-sheet/page.tsx =====
+// 🎯 PURPOSE: Full character sheet with character select, wizard creation, 6-tab interface
+//   (Actions/Spells/Inventory/Features/Background/Notes), item management, spellcasting
+//   with concentration, hit dice, rests, campaign module integration, and more.
+// 🧠 REACT CONCEPT: Mega-component Pattern — one of the largest components in the app, demonstrating
+//   complex state management with 40+ useState hooks, multiple useEffect data-loading pipelines,
+//   functional updates, callbacks, and deeply nested JSX with conditional rendering.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { getLiveStats, SKILL_MAP, computeLoad } from '../../utils/characterEngine';
 import { cleanString } from '../../utils/formatters';
@@ -13,6 +21,7 @@ import { SpellDetailModal } from '../../components/SpellSelectionView';
 import { isMuleNearby, loadStash } from '../../utils/stashEngine';
 import { HonorSanityStats, PietySection, RenownSection, DarkGiftsSection, MadnessSection, EpicBoonsSection, HeroPointsSection, StressFearSection, CampaignSelector, getActiveModules, TransformationsSection, DefilingSection, GroupPatronsSection, ShipMoraleSection, SidekicksSection, IsekaiSection } from '../../components/CampaignModulesCharacterSheet';
 import { saveCharToLocal, getStorageKey, loadCharFromLocal, isValidCharacter, CHAR_STORAGE_PREFIX } from '../../utils/storageEngine';
+import { pushCharacter, pullCharacter, listCloudCharacters } from '../../utils/syncManager';
 import { useSpellSlot as useSpellSlotEngine, useClassResource } from '../../utils/resourceEngine';
 import { getMastery } from '../../utils/weaponMasteries';
 import { getObscuredForCharacter } from '../../utils/obscuredItemsEngine';
@@ -106,12 +115,20 @@ export default function CharacterSheet() {
     const [wizardMode, setWizardMode] = useState<'create' | 'levelup'>('create');
     const [showSelect, setShowSelect] = useState(true);
     const [registry, setRegistry] = useState<CharRegistryEntry[]>([]);
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        const check = () => setIsMobile(window.innerWidth < 768);
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+    }, []);
 
     const handleWizardComplete = (finalDraft: Character) => {
         setChar(finalDraft);
         saveChar(false, finalDraft);
         setIsWizardOpen(false);
         setShowSelect(false);
+        if (finalDraft.id) window.history.replaceState(null, '', `/character-sheet?id=${finalDraft.id}`);
     };
 
     const addToRegistry = useCallback(async (charPath: string, c: Character) => {
@@ -138,6 +155,20 @@ export default function CharacterSheet() {
             saveRegistry(updated);
             return updated;
         });
+    }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+        if (id) {
+            const key = `${CHAR_STORAGE_PREFIX}${id}`;
+            const local = loadCharFromLocal(key);
+            if (local) {
+                setChar(local);
+                setCharPath(key);
+                setShowSelect(false);
+            }
+        }
     }, []);
 
     useEffect(() => {
@@ -469,6 +500,7 @@ useEffect(() => {
                 setChar(local);
                 setCharPath(path);
                 setShowSelect(false);
+                if (local.id) window.history.replaceState(null, '', `/character-sheet?id=${local.id}`);
                 return;
             }
             // Fall back to file
@@ -932,6 +964,121 @@ useEffect(() => {
         });
     };
 
+    // --- SYNC CONFIG ---
+    const [syncUrl, setSyncUrl] = useState(() => `http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:3001`);
+    const [syncRoom, setSyncRoom] = useState('default');
+    const [syncMsg, setSyncMsg] = useState<string | null>(null);
+    useEffect(() => {
+        try { setSyncUrl(localStorage.getItem('dd-sync-url') || `http://${window.location.hostname}:3001`); } catch {}
+        try { setSyncRoom(localStorage.getItem('dd-sync-room') || 'default'); } catch {}
+    }, []);
+
+    const onSyncStatus = useCallback((status: string, msg?: string) => {
+        if (msg) setSyncMsg(msg);
+        if (status !== 'error') setTimeout(() => setSyncMsg(null), 4000);
+    }, []);
+
+    const pushChar = useCallback(async (entry: CharRegistryEntry) => {
+        console.log('[Push] entry:', entry);
+        let char = loadCharFromLocal(entry.path);
+        if (!char) { console.error('[Push] loadCharFromLocal returned null for key:', entry.path); setSyncMsg('Character not found locally'); return; }
+        if (!char.id) { char.id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`; saveCharToLocal(char); }
+        const url = localStorage.getItem('dd-sync-url') || `http://${window.location.hostname}:3001`;
+        const room = localStorage.getItem('dd-sync-room') || 'default';
+        console.log('[Push] URL:', url, 'Room:', room, 'Char ID:', char.id, 'Char Name:', char.name);
+        try {
+            await pushCharacter(url, room, char, onSyncStatus);
+        } catch (e: any) {
+            console.error('[Push] Failed:', e);
+            setSyncMsg(`Push failed: ${e.message}`);
+        }
+    }, [onSyncStatus]);
+
+    const SyncButton = ({ entry }: { entry: CharRegistryEntry }) => (
+        <button onClick={async (e) => { e.stopPropagation(); await pushChar(entry); }}
+            style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', borderRadius: '4px', padding: '2px 8px', fontSize: '0.6rem', cursor: 'pointer' }}
+            title="Push to sync server">
+            ↑ Push
+        </button>
+    );
+
+    const SyncSection = ({ registry, onLoadChar }: { registry: CharRegistryEntry[]; onLoadChar: (path: string) => void }) => {
+        const [show, setShow] = useState(false);
+        const [serverChars, setServerChars] = useState<any[]>([]);
+        const [localUrl, setLocalUrl] = useState(syncUrl);
+        const [localRoom, setLocalRoom] = useState(syncRoom);
+
+        const doRefresh = async () => {
+            localStorage.setItem('dd-sync-url', localUrl);
+            localStorage.setItem('dd-sync-room', localRoom);
+            setSyncUrl(localUrl);
+            setSyncRoom(localRoom);
+            const list = await listCloudCharacters(localUrl, localRoom, onSyncStatus);
+            setServerChars(list);
+            setShow(true);
+        };
+
+        return (
+            <div style={{ marginBottom: spacing.lg }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.7rem', color: '#5a5248', whiteSpace: 'nowrap' }}>🔄 Sync Server</span>
+                    <input value={localUrl} onChange={e => { setLocalUrl(e.target.value); localStorage.setItem('dd-sync-url', e.target.value); }}
+                        placeholder={`http://${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}:3001`}
+                        style={{ ...formInput, width: isMobile ? '120px' : '180px', minWidth: '100px', flex: '1 1 auto', fontSize: '0.65rem', padding: '3px 6px' }} />
+                    <input value={localRoom} onChange={e => { setLocalRoom(e.target.value); localStorage.setItem('dd-sync-room', e.target.value); }}
+                        placeholder="room"
+                        style={{ ...formInput, width: isMobile ? '70px' : '100px', minWidth: '60px', flex: '0 1 auto', fontSize: '0.65rem', padding: '3px 6px' }} />
+                    <button onClick={async () => {
+                        try {
+                            const res = await fetch(`${localUrl.replace(/\/+$/, '')}/api/health`);
+                            const data = await res.json();
+                            setSyncMsg(`✓ Connected: ${JSON.stringify(data)}`);
+                        } catch (e: any) {
+                            setSyncMsg(`✗ Failed: ${e.message}`);
+                        }
+                    }} style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', borderRadius: '4px', padding: '3px 10px', fontSize: '0.65rem', cursor: 'pointer' }}>
+                        Test
+                    </button>
+                    <button onClick={doRefresh} style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', borderRadius: '4px', padding: '3px 10px', fontSize: '0.65rem', cursor: 'pointer' }}>
+                        {show ? 'Connect' : 'Connect'}
+                    </button>
+                    {syncMsg && <span style={{ fontSize: '0.65rem', color: syncMsg.includes('failed') || syncMsg.includes('error') ? '#ef4444' : '#16a34a' }}>{syncMsg}</span>}
+                </div>
+
+                {show && serverChars.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', padding: '8px', background: '#0c0e14', borderRadius: '6px', border: '1px solid #3d3528' }}>
+                        <div style={{ fontSize: '0.6rem', color: '#5a5248' }}>Characters on server — click to download:</div>
+                        {serverChars.map(c => {
+                            const alreadyLocal = registry.some(r => r.path === `${CHAR_STORAGE_PREFIX}${c.id}`);
+                            return (
+                                <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 8px', background: '#1a1714', borderRadius: '4px', fontSize: '0.7rem' }}>
+                                    <div>
+                                        <strong style={{ color: '#c9a84c' }}>{c.name}</strong>
+                                        <span style={{ color: '#5a5248', marginLeft: '6px' }}>Lv{c.level} {c.race} · {c.class}</span>
+                                    </div>
+                                    <button onClick={async () => {
+                                        const char = await pullCharacter(localUrl, localRoom, c.id, onSyncStatus);
+                                        if (char && char.id) {
+                                            onLoadChar(`${CHAR_STORAGE_PREFIX}${char.id}`);
+                                        }
+                                    }} disabled={alreadyLocal}
+                                    style={{ background: alreadyLocal ? '#2d3748' : '#2980b9', border: 'none', color: '#e8dcc8', borderRadius: '4px', padding: '3px 10px', fontSize: '0.6rem', cursor: alreadyLocal ? 'default' : 'pointer' }}>
+                                        {alreadyLocal ? '✓ Downloaded' : 'Download'}
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
+                {show && serverChars.length === 0 && (
+                    <div style={{ fontSize: '0.7rem', color: '#5a5248', padding: '8px', background: '#0c0e14', borderRadius: '4px' }}>
+                        No characters on server. Push local characters (↑ button on cards) to upload them.
+                    </div>
+                )}
+            </div>
+        );
+    };
+
     return (
         <>
             {/* CHARACTER SELECT SCREEN */}
@@ -960,6 +1107,12 @@ useEffect(() => {
                             </button>
                         </div>
 
+                        {/* --- SYNC SECTION --- */}
+                        <SyncSection
+                            registry={registry}
+                            onLoadChar={loadCharByPath}
+                        />
+
                         {registry.length === 0 && (
                             <div style={{ padding: spacing.xl, background: colors.bgCard, borderRadius: radii.lg, textAlign: 'center', border: `1px dashed ${colors.border}` }}>
                                 <p style={{ color: colors.textDim, fontSize: '1.1rem' }}>No saved characters yet.</p>
@@ -977,6 +1130,7 @@ useEffect(() => {
                                         padding: spacing.md,
                                         cursor: 'pointer',
                                         transition: 'border-color 0.2s, transform 0.1s',
+                                        position: 'relative',
                                     }}
                                     onMouseEnter={(e) => { e.currentTarget.style.borderColor = colors.gold; e.currentTarget.style.transform = 'translateY(-2px)'; }}
                                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = colors.border; e.currentTarget.style.transform = 'none'; }}
@@ -985,6 +1139,9 @@ useEffect(() => {
                                     <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'white', marginBottom: '4px' }}>{entry.name}</div>
                                     <div style={{ fontSize: '0.85rem', color: colors.textMuted }}>{entry.race} · {entry.class}</div>
                                     <div style={{ fontSize: '0.7rem', color: colors.textDim, marginTop: spacing.xs }}>Opened: {new Date(entry.lastOpened).toLocaleDateString()}</div>
+                                    <div style={{ display: 'flex', gap: '6px', marginTop: '8px' }}>
+                                        <SyncButton entry={entry} />
+                                    </div>
                                     <button
                                         onClick={(e) => { e.stopPropagation(); removeFromRegistry(entry.path); }}
                                         style={{ ...ghostButton, position: 'absolute', top: '8px', right: '8px', fontSize: '0.8rem', padding: '4px 8px' }}
@@ -1013,7 +1170,7 @@ useEffect(() => {
                     const gradientFrom = `#0c0e14`;
                     const gradientTo = accent + '40';
                     return (
-                    <div style={{ position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`, padding: '24px 32px', borderBottom: `3px solid #c9a84c`, color: 'white' }}>
+                    <div style={{ position: 'relative', overflow: 'hidden', background: `linear-gradient(135deg, ${gradientFrom} 0%, ${gradientTo} 100%)`, padding: isMobile ? '12px 12px' : '24px 32px', borderBottom: `3px solid #c9a84c`, color: 'white' }}>
                         {/* Ghost class icon backgrounds — all classes for multiclass */}
                         {classList.length > 1 ? classList.map((cls, i) => (
                             <img key={cls} src={getClassIconUrl(cls)} onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
@@ -1027,23 +1184,23 @@ useEffect(() => {
                                 {getClassList(char).map(cls => {
                                     const clsAccent = classColors[cls.toLowerCase()] || '#c9a84c';
                                     return (
-                                    <img key={cls} src={getClassIconUrl(cls)} style={{ width: '48px', height: '48px', borderRadius: '10px', flexShrink: 0, border: `2px solid ${clsAccent}`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    <img key={cls} src={getClassIconUrl(cls)} style={{ width: isMobile ? '36px' : '48px', height: isMobile ? '36px' : '48px', borderRadius: '10px', flexShrink: 0, border: `2px solid ${clsAccent}`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                 );})}
                                 {getClassList(char).length === 0 && char.class && (
-                                    <img src={getClassIconUrl(char.class)} style={{ width: '64px', height: '64px', borderRadius: '12px', flexShrink: 0, border: `2px solid #c9a84c`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
+                                    <img src={getClassIconUrl(char.class)} style={{ width: isMobile ? '44px' : '64px', height: isMobile ? '44px' : '64px', borderRadius: '12px', flexShrink: 0, border: `2px solid #c9a84c`, boxShadow: '0 2px 8px rgba(0,0,0,0.5)' }} alt="" onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }} />
                                 )}
                             </div>
-                            <div style={{ flex: 1, minWidth: '200px' }}>
-                                <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{char.name || 'Unnamed Hero'}</div>
-                                <div style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.75)', marginTop: '4px' }}>
+                            <div style={{ flex: 1, minWidth: isMobile ? '120px' : '200px' }}>
+                                <div style={{ fontSize: isMobile ? '1.3rem' : '2rem', fontWeight: 'bold', color: '#c9a84c', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{char.name || 'Unnamed Hero'}</div>
+                                <div style={{ fontSize: isMobile ? '0.75rem' : '0.95rem', color: 'rgba(255,255,255,0.75)', marginTop: '4px' }}>
                                     {[char.race, ...getClassList(char).map(cls => {
                                         const cl = char.classLevels?.find(c => c.className === cls);
                                         return cl ? `${cls} ${cl.level}` : cls;
                                     }), `Level ${char.totalLevel || char.level || 1}`].filter(Boolean).join(' · ')}
                                 </div>
                             </div>
-                            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
-                                <div style={{ fontWeight: 'bold', color: '#c9a84c', fontSize: '1.1rem' }}>LV {char.totalLevel || char.level || 1}</div>
+                            <div style={{ textAlign: 'right', display: 'flex', flexDirection: isMobile ? 'row' : 'column', alignItems: isMobile ? 'center' : 'flex-end', gap: isMobile ? '8px' : '6px', flexWrap: 'wrap' }}>
+                                <div style={{ fontWeight: 'bold', color: '#c9a84c', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>LV {char.totalLevel || char.level || 1}</div>
                                 {char.xp !== undefined && <div style={{ fontSize: '0.8rem', color: '#5a5248' }}>{char.xp} XP</div>}
                                 <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
                                     <button onClick={() => saveChar(false)} style={{ background: '#c9a84c', border: 'none', color: 'white', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
@@ -1052,13 +1209,16 @@ useEffect(() => {
                                 </div>
                             </div>
                         </div>
-                        <div style={{ marginTop: '16px', display: 'flex', gap: '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-                            <div style={{ flex: 1, minWidth: '280px' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '6px' }}>
-                                    <span style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 'bold', letterSpacing: '1px' }}>HIT POINTS</span>
+                        <div style={{ marginTop: isMobile ? '10px' : '16px', display: 'flex', gap: isMobile ? '12px' : '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                            <div style={{ flex: 1, minWidth: isMobile ? '200px' : '280px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '6px', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                                        <span style={{ color: 'rgba(255,255,255,0.6)', fontWeight: 'bold', letterSpacing: '1px' }}>HIT POINTS</span>
+                                        <span style={{ color: '#68d391', fontSize: '0.7rem', fontWeight: 'bold' }}>AC {live.ac}</span>
+                                    </div>
                                     <span style={{ color: 'white', fontSize: '1rem', fontWeight: 'bold' }}>{char.hp?.current || 0} / {char.hp?.max || 0}</span>
                                 </div>
-                                <div style={{ width: '100%', height: '18px', background: 'rgba(0,0,0,0.4)', borderRadius: '9px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' }}>
+                                <div style={{ width: '100%', height: isMobile ? '14px' : '18px', background: 'rgba(0,0,0,0.4)', borderRadius: '9px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)' }}>
                                     <div style={{ width: `${Math.max(0, Math.min(100, ((char.hp?.current || 0) / (char.hp?.max || 1)) * 100))}%`, height: '100%', background: getHpBarColor(), borderRadius: '9px', transition: 'width 0.3s', boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.2)' }} />
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
@@ -1080,7 +1240,7 @@ useEffect(() => {
                             </div>
                             {/* HIT DICE */}
                             {char.classLevels && classInfo && (
-                                <div style={{ flexShrink: 0, minWidth: '180px', padding: '12px 16px', background: 'rgba(0,0,0,0.3)', borderRadius: 'var(--dungeon-radius-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                <div style={{ flexShrink: 0, minWidth: isMobile ? '140px' : '180px', padding: isMobile ? '8px 10px' : '12px 16px', background: 'rgba(0,0,0,0.3)', borderRadius: 'var(--dungeon-radius-md)', border: '1px solid rgba(255,255,255,0.1)' }}>
                                     <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.6)', fontWeight: 'bold', letterSpacing: '1px', marginBottom: '8px' }}>HIT DICE</div>
                                 {char.classLevels.map((cl: any, idx: number) => {
                                     const classData = classDataMap[cl.className];
@@ -1113,8 +1273,8 @@ useEffect(() => {
                 </div>
                 );
             })()}
-            <div style={{ display: 'flex', padding: spacing.md, gap: spacing.md, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>
-                    <div style={{ width: '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', padding: isMobile ? '8px' : spacing.md, gap: spacing.md, background: colors.bgPanel, color: 'white', minHeight: '100vh', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif' }}>
+                    <div style={{ width: isMobile ? '100%' : '280px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
 
                     {/* ABILITY SCORES */}
                     <div style={{ marginBottom: spacing.md }}>
@@ -1205,21 +1365,24 @@ useEffect(() => {
                     </div>
 
                     {/* ─────── RIGHT COLUMN (tabbed) ─────── */}
-                    <div style={{ flex: 1, padding: '16px 24px 16px 12px', display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
+                    <div style={{ flex: 1, padding: isMobile ? '8px 8px 8px 4px' : '16px 24px 16px 12px', display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
 
                 {/* TAB BAR */}
-                <div style={{ display: 'flex', gap: '4px', borderBottom: `2px solid ${colors.border}`, paddingBottom: '2px' }}>
+                <div style={{ display: 'flex', gap: isMobile ? '2px' : '4px', borderBottom: `2px solid ${colors.border}`, padding: isMobile ? '0 0 4px 0' : '0 0 2px 0', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch', flexShrink: 0 }}>
                     {(['actions', 'spells', 'inventory', 'features', 'background', 'notes'] as const).map(tab => (
                         <button key={tab} onClick={() => setActiveTab(tab)}
                             style={{
-                                background: activeTab === tab ? 'rgba(201,168,76,0.15)' : 'transparent',
-                                border: 'none', color: activeTab === tab ? colors.gold : colors.textMuted,
-                                padding: '6px 12px', borderRadius: `${radii.sm} ${radii.sm} 0 0`,
+                                background: activeTab === tab ? 'rgba(201,168,76,0.2)' : colors.bgCard,
+                                border: isMobile ? `1px solid ${activeTab === tab ? colors.gold : colors.border}` : 'none',
+                                color: activeTab === tab ? colors.gold : colors.textMuted,
+                                padding: isMobile ? '8px 10px' : '6px 12px',
+                                borderRadius: isMobile ? radii.sm : `${radii.sm} ${radii.sm} 0 0`,
                                 fontWeight: activeTab === tab ? 'bold' : 'normal',
-                                fontSize: '0.72rem', cursor: 'pointer',
-                                borderBottom: activeTab === tab ? `2px solid ${colors.gold}` : '2px solid transparent',
-                                marginBottom: '-2px', textTransform: 'uppercase',
-                                letterSpacing: '0.5px',
+                                fontSize: isMobile ? '0.75rem' : '0.72rem', cursor: 'pointer',
+                                borderBottom: isMobile ? 'none' : (activeTab === tab ? `2px solid ${colors.gold}` : '2px solid transparent'),
+                                marginBottom: isMobile ? '0' : '-2px',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px', whiteSpace: 'nowrap', flexShrink: 0,
                             }}>
                             {tab}
                         </button>
@@ -1230,7 +1393,7 @@ useEffect(() => {
                 {activeTab === 'actions' && (
                     <ErrorBoundary tabName="Actions">
                     <div style={{ display: 'flex', flexDirection: 'column', gap: spacing.sm }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: '6px' }}>
                             <div style={{ ...cardPanel, textAlign: 'center', padding: '10px' }}>
                                 <div style={{ fontSize: '0.6rem', color: colors.textMuted, letterSpacing: '1px' }}>AC</div>
                                 <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#68d391' }}>{live.ac}</div>
@@ -1716,16 +1879,16 @@ useEffect(() => {
                         )}
 
                         {/* Main layout: Paper Doll + Backpack */}
-                        <div style={{ display: 'flex', gap: spacing.md, alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', gap: spacing.md, alignItems: 'flex-start', flexDirection: isMobile ? 'column' : 'row' }}>
                             {/* Paper Doll */}
-                            <div style={{ ...cardPanel, flex: '0 0 340px' }}>
+                            <div style={{ ...cardPanel, flex: isMobile ? '1 1 100%' : '0 0 340px' }}>
                                 <div style={flexBetween}>
                                     <h4 style={{ margin: 0, fontSize: '0.8rem' }}>EQUIPPED</h4>
                                     <button onClick={openSearch} style={{ background: colors.gold, border: 'none', color: 'black', padding: '3px 10px', borderRadius: radii.sm, fontSize: '0.65rem', fontWeight: 'bold', cursor: 'pointer' }}>+ Add</button>
                                 </div>
-                                <div style={{ marginTop: '10px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px' }}>
+                                <div style={{ marginTop: '10px', display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: '4px' }}>
                                     {/* Hotbar row - spans full width */}
-                                    <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', paddingBottom: '8px', borderBottom: '1px solid ' + colors.border }}>
+                                    <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: '4px', paddingBottom: '8px', borderBottom: '1px solid ' + colors.border }}>
                                         {(['mainHand', 'offHand', 'ranged'] as PaperDollSlot[]).map(slot => {
                                             const item = char.inventory.find((i: any) => i.equipped && i.slot === slot);
                                             return (
@@ -2150,7 +2313,7 @@ useEffect(() => {
             {/* MODALS (Search & View) */}
             {isSearching && (
                 <div style={modalOverlay}>
-                    <div style={{ background: colors.bgCard, padding: spacing.md, borderRadius: radii.md, width: '400px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ background: colors.bgCard, padding: spacing.md, borderRadius: radii.md, width: isMobile ? '95vw' : '400px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
                         <h3>Item Library</h3>
                         <input placeholder="Search..." value={itemSearch} onChange={e => setItemSearch(e.target.value)} style={{ ...localInput, width: '100%', marginBottom: spacing.sm }} />
                         <div style={{ flex: 1, overflowY: 'auto' }}>
@@ -2173,7 +2336,7 @@ useEffect(() => {
 
             {viewingFeature && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '500px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: isMobile ? '95vw' : '500px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
                         <h2 style={{ color: colors.gold, borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <span>{viewingFeature.name}</span>
                             <span style={{ fontSize: '0.8rem', color: colors.textDim, fontWeight: 'normal' }}>Lv{viewingFeature.level} · {viewingFeature.source}</span>
@@ -2188,7 +2351,7 @@ useEffect(() => {
 
             {viewingItem && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '450px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: isMobile ? '95vw' : '450px', maxHeight: '80vh', overflowY: 'auto', border: `2px solid ${colors.gold}` }}>
                         <h2 style={{ color: colors.gold, borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px' }}>{viewingItem.name}</h2>
                         <div style={{ margin: '20px 0', fontSize: '0.9rem', lineHeight: '1.5' }}>
                             {formatEntries(viewingItem.entries || ["No description."])}
@@ -2201,7 +2364,7 @@ useEffect(() => {
             {/* ROLL MODE PICKER */}
             {showRollPicker && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: '300px', border: `2px solid ${colors.gold}`, textAlign: 'center' }}>
+                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: isMobile ? '95vw' : '300px', border: `2px solid ${colors.gold}`, textAlign: 'center' }}>
                         <h3 style={{ color: colors.gold, margin: '0 0 12px 0', fontSize: '1rem' }}>{showRollPicker.label}</h3>
                         <p style={{ fontSize: '0.75rem', color: colors.textMuted, marginBottom: '16px' }}>Select roll type</p>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -2220,7 +2383,7 @@ useEffect(() => {
             {/* MANAGE SPELLS MODAL */}
             {showManageSpells && (
                 <div style={modalOverlay}>
-                    <div style={{ background: '#1a1714', padding: spacing.lg, borderRadius: radii.md, width: viewingSpellInManage ? '800px' : '600px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', border: `2px solid ${colors.gold}` }}>
+                    <div style={{ background: '#1a1714', padding: isMobile ? spacing.md : spacing.lg, borderRadius: radii.md, width: isMobile ? '95vw' : (viewingSpellInManage ? '800px' : '600px'), maxHeight: '85vh', display: 'flex', flexDirection: 'column', border: `2px solid ${colors.gold}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${colors.gold}`, paddingBottom: '10px', marginBottom: '12px' }}>
                             <h2 style={{ margin: 0, color: colors.gold, fontSize: '1.2rem' }}>
                                 {viewingSpellInManage ? viewingSpellInManage.name : 'Manage Spells'}

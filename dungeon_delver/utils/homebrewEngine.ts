@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: utils/homebrewEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: CRUD management for DM-created homebrew content — items,
+//    monsters, and spells. Stores them in campaign-scoped localStorage
+//    and provides import/export as JSON for sharing between campaigns.
+//
+// 🧠 REACT CONCEPT: Generic CRUD with TypeScript Generics
+//    The patterns here (loadFromStorage<T>, saveToStorage<T>) use GENERICS
+//    to avoid repeating the same save/load logic for each content type.
+//    If you understand one pair of functions (loadHBItems / saveHBItem),
+//    you understand them all.
+//
+//    This is the same "abstraction layer" pattern as storageEngine.ts.
+//    Adding a new content type (e.g. HomebrewFeat) requires just 4 short
+//    functions following the existing template.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new homebrew type: create the interface + 4 CRUD functions
+//      following the existing pattern
+//    - Change storage keys: modify the STORAGE_* constants
+//    - Change import/export format: modify exportAllHomebrew / importAllHomebrew
+// =============================================================================
+
 export interface HomebrewItem {
   id: string;
   name: string;
@@ -50,6 +74,9 @@ const STORAGE_SPELLS = 'homebrew-spells';
 
 function sk(key: string) { return campaignKey(key); }
 
+// 🧠 Generic helpers: loadFromStorage<T> and saveToStorage<T> use
+//    TypeScript generics so the same function works for items, monsters,
+//    spells, or any future type. `<T>` means "caller specifies the type."
 function loadFromStorage<T>(key: string): T[] {
   try { const raw = localStorage.getItem(sk(key)); return raw ? JSON.parse(raw) : []; } catch { return []; }
 }
@@ -90,6 +117,8 @@ export function deleteHBSpell(id: string): void {
   saveToStorage(STORAGE_SPELLS, loadHBSpells().filter(s => s.id !== id));
 }
 
+// 🧠 Export/Import as a single JSON blob — useful for sharing homebrew
+//    between campaigns or backing up before clearing localStorage.
 export function exportAllHomebrew(): string {
   return JSON.stringify({ items: loadHBItems(), monsters: loadHBMonsters(), spells: loadHBSpells() }, null, 2);
 }
@@ -102,6 +131,8 @@ export function importAllHomebrew(json: string): { items: number; monsters: numb
   return { items: data.items?.length || 0, monsters: data.monsters?.length || 0, spells: data.spells?.length || 0 };
 }
 
+// 🧠 Constants for dropdown options in the homebrew editor forms.
+//    Components import these to render select/option elements.
 export const RARITIES = ['none', 'common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
 export const ITEM_TYPES = ['LA', 'MA', 'HA', 'S', 'W', 'R', 'A', 'P', 'SC', 'RD', 'Wondrous', 'Other'];
 export const SCHOOLS = ['Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Evocation', 'Illusion', 'Necromancy', 'Transmutation'];

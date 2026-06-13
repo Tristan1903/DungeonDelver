@@ -1,3 +1,41 @@
+// =============================================================================
+// ?? FILE: components/CharacterWizard.tsx
+// =============================================================================
+// ?? PURPOSE: The full-screen character creation and level-up wizard.
+//    This is the LARGEST file in the entire project (~3641 lines).
+//    It handles:
+//     - Hub view (choose class, species, background, abilities)
+//     - Gallery views for classes, species, backgrounds (with art, details)
+//     - Ability score rolling (standard array / point buy / manual)
+//     - Skill proficiency picking per source (class, species, background)
+//     - Equipment selection (class gear or starting gold + shop)
+//     - Spell selection for spellcasting classes
+//     - Level-up flow (HP mode, ASI, feats, subclass, feature picks, confirm)
+//     - Multiclass prerequisites (ability 13 checks)
+//     - Isekai module (otherworldly origin with bonus config)
+//     - Background traits picker (suggested characteristics)
+//     - Language picker
+//     - Subrace picker modal
+//     - ~70 shared style objects at the bottom
+//
+// ?? REACT CONCEPT: Mega-Component with Modal Sub-Views
+//    This component manages the ENTIRE multi-step wizard in one file using
+//    a state machine pattern: creationStage ('hub' | 'equipment' | 'spells'
+//    | 'levelup') controls which major phase is shown. Within each phase,
+//    activeSection | levelUpPhase | overlay flags control sub-views
+//    rendered as fixed overlays.
+//
+//    All ~40 sub-views are defined as inner functions that close over the
+//    main component's state, avoiding prop drilling at the cost of full
+//    re-render on any state change.
+//
+// ?? HOW TO ALTER:
+//    - Add a new selection step: add activeSection value + sub-view + overlay
+//    - Change ability method: modify MethodToggle / POINT_BUY_COST / standardArray
+//    - Change level-up requirements: modify MULTICLASS_PREREQS / asi validation
+//    - Change styles: modify the ~70 CSSProperties objects at the bottom
+// =============================================================================
+
 'use client';
 import { useState, useEffect, type CSSProperties } from 'react';
 import { DataEngine } from '../utils/dataLoader';
@@ -57,6 +95,14 @@ export default function CharacterWizard({
   mode = 'create',
   existingChar = null,
 }: CharacterWizardProps) {
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const hexToRGBA = (hex: string, opacity: number) => {
     // Remove the # if it exists
@@ -298,11 +344,25 @@ export default function CharacterWizard({
       });
       DataEngine.getRacesData().then(data => setAllSubraces(data.subraces || []));
       DataEngine.getMergedBackgrounds().then(mergedData => {
+        const hasTraits = (bg: any) => {
+          const search = (entries: any[]): boolean => {
+            for (const e of entries) {
+              if (e.name === 'Suggested Characteristics') return true;
+              if (e.entries && Array.isArray(e.entries) && search(e.entries)) return true;
+            }
+            return false;
+          };
+          return search(bg.entries || []);
+        };
         const grouped = mergedData.reduce((acc: any, bg: any) => {
           const name = bg.name.trim();
-          if (!acc[name]) acc[name] = bg;
-          // Priority for official sources
-          if (['PHB', 'XPHB', 'SCAG'].includes(bg.source)) acc[name] = bg;
+          if (!acc[name]) { acc[name] = bg; return acc; }
+          const existingHas = hasTraits(acc[name]);
+          const bgHas = hasTraits(bg);
+          if (!existingHas && bgHas) { acc[name] = bg; }
+          else if (existingHas === bgHas && ['PHB', 'XPHB', 'SCAG'].includes(bg.source)) {
+            if (!['PHB', 'XPHB', 'SCAG'].includes(acc[name].source)) acc[name] = bg;
+          }
           return acc;
         }, {});
         setAllBackgrounds(Object.values(grouped));
@@ -423,11 +483,21 @@ export default function CharacterWizard({
   // --- Background Suggested Characteristics parsing ---
   const parseBackgroundTraits = (bg: any) => {
     const found: { personalityTrait: string[]; ideal: string[]; bond: string[]; flaw: string[] } = { personalityTrait: [], ideal: [], bond: [], flaw: [] };
-    const suggested = (bg.entries || []).find((e: any) => e.name === 'Suggested Characteristics');
+    const findSuggested = (entries: any[]): any => {
+      for (const entry of entries) {
+        if (entry.name === 'Suggested Characteristics') return entry;
+        if (entry.entries && Array.isArray(entry.entries)) {
+          const nested = findSuggested(entry.entries);
+          if (nested) return nested;
+        }
+      }
+      return null;
+    };
+    const suggested = findSuggested(bg.entries || []);
     if (!suggested?.entries) return found;
     for (const entry of suggested.entries) {
       if (entry.type === 'table' && entry.rows) {
-        const label = entry.colLabels?.[1] || '';
+        const label = entry.colLabels?.[1] || entry.caption || '';
         const options = entry.rows.map((r: string[]) => r[1]);
         if (label.includes('Personality')) found.personalityTrait = options;
         else if (label.includes('Ideal')) found.ideal = options;
@@ -499,7 +569,7 @@ export default function CharacterWizard({
 
     return (
       <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', border: '2px solid #b8860b', width: '580px', maxHeight: '85vh', overflowY: 'auto' }}>
+        <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '28px', borderRadius: '12px', border: '2px solid #b8860b', width: isMobile ? '95vw' : '580px', maxHeight: '85vh', overflowY: 'auto' }}>
           <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>Suggested Characteristics</h2>
           <p style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16 }}>Choose or roll for each trait. These help define your character's personality.</p>
 
@@ -580,7 +650,7 @@ export default function CharacterWizard({
 
     return (
       <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', border: '2px solid #b8860b', width: '480px' }}>
+        <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '28px', borderRadius: '12px', border: '2px solid #b8860b', width: isMobile ? '95vw' : '480px' }}>
           <h2 style={{ fontFamily: 'serif', margin: '0 0 4px 0' }}>Choose Languages</h2>
           <p style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16 }}>Your race and background grant language proficiencies. Pick {totalSlots} language{totalSlots > 1 ? 's' : ''} ({usedSlots}/{totalSlots} chosen).</p>
           {pendingLanguageChoices.map((group, gi) => (
@@ -617,6 +687,7 @@ export default function CharacterWizard({
     );
   };
 
+  // --- WIZARD FINALIZATION: assemble final character object and call onComplete ---
   const finishWizard = async (spells?: Character['spells'], hpGainOverride?: number) => {
     const className = draft.class;
     if (!className) return;
@@ -1357,7 +1428,7 @@ export default function CharacterWizard({
           {/* Add new class */}
           <div>
             <h3 style={{ color: '#718096', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', margin: '0 0 12px 0' }}>OR ADD A NEW CLASS</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '1fr 1fr 1fr', gap: '8px' }}>
               {DataEngine.getClassesList()
                 .filter((cls: string) => !classList.includes(cls))
                 .map(cls => {
@@ -1392,6 +1463,11 @@ export default function CharacterWizard({
     );
   };
 
+  // --- ABILITIES VIEW: ability scores + skill proficiency picking ---
+  // Toggle between Standard Array / Point Buy / Manual. Shows 6 ability
+  // score cards with racial bonus. Skill blocks organize proficiencies by
+  // source (background fixed, race fixed, race choice, class choice).
+  // Expertise is derived from picking the same skill in 2+ sources.
   const AbilitiesView = () => {
 
     const classTheme = CLASS_THEMES[draft.class.replace(/ /g, '')] || { color: '#b8860b' };
@@ -1567,20 +1643,23 @@ export default function CharacterWizard({
     };
 
     return (
-      <div style={subOverlayStyle}>
+      <div style={isMobile ? subOverlayMobileStyle : subOverlayStyle}>
         <button onClick={() => setActiveSection(null)} style={backButtonStyle}>← BACK TO HUB</button>
-        <h1 style={{ fontSize: '3rem', margin: '10px 0', fontFamily: 'serif' }}>Power & Skills</h1>
+        <h1 style={{ fontSize: isMobile ? '1.8rem' : '3rem', margin: '10px 0', fontFamily: 'serif' }}>Power & Skills</h1>
         <MethodToggle />
 
-        <div style={{ display: 'flex', gap: '40px', marginTop: '30px' }}>
+        <div style={{ display: 'flex', gap: isMobile ? '16px' : '40px', marginTop: '30px', flexDirection: isMobile ? 'column' : 'row' }}>
           <div style={{ flex: 1 }}>
             {statMethod === 'array' && (
               <div>
                 <div style={sectionLabelStyle}>STANDARD ARRAY</div>
-                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                <div style={{ display: 'flex', gap: '6px', marginTop: '10px', flexWrap: 'wrap' }}>
                   {standardArray.map(num => (
                     <div key={num} style={{
                       ...arrayNumStyle,
+                      width: isMobile ? '36px' : '45px',
+                      height: isMobile ? '36px' : '45px',
+                      fontSize: isMobile ? '0.9rem' : '1.1rem',
                       background: usedNumbers.includes(num) ? '#2d3748' : '#b8860b',
                       opacity: usedNumbers.includes(num) ? 0.3 : 1
                     }}>{num}</div>
@@ -1596,7 +1675,7 @@ export default function CharacterWizard({
                 <div style={{ width: '100%', height: '6px', background: '#1a202c', borderRadius: '3px', overflow: 'hidden', marginTop: '8px' }}>
                   <div style={{ width: `${(pointsRemaining / 27) * 100}%`, height: '100%', background: pointsRemaining >= 0 ? '#6366f1' : '#e53e3e', transition: 'width 0.2s' }} />
                 </div>
-                <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '4px', fontSize: '0.65rem', color: '#718096' }}>
+                <div style={{ marginTop: '12px', display: 'grid', gridTemplateColumns: isMobile ? 'repeat(4, 1fr)' : 'repeat(8, 1fr)', gap: '4px', fontSize: '0.65rem', color: '#718096' }}>
                   <span>8→9</span><span>9→10</span><span>10→11</span><span>11→12</span><span>12→13</span><span>13→14</span><span>14→15</span>
                   <span style={{ color: '#b8860b', fontWeight: 'bold' }}>Cost: 1</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>1</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>1</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>1</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>1</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>2</span><span style={{ color: '#b8860b', fontWeight: 'bold' }}>2</span>
                   <span></span>
@@ -1622,22 +1701,22 @@ export default function CharacterWizard({
           </div>
 
           {/* RIGHT: ABILITY SCORES (Same as before) */}
-          <div style={{ flex: 1.2, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+          <div style={{ flex: 1.2, display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '20px' }}>
             {stats.map(stat => {
               const base = baseScores[stat] || 0;
               const racial = getFinalRacialBonus(stat);
               const total = base > 0 ? base + racial : '-';
 
               return (
-                <div key={stat} style={abilityCardStyle}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#b8860b' }}>{stat.toUpperCase()}</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
+                <div key={stat} style={{ ...abilityCardStyle, padding: isMobile ? '10px' : spacing.md }}>
+                  <div style={{ fontSize: isMobile ? '0.7rem' : '0.8rem', fontWeight: 'bold', color: '#b8860b' }}>{stat.toUpperCase()}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '8px' : '15px', marginTop: '10px', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
 
                     {statMethod === 'array' ? (
                       <select
                         value={base || ""}
                         onChange={(e) => setBaseScores({ ...baseScores, [stat]: Number(e.target.value) })}
-                        style={abilitySelectStyle}
+                        style={{ ...abilitySelectStyle, width: isMobile ? '60px' : '80px', fontSize: isMobile ? '1rem' : '1.2rem' }}
                       >
                         <option value="">--</option>
                         {[...standardArray.filter(n => !usedNumbers.includes(n) || n === base)].sort((a, b) => b - a).map(n => (
@@ -1658,12 +1737,12 @@ export default function CharacterWizard({
                               setBaseScores({ ...baseScores, [stat]: newVal <= 8 ? 0 : newVal });
                             }
                           }}
-                          style={{ padding: '4px 10px', background: (base || 8) <= 8 ? '#2d3748' : '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: (base || 8) <= 8 ? 'not-allowed' : 'pointer', fontSize: '1rem' }}
+                          style={{ padding: isMobile ? '3px 8px' : '4px 10px', minWidth: '44px', minHeight: '44px', background: (base || 8) <= 8 ? '#2d3748' : '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: (base || 8) <= 8 ? 'not-allowed' : 'pointer', fontSize: isMobile ? '0.85rem' : '1rem' }}
                           disabled={(base || 8) <= 8}
                         >
                           −
                         </button>
-                        <span style={{ ...abilitySelectStyle, padding: '8px 12px', minWidth: '30px', textAlign: 'center' }}>{base || 8}</span>
+                        <span style={{ ...abilitySelectStyle, width: isMobile ? '46px' : '80px', padding: isMobile ? '4px 6px' : '8px 12px', minWidth: '24px', textAlign: 'center', fontSize: isMobile ? '0.9rem' : '1.2rem' }}>{base || 8}</span>
                         <button
                           onClick={() => {
                             const current = base || 8;
@@ -1674,7 +1753,7 @@ export default function CharacterWizard({
                               setBaseScores({ ...baseScores, [stat]: newVal });
                             }
                           }}
-                          style={{ padding: '4px 10px', background: (base || 8) >= 15 || pointsRemaining <= 0 ? '#2d3748' : '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: (base || 8) >= 15 || pointsRemaining <= 0 ? 'not-allowed' : 'pointer', fontSize: '1rem' }}
+                          style={{ padding: isMobile ? '3px 8px' : '4px 10px', minWidth: '44px', minHeight: '44px', background: (base || 8) >= 15 || pointsRemaining <= 0 ? '#2d3748' : '#4a5568', border: 'none', color: 'white', borderRadius: '4px', cursor: (base || 8) >= 15 || pointsRemaining <= 0 ? 'not-allowed' : 'pointer', fontSize: isMobile ? '0.85rem' : '1rem' }}
                           disabled={(base || 8) >= 15 || pointsRemaining <= 0}
                         >
                           +
@@ -1686,12 +1765,12 @@ export default function CharacterWizard({
                         min="0" max="20"
                         value={base || ""}
                         onChange={(e) => setBaseScores({ ...baseScores, [stat]: Number(e.target.value) })}
-                        style={{ ...abilitySelectStyle, width: '60px' }}
+                        style={{ ...abilitySelectStyle, width: isMobile ? '50px' : '60px', fontSize: isMobile ? '1rem' : '1.2rem' }}
                       />
                     )}
 
-                    <div style={{ textAlign: 'center' }}><div style={{ fontSize: '0.6rem', color: '#718096' }}>RACIAL</div><div style={{ color: '#48bb78', fontWeight: 'bold' }}>+{racial}</div></div>
-                    <div style={{ flex: 1, textAlign: 'right' }}><div style={{ fontSize: '0.6rem', color: '#718096' }}>TOTAL</div><div style={{ fontSize: '2.5rem', fontWeight: '900', color: base > 0 ? 'white' : '#2d3748' }}>{total}</div></div>
+                      <div style={{ textAlign: 'center' }}><div style={{ fontSize: '0.55rem', color: '#718096' }}>RACIAL</div><div style={{ color: '#48bb78', fontWeight: 'bold', fontSize: isMobile ? '0.8rem' : '1rem' }}>+{racial}</div></div>
+                    <div style={{ flex: 1, textAlign: 'right' }}><div style={{ fontSize: '0.55rem', color: '#718096' }}>TOTAL</div><div style={{ fontSize: isMobile ? '1.8rem' : '2.5rem', fontWeight: '900', color: base > 0 ? 'white' : '#2d3748' }}>{total}</div></div>
                   </div>
                 </div>
               );
@@ -1701,7 +1780,7 @@ export default function CharacterWizard({
 
         <button
           onClick={() => setActiveSection(null)}
-          style={{ ...detailSelectButtonStyle, position: 'fixed', bottom: '40px', right: '40px', background: '#b8860b' }}
+          style={{ ...detailSelectButtonStyle, position: 'fixed', bottom: isMobile ? '70px' : '40px', right: isMobile ? '16px' : '40px', background: '#b8860b', padding: isMobile ? '12px 20px' : '8px 30px', fontSize: isMobile ? '0.75rem' : '0.8rem' }}
         >
           SAVE & RETURN
         </button>
@@ -1717,15 +1796,15 @@ export default function CharacterWizard({
     return (
       <div style={detailOverlayStyle}>
         {/* TOP NAVIGATION */}
-        <div style={detailNavStyle}>
-          <button onClick={closeView} style={detailBackButtonStyle}>← BACK</button>
+        <div style={{ ...detailNavStyle, ...(isMobile ? { height: '50px', padding: '0 8px' } : {}) }}>
+          <button onClick={closeView} style={{ ...detailBackButtonStyle, ...(isMobile ? { padding: '6px 10px', fontSize: '0.75rem' } : {}) }}>← BACK</button>
           <button
             onClick={() => {
               setDraft({ ...draft, background: data.name });
               setInspectingBackground(null);
               setActiveSection(null);
             }}
-            style={{ ...detailSelectButtonStyle, background: '#b8860b', color: 'white' }}
+            style={{ ...detailSelectButtonStyle, background: '#b8860b', color: 'white', ...(isMobile ? { padding: '6px 12px', fontSize: '0.75rem', maxWidth: '45vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}) }}
           >
             SELECT {data.name.toUpperCase()}
           </button>
@@ -1733,21 +1812,21 @@ export default function CharacterWizard({
 
         {/* HERO SECTION - Fixed Image Path for Backgrounds */}
         <div style={{
-          ...heroSectionStyle,
+          ...(isMobile ? heroSectionMobileStyle : heroSectionStyle),
           // We use the helper we built earlier to handle the spaces in "Zhentarim Mercenary"
           backgroundImage: `url("${getBackgroundImg(data.name)}")`,
           backgroundColor: '#0a0d12'
         }}>
           <div style={heroGradientStyle} />
-          <div style={heroContentStyle}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 'bold', color: '#cbd5e0', letterSpacing: '2px' }}>CHARACTER BACKGROUND</div>
-            <h1 style={{ fontSize: '5rem', margin: '0 0 10px 0', fontFamily: 'serif' }}>{data.name}</h1>
-            <div style={badgeStyle}>{data.source} SOURCE</div>
+          <div style={isMobile ? { ...heroContentStyle, padding: '0 16px 40px 16px' } : heroContentStyle}>
+            <div style={{ fontSize: isMobile ? '0.7rem' : '0.8rem', fontWeight: 'bold', color: '#cbd5e0', letterSpacing: '2px' }}>CHARACTER BACKGROUND</div>
+            <h1 style={{ fontSize: 'clamp(1.5rem, 8vw, 5rem)', margin: '0 0 10px 0', fontFamily: 'serif' }}>{data.name}</h1>
+            <div style={{ ...badgeStyle, ...(isMobile ? { fontSize: '0.65rem', padding: '2px 8px' } : {}) }}>{data.source} SOURCE</div>
           </div>
         </div>
 
-        <div style={infoGridContainerStyle}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '60px' }}>
+        <div style={isMobile ? { ...infoGridContainerStyle, padding: '16px' } : infoGridContainerStyle}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: '60px' }}>
             {/* LORE */}
             <div>
               <div style={sectionLabelStyle}>LORE & ORIGIN</div>
@@ -1786,17 +1865,17 @@ export default function CharacterWizard({
 
   // --- SUB-VIEW: BACKGROUND GRID ---
   const BackgroundView = () => (
-    <div style={subOverlayStyle}>
+    <div style={isMobile ? subOverlayMobileStyle : subOverlayStyle}>
       <button onClick={() => setActiveSection(null)} style={backButtonStyle}>← BACK TO HUB</button>
-      <h1 style={{ fontSize: '3rem', margin: '10px 0', fontFamily: 'serif' }}>What's your story?</h1>
+      <h1 style={{ fontSize: isMobile ? '1.8rem' : '3rem', margin: '10px 0', fontFamily: 'serif' }}>What's your story?</h1>
 
       {/* We use a wrapper div for the grid to ensure it doesn't break the parent scroll */}
-      <div style={{ ...speciesGridStyle, paddingBottom: '100px' }}>
+      <div style={{ ...speciesGridStyle, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '12px' : '25px', paddingBottom: '100px' }}>
         {allBackgrounds.map(bg => {
           const bgImg = getBackgroundImg(bg.name);
 
           return (
-            <div key={`${bg.name}-${bg.source}`} style={speciesCardStyle}>
+            <div key={`${bg.name}-${bg.source}`} style={{ ...speciesCardStyle, height: isMobile ? '200px' : '320px' }}>
               {/* Background Image */}
               <div style={{
                 ...cardArtStyle,
@@ -1893,17 +1972,17 @@ export default function CharacterWizard({
         </div>
         <div style={{ marginLeft: '70px' }}>
           {/* TOP NAVIGATION (Sticky) */}
-          <div style={{ ...detailNavStyle, borderBottom: `1px solid ${theme.color}66` }}>
-            <button onClick={() => setInspectingClass(null)} style={detailBackButtonStyle}>← BACK</button>
-            <div style={{ fontWeight: 'bold', color: theme.color }}>{info.name.toUpperCase()}</div>
+          <div style={{ ...detailNavStyle, borderBottom: `1px solid ${theme.color}66`, ...(isMobile ? { height: '50px', padding: '0 8px' } : {}) }}>
+            <button onClick={() => setInspectingClass(null)} style={{ ...detailBackButtonStyle, ...(isMobile ? { padding: '6px 10px', fontSize: '0.75rem' } : {}) }}>← BACK</button>
+            <div style={{ fontWeight: 'bold', color: theme.color, ...(isMobile ? { fontSize: '0.8rem', maxWidth: '35vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}) }}>{info.name.toUpperCase()}</div>
             <button
               onClick={() => {
-                setDraft({ ...draft, class: info.name }); // Sets the name (e.g., "Barbarian")
+                setDraft({ ...draft, class: info.name });
                 setSelectedClassData(data);
                 setInspectingClass(null);
                 setActiveSection(null);
               }}
-              style={{ ...detailSelectButtonStyle, background: theme.color }}
+              style={{ ...detailSelectButtonStyle, background: theme.color, ...(isMobile ? { padding: '6px 12px', fontSize: '0.75rem' } : {}) }}
             >
               SELECT
             </button>
@@ -1911,21 +1990,21 @@ export default function CharacterWizard({
 
           {/* HERO SECTION */}
           <div style={{
-            ...heroSectionStyle,
+            ...(isMobile ? heroSectionMobileStyle : heroSectionStyle),
             backgroundImage: `url("/img/classes/landscapes/${info.name}.webp")`,
             // FALLBACK if image is missing:
             backgroundColor: '#1a202c'
           }}>
             <div style={heroGradientStyle} />
-            <div style={heroContentStyle}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+            <div style={isMobile ? { ...heroContentStyle, padding: '0 16px 40px 16px' } : heroContentStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '15px' : '30px' }}>
                 {/* Class Banner Icon */}
-                <div style={{ ...classBannerContainer, position: 'relative', left: 0, top: 0 }}>
-                  <img src={`/img/classes/Icons/${info.name}.png`} style={classIconOnBannerStyle} />
+                <div style={{ ...classBannerContainer, position: 'relative', left: 0, top: 0, ...(isMobile ? { width: '60px', height: '60px' } : {}) }}>
+                  <img src={`/img/classes/Icons/${info.name}.png`} style={{ ...classIconOnBannerStyle, ...(isMobile ? { width: '40px', height: '40px' } : {}) }} />
                 </div>
                 <div>
-                  <h1 style={{ fontSize: '5rem', margin: '0 0 10px 0', fontFamily: 'serif', lineHeight: 1 }}>{info.name}</h1>
-                  <h3 style={{ fontSize: '1.2rem', color: theme.tagline_color, textTransform: 'uppercase', fontWeight: 'bold' }}>{theme.tagline}</h3>
+                  <h1 style={{ fontSize: isMobile ? 'clamp(1.5rem, 8vw, 5rem)' : 'clamp(2rem, 8vw, 5rem)', margin: '0 0 10px 0', fontFamily: 'serif', lineHeight: 1 }}>{info.name}</h1>
+                  <h3 style={{ fontSize: isMobile ? '0.9rem' : '1.2rem', color: theme.tagline_color, textTransform: 'uppercase', fontWeight: 'bold' }}>{theme.tagline}</h3>
                   <div style={{ display: 'flex', gap: '5px', marginTop: '20px' }}>
                     {theme.pills?.map((pill: any) => (
                       <div
@@ -1947,7 +2026,7 @@ export default function CharacterWizard({
           </div>
 
           {/* CONTENT AREA */}
-          <div style={{ ...infoGridContainerStyle, background: `${theme.color}`, paddingTop: '60px', paddingBottom: '100px' }}>
+          <div style={{ ...infoGridContainerStyle, ...(isMobile ? { padding: '16px' } : {}), background: `${theme.color}`, paddingTop: isMobile ? '40px' : '60px', paddingBottom: '100px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', marginBottom: '80px' }}>
               <div>
                 <div style={{ ...sectionLabelStyle, color: theme.tagline_color }}>CLASS HIGHLIGHTS</div>
@@ -2070,13 +2149,13 @@ export default function CharacterWizard({
 
   // --- SUB-VIEW: CLASS GALLERY ---
   const ClassView = () => (
-    <div style={subOverlayStyle}>
+    <div style={isMobile ? subOverlayMobileStyle : subOverlayStyle}>
       <button onClick={() => setActiveSection(null)} style={backButtonStyle}>← BACK TO HUB</button>
-      <h1 style={{ fontSize: '3rem', margin: '10px 0', fontFamily: 'serif' }}>What's your vocation?</h1>
+      <h1 style={{ fontSize: isMobile ? '1.8rem' : '3rem', margin: '10px 0', fontFamily: 'serif' }}>What's your vocation?</h1>
 
-      <div style={speciesGridStyle}>
+      <div style={{ ...speciesGridStyle, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '12px' : '25px' }}>
         {DataEngine.getClassesList().map(clsName => (
-          <div key={clsName} style={classCardStyle}>
+          <div key={clsName} style={{ ...classCardStyle, height: isMobile ? '280px' : '400px' }}>
             {/* 1. Cinematic Landscape Background */}
             <div style={{
               ...cardArtStyle,
@@ -2088,14 +2167,16 @@ export default function CharacterWizard({
             {/* 2. The Unique Class Banner */}
             <div style={{
               ...classBannerContainer,
+              width: isMobile ? '56px' : '80px',
+              height: isMobile ? '100px' : '140px',
               backgroundImage: `url("/img/classes/banner/${clsName}.png")`,
             }}>
-              <img src={`/img/classes/Icons/${clsName}.png`} alt="" style={classIconOnBannerStyle} />
+              <img src={`/img/classes/Icons/${clsName}.png`} alt="" style={{ ...classIconOnBannerStyle, height: isMobile ? '34px' : '50px' }} />
             </div>
 
             {/* 3. Card Content */}
-            <div style={classCardContentStyle}>
-              <h2 style={{ fontSize: '2.8rem', margin: 0, fontFamily: 'serif' }}>{clsName}</h2>
+            <div style={{ ...classCardContentStyle, padding: isMobile ? spacing.md : spacing.lg }}>
+              <h2 style={{ fontSize: isMobile ? '1.6rem' : '2.8rem', margin: 0, fontFamily: 'serif' }}>{clsName}</h2>
 
               {/* --- THE UPDATED PILLS SECTION (Uses the .short text) --- */}
               <div style={{ display: 'flex', gap: '8px', marginBottom: '15px' }}>
@@ -2120,23 +2201,23 @@ export default function CharacterWizard({
                 )}
               </div>
 
-              <p style={classDescriptionStyle}>
+              <p style={{ ...classDescriptionStyle, maxWidth: isMobile ? '100%' : '90%', fontSize: isMobile ? '0.8rem' : '1rem' }}>
                 {CLASS_THEMES[clsName.replace(/ /g, '')]?.tagline || `Masters of their craft, the ${clsName} brings unique skills to the party.`}
               </p>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', alignItems: 'center', marginTop: '10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: isMobile ? '8px' : '15px', alignItems: 'center', marginTop: '10px' }}>
                 <button
                   onClick={async () => {
                     const data = await DataEngine.getClassFullData(clsName);
                     setInspectingClass(data);
                   }}
-                  style={learnMoreButtonStyle}
+                  style={{ ...learnMoreButtonStyle, padding: isMobile ? '6px 12px' : '8px 20px', fontSize: isMobile ? '0.65rem' : '0.8rem' }}
                 >
                   LEARN MORE
                 </button>
                 <button
                   onClick={() => handleSelection('class', { name: clsName })}
-                  style={classSelectButtonStyle}
+                  style={{ ...classSelectButtonStyle, padding: isMobile ? '6px 16px' : '8px 25px', fontSize: isMobile ? '0.65rem' : '0.8rem' }}
                 >
                   SELECT
                 </button>
@@ -2311,9 +2392,9 @@ export default function CharacterWizard({
     return (
       <div style={detailOverlayStyle}>
         {/* NAVIGATION BAR */}
-        <div style={detailNavStyle}>
-          <button onClick={() => setInspectingSpecies(null)} style={detailBackButtonStyle}>← BACK</button>
-          <div style={{ fontWeight: 'bold', color: '#b8860b' }}>SPECIES BROWSER</div>
+        <div style={{ ...detailNavStyle, ...(isMobile ? { height: '50px', padding: '0 8px' } : {}) }}>
+          <button onClick={() => setInspectingSpecies(null)} style={{ ...detailBackButtonStyle, ...(isMobile ? { padding: '6px 10px', fontSize: '0.75rem' } : {}) }}>← BACK</button>
+          <div style={{ fontWeight: 'bold', color: '#b8860b', ...(isMobile ? { fontSize: '0.8rem', maxWidth: '35vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}) }}>SPECIES BROWSER</div>
           <button
             onClick={() => {
               // We save the Name. If it's a subrace, we format it like "Aasimar (Fallen)"
@@ -2322,17 +2403,17 @@ export default function CharacterWizard({
               setInspectingSpecies(null);
               setActiveSection(null);
             }}
-            style={detailSelectButtonStyle}
+            style={{ ...detailSelectButtonStyle, ...(isMobile ? { padding: '6px 12px', fontSize: '0.75rem', maxWidth: '45vw', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}) }}
           >
             SELECT {activeSub.name.toUpperCase()}
           </button>
         </div>
 
         {/* HERO SECTION */}
-        <div style={{ ...heroSectionStyle, backgroundImage: `url("${getImagePath(activeSub.raceName || activeSub.name)}")` }}>
+        <div style={{ ...(isMobile ? heroSectionMobileStyle : heroSectionStyle), backgroundImage: `url("${getImagePath(activeSub.raceName || activeSub.name)}")` }}>
           <div style={heroGradientStyle} />
-          <div style={heroContentStyle}>
-            <h1 style={{ fontSize: '4.5rem', margin: '0 0 10px 0', fontFamily: 'serif' }}>{activeSub.name}</h1>
+          <div style={isMobile ? { ...heroContentStyle, padding: '0 16px 40px 16px' } : heroContentStyle}>
+            <h1 style={{ fontSize: isMobile ? 'clamp(2rem, 10vw, 4.5rem)' : '4.5rem', margin: '0 0 10px 0', fontFamily: 'serif' }}>{activeSub.name}</h1>
 
             {/* VERSION SWITCHER TABS */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '20px' }}>
@@ -2367,8 +2448,8 @@ export default function CharacterWizard({
         </div>
 
         {/* CONTENT GRID */}
-        <div style={infoGridContainerStyle}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '60px' }}>
+        <div style={isMobile ? { ...infoGridContainerStyle, padding: '16px' } : infoGridContainerStyle}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.2fr', gap: isMobile ? '30px' : '60px' }}>
 
             {/* Left Column: Lore */}
             <div>
@@ -2578,9 +2659,9 @@ export default function CharacterWizard({
   const SpeciesView = () => {
     const speciesList = isekaiSpeciesMode ? allSpeciesUnfiltered : allSpecies;
     return (
-    <div style={subOverlayStyle}>
+    <div style={isMobile ? subOverlayMobileStyle : subOverlayStyle}>
       <button onClick={() => { if (isekaiSpeciesMode) { setIsekaiSpeciesMode(false); setSearchTerm(''); } setActiveSection(null); }} style={backButtonStyle}>← BACK TO HUB</button>
-      <h1 style={{ fontSize: '2.5rem', margin: '10px 0' }}>{isekaiSpeciesMode ? 'Choose your new-world race' : "What's your lineage?"}</h1>
+      <h1 style={{ fontSize: isMobile ? '1.6rem' : '2.5rem', margin: '10px 0' }}>{isekaiSpeciesMode ? 'Choose your new-world race' : "What's your lineage?"}</h1>
       {isekaiSpeciesMode && (
         <p style={{ color: '#68d391', fontSize: '0.85rem', marginBottom: '8px' }}>
           Your character is from another world. All races are available regardless of campaign restrictions.
@@ -2591,16 +2672,16 @@ export default function CharacterWizard({
         style={searchFieldStyle}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <div style={speciesGridStyle}>
+      <div style={{ ...speciesGridStyle, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '12px' : '25px' }}>
         {!isekaiSpeciesMode && isekaiEnabled && (
-          <div key="__isekai" style={{ ...speciesCardStyle, border: '2px solid #f6e05e' }}>
+          <div key="__isekai" style={{ ...speciesCardStyle, height: isMobile ? '200px' : '320px', border: '2px solid #f6e05e' }}>
             <div style={{ ...cardArtStyle, background: 'linear-gradient(135deg, #6b46c1, #d53f8c)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ fontSize: '3rem' }}>🌌</span>
             </div>
             <div style={cardGradientOverlay} />
             <div style={cardContentStyle}>
               <h2 style={{ fontSize: '2.2rem', margin: 0 }}>Isekai</h2>
-              <p style={cardDescriptionStyle}>A character transported from another world. Bypass all race restrictions.</p>
+              <p style={{ ...cardDescriptionStyle, maxWidth: isMobile ? '100%' : '70%' }}>A character transported from another world. Bypass all race restrictions.</p>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', alignItems: 'center' }}>
                 <button onClick={() => { setShowIsekaiPicker(true); }}
                   style={{ ...selectButtonStyle, background: '#6b46c1' }}>
@@ -2614,7 +2695,7 @@ export default function CharacterWizard({
         {speciesList
           .filter(s => s.name.toLowerCase().includes(searchTerm.toLowerCase()))
           .map(s => (
-            <div key={s.name} style={speciesCardStyle}>
+            <div key={s.name} style={{ ...speciesCardStyle, height: isMobile ? '200px' : '320px' }}>
               <div style={{
                 ...cardArtStyle,
                 backgroundImage: `url("${getImagePath(s.name)}")`,
@@ -2652,6 +2733,10 @@ export default function CharacterWizard({
   );
   };
 
+  // --- EQUIPMENT SELECTION VIEW: class gear or starting gold ---
+  // Shows class starting equipment choices (Option A/B/C per group) with
+  // auto-granted mandatory items. Can switch to Starting Gold mode which
+  // rolls dice formula and opens the ShopModal for purchases.
   const EquipmentSelectionView = () => {
     const startingGear = selectedClassData?.info?.startingEquipment;
     const choices = startingGear?.defaultData || [];
@@ -2866,7 +2951,7 @@ export default function CharacterWizard({
     };
 
     return (
-      <div style={subOverlayStyle}>
+      <div style={isMobile ? subOverlayMobileStyle : subOverlayStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '30px' }}>
           <div>
             <div style={sectionLabelStyle}>PHASE 2: GEAR & INVENTORY</div>
@@ -3015,12 +3100,13 @@ export default function CharacterWizard({
         {/* THE SUB-MENU PICKER MODAL */}
         {activeEquipmentPicker && (
           <div style={modalOverlayStyle}>
-            <div style={pickerContentStyle}>
+            <div style={{ ...pickerContentStyle, width: isMobile ? '95vw' : '500px' }}>
               <h2 style={{ color: '#b8860b', marginBottom: '15px' }}>
                 Select {activeEquipmentPicker.filter.toLowerCase().includes('martial') ? 'Martial' : 'Simple'} Weapon
               </h2>
 
-              <div style={scrollableListStyle}>
+              <div style={{ overflowY: 'auto', maxHeight: '50vh', marginTop: spacing.md }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.xs, paddingRight: spacing.xs }}>
                 {allLibraryItems
                   .filter(item => {
                     // 1. MUST BE MUNDANE
@@ -3079,6 +3165,7 @@ export default function CharacterWizard({
                     </button>
                   ))
                 }
+                </div>
               </div>
               <button onClick={() => setActiveEquipmentPicker(null)} style={closeButtonStyle}>CANCEL</button>
             </div>
@@ -3090,9 +3177,9 @@ export default function CharacterWizard({
 
   // --- 6. MAIN HUB VIEW ---
   const HubView = () => (
-    <div style={{ flex: 1, padding: '40px', overflowY: 'auto' }}>
-      <h1 style={{ fontSize: '3.5rem', margin: '0 0 30px 0' }}>Start your story...</h1>
-      <div style={hubGridStyle}>
+    <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', overflowY: 'auto' }}>
+      <h1 style={{ fontSize: isMobile ? '2rem' : '3.5rem', margin: '0 0 30px 0' }}>Start your story...</h1>
+      <div style={isMobile ? { display: 'grid', gridTemplateColumns: '1fr', gap: '12px' } : hubGridStyle}>
         {/* Provide paths to your default silhouette/background images */}
         <SelectionCard
           title="Class"
@@ -3161,7 +3248,8 @@ export default function CharacterWizard({
     return (
       <div style={{
         ...hubCardStyle,
-        gridColumn: isFullWidth ? 'span 2' : 'span 1',
+        height: isMobile ? '160px' : '240px',
+        gridColumn: isMobile ? 'span 1' : (isFullWidth ? 'span 2' : 'span 1'),
         backgroundImage: backgroundImage,
         backgroundSize: 'cover',
         backgroundPosition: 'center 20%',
@@ -3229,22 +3317,22 @@ export default function CharacterWizard({
 
 
   return (
-    <div style={overlayStyle}>
-      <div style={containerStyle}>
+    <div style={isMobile ? { ...overlayStyle, flexDirection: 'column' } : overlayStyle}>
+      <div style={isMobile ? { ...containerStyle, flexDirection: 'column', maxWidth: '100%', flex: 1, overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch' } : containerStyle}>
 
         {creationStage === 'levelup' && levelUpPhase === 'picker' && <LevelUpClassPicker />}
-        {creationStage === 'levelup' && levelUpPhase === 'choices' && <LevelUpView />}
-        {creationStage === 'levelup' && levelUpPhase === 'intro' && <LevelUpIntroView />}
-        {creationStage === 'levelup' && levelUpPhase === 'confirm' && <LevelUpConfirmView />}
+        {creationStage === 'levelup' && levelUpPhase === 'choices' && LevelUpView()}
+        {creationStage === 'levelup' && levelUpPhase === 'intro' && LevelUpIntroView()}
+        {creationStage === 'levelup' && levelUpPhase === 'confirm' && LevelUpConfirmView()}
 
         {/* STAGE 1: THE HUB AND CHOICES */}
         {creationStage === 'hub' && (
           <>
-            {activeSection === 'species' ? <SpeciesView /> :
-              activeSection === 'class' ? <ClassView /> :
-                activeSection === 'background' ? <BackgroundView /> :
-                  activeSection === 'abilities' ? <AbilitiesView /> :
-                    <HubView />}
+            {activeSection === 'species' ? SpeciesView() :
+              activeSection === 'class' ? ClassView() :
+                activeSection === 'background' ? BackgroundView() :
+                  activeSection === 'abilities' ? AbilitiesView() :
+                    HubView()}
           </>
         )}
 
@@ -3259,15 +3347,16 @@ export default function CharacterWizard({
             level={mode === 'levelup' && existingChar ? (existingChar.totalLevel || existingChar.level) + 1 : 1}
             baseStats={baseScores as Character['baseStats']}
             initialSpells={pendingSpells}
-            onConfirm={(spells) => {
+            onConfirm={async (spells) => {
               setPendingSpells(spells);
-              finishWizard(spells, mode === 'levelup' ? pendingHpGain : undefined);
+              try { await finishWizard(spells, mode === 'levelup' ? pendingHpGain : undefined); }
+              catch (e) { alert('Error finishing character: ' + ((e instanceof Error) ? e.message : 'Unknown error')); }
             }}
             onBack={() => setCreationStage(mode === 'levelup' ? 'levelup' : 'equipment')}
           />
         )}
         {/* SIDEBAR ... */}
-        <div style={sidebarStyle}>
+        <div style={isMobile ? { ...sidebarStyle, width: '100%', borderLeft: 'none', borderTop: `1px solid ${colors.borderLight}`, padding: '8px 12px', flexDirection: 'row', alignItems: 'center', gap: '8px', flexShrink: 0 } : sidebarStyle}>
           <button
             style={{
               ...createButtonStyle,
@@ -3277,7 +3366,8 @@ export default function CharacterWizard({
               ) ? '#b8860b' : '#2d3748',
               color: 'white',
               cursor: 'pointer',
-              opacity: creationStage === 'levelup' && (levelUpPhase === 'intro' || levelUpPhase === 'picker') ? 0.4 : creationStage === 'levelup' && levelUpPhase === 'confirm' ? 1 : (creationStage === 'levelup' || (draft.name && draft.race && draft.class)) ? 1 : 0.5
+              opacity: creationStage === 'levelup' && (levelUpPhase === 'intro' || levelUpPhase === 'picker') ? 0.4 : creationStage === 'levelup' && levelUpPhase === 'confirm' ? 1 : (creationStage === 'levelup' || (draft.name && draft.race && draft.class)) ? 1 : 0.5,
+              ...(isMobile ? { flex: 3, marginBottom: 0, whiteSpace: 'nowrap' as const, fontSize: '0.75rem' } : {})
             }}
             onClick={() => {
               if (creationStage === 'levelup' && (levelUpPhase === 'intro' || levelUpPhase === 'picker')) return;
@@ -3286,7 +3376,7 @@ export default function CharacterWizard({
                 if (classInfo && isSpellcaster(classInfo)) {
                   setCreationStage('spells');
                 } else {
-                  finishWizard(undefined, pendingHpGain);
+                  finishWizard(undefined, pendingHpGain).catch(e => alert('Error: ' + ((e instanceof Error) ? e.message : 'Finish failed')));
                 }
                 return;
               }
@@ -3327,7 +3417,7 @@ export default function CharacterWizard({
                 if (classInfo && isSpellcaster(classInfo)) {
                   setCreationStage('spells');
                 } else {
-                  finishWizard();
+                  finishWizard().catch(e => alert('Error: ' + ((e instanceof Error) ? e.message : 'Finish failed')));
                 }
               }
             }}
@@ -3349,7 +3439,7 @@ export default function CharacterWizard({
                     : 'FINISH CHARACTER'}
           </button>
           {creationStage !== 'levelup' && (
-            <input placeholder="Name" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} style={nameInputStyle} />
+            <input placeholder="Name" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} style={{ ...nameInputStyle, ...(isMobile ? { flex: '1 1 80px', marginTop: 0, width: 'auto', minWidth: 0 } : {}) }} />
           )}
           {creationStage === 'levelup' && existingChar && (
             <div style={{ textAlign: 'center', marginTop: '20px', color: '#a0aec0' }}>
@@ -3363,10 +3453,10 @@ export default function CharacterWizard({
             {inspectingSpecies && <DetailedSpeciesView data={inspectingSpecies} />}
             {inspectingClass && <DetailedClassView data={inspectingClass} />}
             {inspectingBackground && <DetailedBackgroundView data={inspectingBackground} />}
-            {subracePickerFor && <SubracePickerModal parentSpecies={subracePickerFor} />}
+            {subracePickerFor && SubracePickerModal({ parentSpecies: subracePickerFor })}
             {showCreateSubclassPicker && (
               <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ background: '#1a202c', padding: '30px', borderRadius: '12px', border: '2px solid #b8860b', width: '500px', maxHeight: '80vh', overflowY: 'auto' }}>
+                <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '30px', borderRadius: '12px', border: '2px solid #b8860b', width: isMobile ? '95vw' : '500px', maxHeight: '80vh', overflowY: 'auto' }}>
                   <h2 style={{ fontFamily: 'serif', margin: '0 0 8px 0' }}>Choose your subclass</h2>
                   <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: '20px' }}>
                     {draft.class === 'Warlock' ? 'Choose your Otherworldly Patron' : `Choose your path for ${draft.class}`}
@@ -3410,7 +3500,7 @@ export default function CharacterWizard({
       <button onClick={onClose} style={cancelButtonStyle}>✕ CANCEL</button>
       {quickChoiceTask && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 3000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ background: '#1a202c', padding: '30px', borderRadius: '12px', border: '2px solid #b8860b', width: '400px' }}>
+          <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '30px', borderRadius: '12px', border: '2px solid #b8860b', width: isMobile ? '95vw' : '400px' }}>
             <h3 style={{ marginTop: 0 }}>Select Version for {quickChoiceTask.group[0].name}</h3>
             <p style={{ color: '#a0aec0', fontSize: '0.8rem' }}>Multiple versions or sources were found. Please choose one:</p>
 
@@ -3434,7 +3524,7 @@ export default function CharacterWizard({
       )}
       {viewingFeatureDetail && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300 }}>
-          <div style={{ background: '#1a202c', padding: '28px', borderRadius: '12px', width: '500px', maxHeight: '70vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
+          <div style={{ background: '#1a202c', padding: isMobile ? '16px' : '28px', borderRadius: '12px', width: isMobile ? '95vw' : '500px', maxHeight: '70vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
             <h2 style={{ color: '#f6e05e', margin: '0 0 4px 0', fontFamily: 'serif' }}>{viewingFeatureDetail.name}</h2>
             <div style={{ fontSize: '0.75rem', color: '#718096', marginBottom: '16px' }}>
               {viewingFeatureDetail.featureType?.join(', ') || 'Feature'} · {viewingFeatureDetail.source || ''}
@@ -3561,6 +3651,7 @@ const detailOverlayStyle: CSSProperties = { position: 'fixed', inset: 0, backgro
 const detailNavStyle: CSSProperties = { position: 'sticky', top: 0, height: '70px', background: 'rgba(10, 13, 18, 0.95)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: `0 ${spacing.xl}`, zIndex: 100 };
 
 const heroSectionStyle: CSSProperties = { height: '65vh', backgroundSize: 'cover', backgroundPosition: 'center 20%', position: 'relative', display: 'flex', alignItems: 'flex-end' };
+const heroSectionMobileStyle: CSSProperties = { height: '40vh', backgroundSize: 'cover', backgroundPosition: 'center 20%', position: 'relative', display: 'flex', alignItems: 'flex-end' };
 
 const heroContentStyle: CSSProperties = { width: '100%', maxWidth: '1200px', margin: '0 auto', padding: `0 ${spacing.xl} 60px ${spacing.xl}`, zIndex: 2 };
 
@@ -3572,7 +3663,9 @@ const sideRailStyle: CSSProperties = { position: 'fixed', left: 0, top: '70px', 
 
 const sideRailIconContainer: CSSProperties = { width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: transitions.fast, marginBottom: '5px' };
 
-const subOverlayStyle: CSSProperties = { flex: 1, padding: spacing.xl, height: '100vh', overflowY: 'auto', position: 'relative' };
+const subOverlayStyle: CSSProperties = { flex: 1, padding: spacing.xl, overflowY: 'auto', display: 'flex', flexDirection: 'column', minHeight: 0, maxHeight: '100%', position: 'relative' };
+
+const subOverlayMobileStyle: CSSProperties = { flex: 1, padding: spacing.md, display: 'flex', flexDirection: 'column', minHeight: 0, position: 'relative' };
 
 const statBonusBadgeStyle: CSSProperties = { padding: '2px 8px', border: `1px solid ${colors.gold}`, borderRadius: radii.sm, fontSize: '0.75rem', fontWeight: 'bold', color: 'white', background: colors.goldFaded };
 
@@ -3589,8 +3682,6 @@ const orDividerStyle: CSSProperties = { fontWeight: 'bold', color: colors.border
 const modalOverlayStyle: CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0, 0, 0, 0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 4000 };
 
 const pickerContentStyle: CSSProperties = { background: colors.bgPanel, padding: spacing.lg, borderRadius: radii.lg, border: `2px solid ${colors.gold}`, width: '500px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' };
-
-const scrollableListStyle: CSSProperties = { flex: 1, overflowY: 'auto', marginTop: spacing.md, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: spacing.xs, paddingRight: spacing.xs };
 
 const pickerItemButtonStyle: CSSProperties = { padding: '12px', background: colors.bgCard, border: `1px solid ${colors.border}`, color: 'white', borderRadius: '6px', cursor: 'pointer', textAlign: 'left', fontSize: '0.85rem', fontWeight: 'bold', transition: transitions.fast };
 

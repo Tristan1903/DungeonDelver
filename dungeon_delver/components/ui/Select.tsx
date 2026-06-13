@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: components/ui/select.tsx
+// =============================================================================
+// 🎯 PURPOSE: A styled select dropdown built on @base-ui/react's Select
+//    primitive. Provides trigger, popup (portal), items with checkmarks,
+//    labels, separators, and scroll buttons. Supports keyboard navigation.
+//
+// 🧠 REACT CONCEPT: Compound Component + Portal + Floating UI
+//    The Select component uses a PORTAL to render the dropdown outside the
+//    normal DOM flow (avoids overflow clipping) and a POSITIONER from
+//    Floating UI to handle placement (side, align, offset).
+//
+//    Sub-components: SelectTrigger (the visible button), SelectValue (text
+//    display), SelectContent (the dropdown), SelectItem (each option).
+//    This composition gives developers full control over layout while
+//    the library handles accessibility and state.
+//
+// 🔧 HOW TO ALTER:
+//    - Change dropdown positioning: modify side/align/sideOffset props
+//    - Change trigger height: modify data-[size] classes in SelectTrigger
+//    - Change item style: modify SelectItem className
+//    - Change animation: adjust data-open/data-closed classes in SelectContent
+// =============================================================================
+
 "use client"
 
 import * as React from "react"
@@ -162,8 +186,7 @@ function SelectScrollUpButton({
       )}
       {...props}
     >
-      <ChevronUpIcon
-      />
+      <ChevronUpIcon />
     </SelectPrimitive.ScrollUpArrow>
   )
 }
@@ -181,8 +204,7 @@ function SelectScrollDownButton({
       )}
       {...props}
     >
-      <ChevronDownIcon
-      />
+      <ChevronDownIcon />
     </SelectPrimitive.ScrollDownArrow>
   )
 }

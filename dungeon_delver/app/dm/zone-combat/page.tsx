@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/zone-combat/page.tsx =====
+// 🎯 PURPOSE: Zone combat (theater-of-the-mind) — abstract combat zones with drag-to-move,
+//   HP tracking, condition management, initiative order, and combat log.
+// 🧠 REACT CONCEPT: Drag & Drop + Turn-Based State — implements HTML5 drag-and-drop for moving
+//   combatants between zones, turn-based initiative tracking with next-turn progression,
+//   and a real-time combat log with addLog helper.
+// =====
 import { useState, useEffect } from 'react';
 import {
   Zone, ZoneCombatant,

@@ -1,3 +1,28 @@
+// =============================================================================
+// ?? FILE: components/CampaignWizard.tsx
+// =============================================================================
+// ?? PURPOSE: Full-screen modal (wizard) for creating or editing a campaign.
+//    Has 4 steps: Identity (name, description, tone), Modules (toggle 15
+//    optional modules), Rules (race preset, pantheon, level, gold, safety
+//    tools), Review (summary + save). In edit mode, shows all fields on a
+//    single scrollable page instead of steps.
+//
+// ?? REACT CONCEPT: Step Wizard + Controlled Form
+//    Uses a step index to show 1 of 4 sub-views. State is a single
+//    WizardState object updated via set(patch) partial merge. The tone
+//    handler auto-selects modules/rest variant. The canNext function
+//    gates the Next button (requires name on step 0).
+//
+//    The component pattern is "controlled form": all inputs read from s
+//    state and write via set(). No separate form library needed — just
+//    useState + onChange handlers.
+//
+// ?? HOW TO ALTER:
+//    - Add a step: add to STEPS array + conditional render in body + nav
+//    - Add a field: add to WizardState interface + defaultState + UI
+//    - Add a tone: edit CAMPAIGN_TONES in campaignEngine.ts
+// =============================================================================
+
 'use client';
 import { useState } from 'react';
 import { OPTIONAL_MODULES, CAMPAIGN_TONES, CAMPAIGN_PANTHEONS, saveCampaignConfig, loadCampaignConfig, type CampaignConfig, type RacePresetId, type CustomDeity } from '../utils/campaignEngine';
@@ -324,3 +349,4 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
     </div>
   );
 }
+

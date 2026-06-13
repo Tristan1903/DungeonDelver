@@ -1,3 +1,28 @@
+// =============================================================================
+// 📘 FILE: utils/npcGenerator.ts
+// =============================================================================
+// 🎯 PURPOSE: Generates random NPCs (non-player characters) for the DM.
+//    Provides name tables by species, stat templates (Commoner, Guard, Mage,
+//    etc.), personality traits, ideals, bonds, flaws, and physical appearance
+//    descriptions. Also includes CRUD for saving/loading generated NPCs.
+//
+// 🧠 REACT CONCEPT: Data + Pure Functions
+//    This file is mostly DATA (name arrays, template objects, trait lists)
+//    and PURE FUNCTIONS (generateNPC, pick, rollHp) that take input and
+//    return output without side effects. The only side-effect functions
+//    (loadSavedNPCs, saveNPC, deleteSavedNPC) touch localStorage.
+//
+//    Separating data from side effects makes the pure parts easy to test
+//    and reuse. The save/load functions are only called by components
+//    when the user explicitly requests persistence.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new species: add an entry to NAMES with male/female/surnames
+//    - Add a stat template: add to STAT_TEMPLATES
+//    - Add traits: add strings to PERSONALITY_TRAITS, IDEALS, BONDS, FLAWS
+//    - Change generation logic: modify generateNPC
+// =============================================================================
+
 export interface GeneratedNPC {
   id: string;
   name: string;
@@ -31,6 +56,9 @@ export interface StatTemplate {
   notes?: string;
 }
 
+// 🧠 NAMES: a big lookup table keyed by species. Each entry has male names,
+//    female names, and surnames. Used by generateNPC to pick random names.
+//    This is "static data" — it never changes at runtime.
 const NAMES: Record<string, { male: string[]; female: string[]; surnames: string[] }> = {
   human: {
     male: ['Aldric','Bael','Cedric','Doran','Edric','Finn','Gareth','Hale','Ivar','Jace','Kael','Leoric','Merek','Nash','Orin','Peregrin','Quinn','Roderic','Soren','Theron','Ulric','Vance','Willem','Xander','Yorick','Zane'],
@@ -148,6 +176,9 @@ const FLAWS = [
   'I am always late.',
 ];
 
+// 🧠 STAT_TEMPLATES: predefined NPC stat blocks. Each template has fixed
+//    ability scores, AC, HP formula, and attacks. Components use these
+//    to quickly generate a stat block without full character creation.
 export const STAT_TEMPLATES: StatTemplate[] = [
   { name: 'Commoner', stats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }, ac: 10, hp: '1d8+0', speed: 30, profBonus: 2, skills: [], attacks: ['Club. Melee Weapon Attack: +2 to hit, reach 5 ft., one target. Hit: 1d4 bludgeoning damage.'] },
   { name: 'Guard', stats: { str: 14, dex: 12, con: 14, int: 10, wis: 10, cha: 10 }, ac: 16, hp: '2d8+4', speed: 30, profBonus: 2, skills: ['Perception +2'], attacks: ['Spear. Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 1d6+2 piercing damage.'] },
@@ -191,6 +222,8 @@ const APPEARANCES = [
 
 const AGE_RANGES = ['Young adult', 'Adult', 'Middle-aged', 'Elderly', 'Ancient'];
 
+// 🧠 Utility helpers: pick (random element), pickN (random subset), rollHp (dice formula).
+//    These are pure functions — same input always gives same kind of output.
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -213,6 +246,9 @@ function rollHp(hpFormula: string): number {
   return Math.max(1, total);
 }
 
+// 🧠 generateNPC: the main generator function. Picks random name, species,
+//    template, personality traits, and appearance. Accepts overrides for
+//    any field — a common React pattern (defaults + overrides via spread).
 export function generateNPC(overrides?: Partial<GeneratedNPC>): GeneratedNPC {
   const species = overrides?.species || pick(Object.keys(NAMES));
   const nameData = NAMES[species] || NAMES.human;
@@ -250,6 +286,8 @@ export function generateNPCMultiple(count: number, species?: string): GeneratedN
   return Array.from({ length: count }, () => generateNPC(species ? { species } : undefined));
 }
 
+// 🧠 Storage helpers: save/load NPCs to localStorage scoped to the campaign.
+//    These are the only side-effect functions in this file.
 import { campaignKey } from './campaignStorage';
 const STORAGE_KEY = 'saved-npcs';
 function sk(key: string) { return campaignKey(key); }

@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: GroupPatronsConfig.tsx =====
+// 🎯 PURPOSE: Configuration panel for group patrons — DMs define patron types with descriptions,
+//   benefits (array of strings), and rank progression (array of strings).
+// 🧠 REACT CONCEPT: Deeply Nested Array CRUD — manages arrays of objects that themselves contain
+//   arrays. Each update requires careful immutable spreading at multiple nesting levels.
+// =====
 export interface GroupPatronsConfigValue {
   patrons: { type: string; description: string; benefits: string[]; ranks: string[] }[];
 }

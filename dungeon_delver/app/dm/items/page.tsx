@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/items/page.tsx =====
+// 🎯 PURPOSE: Magic item assignment — assign items from the library to characters, with optional
+//   "hidden" (unidentified) mode. Manage identification and removal per-character.
+// 🧠 REACT CONCEPT: Tabbed Assign/Manage Pattern — character selector drives two sub-views:
+//   "Assign" (search library items and assign hidden/revealed) and "Manage" (list unidentified
+//   vs identified items per character with identify/delete actions).
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { loadCharFromLocal, CHAR_STORAGE_PREFIX } from '../../../utils/storageEngine';

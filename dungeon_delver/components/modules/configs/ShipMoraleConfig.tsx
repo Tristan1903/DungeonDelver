@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: ShipMoraleConfig.tsx =====
+// 🎯 PURPOSE: Configures ship morale system — base morale score, officer role names, and
+//   situational morale modifiers (situation + numeric modifier).
+// 🧠 REACT CONCEPT: Heterogeneous Array Forms — same component manages three different array types:
+//   simple string arrays (roles) and object arrays (modifiers), showcasing flexible CRUD patterns.
+// =====
 export interface ShipMoraleConfigValue { baseMorale: number; officerRoles: string[]; moraleModifiers: { situation: string; mod: number }[]; }
 export default function ShipMoraleConfig({ value, onChange }: { value: ShipMoraleConfigValue; onChange: (v: ShipMoraleConfigValue) => void }) {
   return (

@@ -1,3 +1,30 @@
+// =============================================================================
+// 📘 FILE: utils/obscuredItemsEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Manages "obscured" magic items — items the DM gives to players
+//    with hidden identities. Players see a fake name ("Ornate Ring of Unknown
+//    Origin") until the item is identified, revealing the true name and data.
+//    Supports Identify and Detect Magic workflows.
+//
+// 🧠 REACT CONCEPT: Derived Display State
+//    Each ObscuredItem has an `identified` boolean. The UI conditionally
+//    renders either the `displayName` (fake) or the `trueName` (real).
+//    This is a classic example of "conditional rendering" based on state:
+//
+//    ```tsx
+//    {item.identified ? <TrueName /> : <FakeName />}
+//    ```
+//
+//    The `generateDisplayName()` function creates a thematic fake name
+//    from randomized prefix + item short name + suffix.
+//
+// 🔧 HOW TO ALTER:
+//    - Change fake name generation: modify generateDisplayName
+//    - Add more fake prefixes/suffixes: edit FAKE_PREFIXES / FAKE_SUFFIXES
+//    - Change item identification logic: modify identifyItem
+//    - Change storage scope: modify the campaignKey usage
+// =============================================================================
+
 export interface ObscuredItem {
   id: string;
   trueName: string;
@@ -17,6 +44,8 @@ import { campaignKey } from './campaignStorage';
 const STORAGE_KEY = 'obscured-items';
 function sk(key: string) { return campaignKey(key); }
 
+// 🧠 generateDisplayName: creates a randomized fake item name.
+//    Uses the last word of the true name (e.g. "Ring" from "Ring of Protection").
 export function generateDisplayName(trueName: string): string {
   const prefix = FAKE_PREFIXES[Math.floor(Math.random() * FAKE_PREFIXES.length)];
   const suffix = FAKE_SUFFIXES[Math.floor(Math.random() * FAKE_SUFFIXES.length)];
@@ -48,6 +77,8 @@ export function addObscuredItem(item: Omit<ObscuredItem, 'id' | 'assignedAt'>): 
   return newItem;
 }
 
+// 🧠 identifyItem: flips the identified flag to true.
+//    The DM calls this when a player casts Identify or uses Detect Magic.
 export function identifyItem(id: string): void {
   const items = loadObscuredItems();
   const idx = items.findIndex(i => i.id === id);

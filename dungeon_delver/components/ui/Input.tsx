@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/input.tsx
+// =============================================================================
+// 🎯 PURPOSE: A styled text input wrapping @base-ui/react's Input primitive.
+//    Supports all standard HTML input types (text, number, email, etc.).
+//
+// 🧠 REACT CONCEPT: Primitive Wrapper + Forwarding Props
+//    This is one of the simplest shadcn/ui patterns — a thin wrapper around
+//    a base input that adds consistent styling via Tailwind. It accepts
+//    ALL standard input props via `React.ComponentProps<"input">`, which
+//    means any prop you can pass to `<input>` (placeholder, value, onChange,
+//    disabled, etc.) works here too.
+//
+//    The `type` prop is destructured separately so it can be passed to the
+//    underlying InputPrimitive properly.
+//
+// 🔧 HOW TO ALTER:
+//    - Change input height: modify `h-8`
+//    - Change border radius: modify `rounded-lg`
+//    - Change focus ring: modify `focus-visible:ring-*` classes
+//    - Change disabled style: modify `disabled:*` classes
+// =============================================================================
+
 import * as React from "react"
 import { Input as InputPrimitive } from "@base-ui/react/input"
 

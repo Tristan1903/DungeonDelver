@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: GrittyRealismConfig.tsx =====
+// 🎯 PURPOSE: Configures Gritty Realism rest variant — two number inputs for short rest (hours) and
+//   long rest (days) durations.
+// 🧠 REACT CONCEPT: Simple Controlled Inputs — the simplest form pattern: scalar values driven by
+//   props, each onChange parses the string to number and calls the parent's setter.
+// =====
 export interface GrittyRealismConfigValue { shortRestHours: number; longRestDays: number; }
 export default function GrittyRealismConfig({ value, onChange }: { value: GrittyRealismConfigValue; onChange: (v: GrittyRealismConfigValue) => void }) {
   return (

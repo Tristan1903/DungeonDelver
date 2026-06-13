@@ -1,4 +1,11 @@
 ﻿'use client';
+// ===== 📘 FILE: app/hub/page.tsx =====
+// 🎯 PURPOSE: Player hub dashboard — shows active storylines, current session info, and quick
+//   links to character sheet, notes, and library.
+// 🧠 REACT CONCEPT: Dashboard Composition — combines multiple data sources (quests, sessions)
+//   loaded via useEffect into a single page with stat cards, a storyline board, and a session
+//   feed. Uses useMemo for derived data (storylineHighlights).
+// =====
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { Quest } from '../../lib/campaign';

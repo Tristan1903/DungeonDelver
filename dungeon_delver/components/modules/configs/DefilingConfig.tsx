@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: DefilingConfig.tsx =====
+// 🎯 PURPOSE: Configures the Dark Sun defiling magic mechanic — damage per spell level, radius per
+//   level, and a list of preserve options (name + HP cost) that mitigate defiling damage.
+// 🧠 REACT CONCEPT: Controlled Forms with Nested Arrays — demonstrates managing a top-level config
+//   object containing both scalar values and an array of sub-objects, all updated immutably.
+// =====
 export interface DefilingConfigValue {
   damagePerSpellLevel: number; radiusPerLevel: number;
   preserveOptions: { name: string; cost: number }[];

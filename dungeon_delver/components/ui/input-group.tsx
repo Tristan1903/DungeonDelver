@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/input-group.tsx
+// =============================================================================
+// 🎯 PURPOSE: A composite input group that combines an input/textarea with
+//    addons (icons, buttons, labels) positioned inline or stacked (block).
+//    Built from lower-level Input/Textarea/Button components.
+//
+// 🧠 REACT CONCEPT: Compound Component + Layout Composition
+//    InputGroup wraps an Input or Textarea with InputGroupAddon (icons,
+//    labels) and InputGroupButton (action buttons). Addons can be placed
+//    inline-start (left), inline-end (right), block-start (top), or
+//    block-end (bottom) for different layout needs.
+//
+//    The group div uses `has-[[data-slot=input-group-control]:focus-visible]`
+//    selectors to highlight the entire group when the child input is focused.
+//    This creates a "focus ring around the group" effect.
+//
+// 🔧 HOW TO ALTER:
+//    - Change addon placement: modify align variants in inputGroupAddonVariants
+//    - Change group focus ring: modify `has-[[...]:focus-visible]` classes
+//    - Change addon padding: modify pl/pr values in variants
+// =============================================================================
+
 "use client"
 
 import * as React from "react"
@@ -27,14 +50,10 @@ const inputGroupAddonVariants = cva(
   {
     variants: {
       align: {
-        "inline-start":
-          "order-first pl-2 has-[>button]:ml-[-0.3rem] has-[>kbd]:ml-[-0.15rem]",
-        "inline-end":
-          "order-last pr-2 has-[>button]:mr-[-0.3rem] has-[>kbd]:mr-[-0.15rem]",
-        "block-start":
-          "order-first w-full justify-start px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2",
-        "block-end":
-          "order-last w-full justify-start px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2",
+        "inline-start": "order-first pl-2 has-[>button]:ml-[-0.3rem] has-[>kbd]:ml-[-0.15rem]",
+        "inline-end": "order-last pr-2 has-[>button]:mr-[-0.3rem] has-[>kbd]:mr-[-0.15rem]",
+        "block-start": "order-first w-full justify-start px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2",
+        "block-end": "order-last w-full justify-start px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2",
       },
     },
     defaultVariants: {
@@ -72,8 +91,7 @@ const inputGroupButtonVariants = cva(
       size: {
         xs: "h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5",
         sm: "",
-        "icon-xs":
-          "size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0",
+        "icon-xs": "size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0",
         "icon-sm": "size-8 p-0 has-[>svg]:p-0",
       },
     },

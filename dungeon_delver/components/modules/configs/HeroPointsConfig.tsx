@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: HeroPointsConfig.tsx =====
+// 🎯 PURPOSE: Configures Hero Points variant rule — pool size, maximum pool, and whether points
+//   reset per session.
+// 🧠 REACT CONCEPT: Mixed Input Types — demonstrates a form with both number inputs and a checkbox,
+//   each calling onChange with the appropriately typed value (+e.target.value vs e.target.checked).
+// =====
 export interface HeroPointsConfigValue { poolSize: number; maxPool: number; resetPerSession: boolean; }
 export default function HeroPointsConfig({ value, onChange }: { value: HeroPointsConfigValue; onChange: (v: HeroPointsConfigValue) => void }) {
   return (

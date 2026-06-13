@@ -1,3 +1,24 @@
+// =============================================================================
+// 📘 FILE: components/ui/badge.tsx
+// =============================================================================
+// 🎯 PURPOSE: A small label/badge component with multiple visual variants
+//    (default, secondary, destructive, outline, ghost, link). Uses
+//    @base-ui/react's `useRender` for polymorphic rendering (can render as
+//    span, div, or any other element via the `render` prop).
+//
+// 🧠 REACT CONCEPT: Polymorphic Component + useRender
+//    Unlike simple wrappers, Badge uses `useRender` + `mergeProps` from
+//    @base-ui/react. This allows the consumer to change the root element:
+//    `<Badge render={<a href="..." />}>Clickable</Badge>` renders as a link.
+//    The `render` prop pattern is an alternative to the traditional
+//    `as` prop pattern for polymorphic components.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a variant: add to `badgeVariants.variants.variant`
+//    - Change base padding: modify the first string arg to cva()
+//    - Change the default tag: modify `defaultTagName: "span"`
+// =============================================================================
+
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -10,14 +31,10 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
-        secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
-        destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
-        outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
-        ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
+        secondary: "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+        destructive: "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+        outline: "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+        ghost: "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
         link: "text-primary underline-offset-4 hover:underline",
       },
     },

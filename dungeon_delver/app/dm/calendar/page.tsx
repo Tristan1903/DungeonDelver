@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/calendar/page.tsx =====
+// 🎯 PURPOSE: World calendar — date tracking with configurable calendar definitions, month/day
+//   navigation, event management (add/delete per day), season display, and leap year support.
+// 🧠 REACT CONCEPT: Calendar Grid Component — renders a 7-column grid with blank padding for the
+//   first day of week, dynamic month lengths via calendarEngine, and per-day event badges with
+//   color-coded types.
+// =====
 import { useState, useEffect } from 'react';
 import {
   CalendarState, CalendarEvent,

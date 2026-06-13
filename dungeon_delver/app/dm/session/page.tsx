@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/session/page.tsx =====
+// 🎯 PURPOSE: Session log — create/manage sessions with encounter logs (XP, difficulty, outcome),
+//   journal entries (notes, encounters, milestones, loot, rests, level-ups), and save/load.
+// 🧠 REACT CONCEPT: CRUD Store Pattern — manages a SessionLogStore with multiple sessions,
+//   active session tracking, and nested sub-types (encounters, journal entries). Demonstrates
+//   functional updates with useCallback for persistent handlers.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { SessionFile, SessionEncounterLog, SessionJournalEntry, SessionLogStore } from '../../../lib/campaign';
 import { useRouter } from 'next/navigation';

@@ -1,4 +1,12 @@
 'use client';
+// ===== 📘 FILE: app/dm/journal/page.tsx =====
+// 🎯 PURPOSE: Lore & journal editor — create typed entries (session recaps, lore, NPC profiles,
+//   quest notes, world building, notes) with templates, tags, wiki-link backlinks, and
+//   Obsidian vault import/export.
+// 🧠 REACT CONCEPT: Three-Panel Layout — left sidebar (filterable entry list + create buttons),
+//   center (rich editor with title, type, tags, content), right sidebar (backlinks + link
+//   inserter). Demonstrates wiki-link extraction and cross-referencing between entries.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import Link from 'next/link';

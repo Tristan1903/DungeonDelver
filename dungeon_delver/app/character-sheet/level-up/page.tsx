@@ -1,5 +1,11 @@
 'use client';
-
+// ===== 📘 FILE: app/character-sheet/level-up/page.tsx =====
+// 🎯 PURPOSE: Level-up wizard page — accepts a character ID via search params, loads the
+//   character from localStorage, and renders the LevelUpWizard component.
+// 🧠 REACT CONCEPT: Search Params with Suspense — demonstrates the required Next.js pattern:
+//   useSearchParams() must be called inside a <Suspense> boundary. Also shows error/loading
+//   states for URL-driven data loading.
+// =====
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Character } from '../../../lib/character';

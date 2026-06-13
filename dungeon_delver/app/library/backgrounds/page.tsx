@@ -1,11 +1,19 @@
 'use client';
+// ===== 📘 FILE: app/library/backgrounds/page.tsx =====
+// 🎯 PURPOSE: Backgrounds library — searchable grid of character backgrounds with images,
+//   skill proficiencies, and a detail modal via BackgroundDetail component.
+// 🧠 REACT CONCEPT: Search + Grid + Detail Modal — loads data on mount, filters client-side,
+//   renders a responsive grid with image fallback on error, and opens a detail modal on click.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { backgroundImgPath } from '../../../utils/imgPaths';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 import BackgroundDetail from '../../../components/BackgroundDetail';
 
 export default function BackgroundsPage() {
+  const isMobile = useIsMobile();
   const [allBackgrounds, setAllBackgrounds] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -21,7 +29,7 @@ export default function BackgroundsPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Backgrounds
         </h1>

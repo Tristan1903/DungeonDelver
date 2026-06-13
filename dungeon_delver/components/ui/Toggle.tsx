@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: components/ui/toggle.tsx
+// =============================================================================
+// 🎯 PURPOSE: A two-state button (on/off), typically used in toolbars or
+//    option groups. Built on @base-ui/react's Toggle primitive. Supports
+//    variant (default/outline) and size (default/sm/lg) via CVA.
+//
+// 🧠 REACT CONCEPT: aria-pressed Toggle Button
+//    Unlike a checkbox (which toggles a value), a toggle button uses
+//    aria-pressed="true|false" to indicate state. @base-ui/react handles
+//    this automatically — clicking the Toggle primitive flips the pressed
+//    state. The `data-[state=on]:bg-muted` selector styles the pressed
+//    state via Tailwind.
+//
+//    The toggleVariants object (from CVA) is also exported so consumers
+//    can apply the same styling to other elements (e.g., a custom toggle
+//    built from a Button).
+//
+// 🔧 HOW TO ALTER:
+//    - Change pressed style: modify `aria-pressed:bg-muted` / `data-[state=on]:bg-muted`
+//    - Change size values: modify h-7/h-8/h-9 and px values per variant
+//    - Change variant colors: modify `hover:bg-muted` for outline variant
+// =============================================================================
+
 "use client"
 
 import { Toggle as TogglePrimitive } from "@base-ui/react/toggle"
@@ -14,8 +38,7 @@ const toggleVariants = cva(
         outline: "border border-input bg-transparent hover:bg-muted",
       },
       size: {
-        default:
-          "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        default: "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         sm: "h-7 min-w-7 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
       },

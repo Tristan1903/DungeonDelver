@@ -48,14 +48,37 @@ export default function DmAuthGate({ children }: DmAuthGateProps) {
   const [showSetup, setShowSetup] = useState(false);
   const [newPw, setNewPw] = useState('');
   const [confirmPw, setConfirmPw] = useState('');
+  const [lanRole, setLanRole] = useState<'dm' | 'player' | 'local'>('local');
 
   useEffect(() => {
     setMounted(true);
+    try {
+      const role = localStorage.getItem('dd-lan-role');
+      if (role === 'player') setLanRole('player');
+      else if (role === 'dm') setLanRole('dm');
+    } catch {}
     try { setHasPw(!!localStorage.getItem('dd-dm-password')); } catch { setHasPw(false); }
   }, []);
 
   if (!mounted) return null;
-  if (authed) return <>{children}</>;
+
+  if (lanRole === 'player') {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh', padding: '2rem' }}>
+        <div style={{ background: 'var(--dungeon-panel)', border: '1px solid var(--dungeon-border)', borderRadius: 'var(--dungeon-radius-md)', padding: '2rem', maxWidth: 400, width: '100%', textAlign: 'center' }}>
+          <h2 style={{ color: 'var(--dungeon-gold)', margin: '0 0 12px', fontSize: '1.2rem' }}>DM Area Locked</h2>
+          <p style={{ color: 'var(--dungeon-text-dim)', margin: '0 0 16px', fontSize: '0.9rem' }}>
+            You are connected as a player. The Dungeon Master area is not available in player mode.
+          </p>
+          <p style={{ color: 'var(--dungeon-text-dim)', fontSize: '0.8rem' }}>
+            Join again as the DM to access this area.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (authed || lanRole === 'dm') return <>{children}</>;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +119,7 @@ export default function DmAuthGate({ children }: DmAuthGateProps) {
                 style={{ width: '100%', padding: '10px', marginBottom: 12, background: 'var(--dungeon-bg)', border: '1px solid var(--dungeon-border)', borderRadius: '6px', color: 'white' }} />
               {error && <p style={{ color: 'var(--dungeon-danger)', margin: '0 0 8px', fontSize: '0.8rem' }}>{error}</p>}
               <div style={{ display: 'flex', gap: 8 }}>
-                <button type="submit" style={{ flex: 1, padding: '10px', background: 'var(--dungeon-accent)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Set &amp; Enter</button>
+                <button type="submit" style={{ flex: 1, padding: '10px', background: 'var(--dungeon-accent)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}>Set & Enter</button>
                 <button type="button" onClick={() => { setShowSetup(false); setNewPw(''); setConfirmPw(''); setError(''); }}
                   style={{ padding: '10px 16px', background: 'transparent', color: 'var(--dungeon-text)', border: '1px solid var(--dungeon-border)', borderRadius: '6px', cursor: 'pointer' }}>Back</button>
               </div>

@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/HandoutCard.tsx
+// =============================================================================
+// 🎯 PURPOSE: A printable handout card component for spells and items. Renders
+//    a compact, styled card suitable for printing (uses CSS classes like
+//    `handout-card`, `handout-header`). Includes helper functions to format
+//    spell/item fields (time, range, components, duration).
+//
+// 🧠 REACT CONCEPT: Presentational Components
+//    `SpellCard` and `ItemCard` are pure presentational components — they receive
+//    data via props and render it without side effects or local state. The helper
+//    functions (`formatTime`, `formatRange`, etc.) are co-located for clarity.
+// =============================================================================
 
 export function SpellCard({ spell }: { spell: any }) {
   const levelLabel = spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`;

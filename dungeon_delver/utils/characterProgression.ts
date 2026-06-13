@@ -1,3 +1,31 @@
+// =============================================================================
+// 📘 FILE: utils/characterProgression.ts
+// =============================================================================
+// 🎯 PURPOSE: Character progression math — HP calculation, level-up
+//    application, feature merging, skill extraction from class/background
+//    data, and the main finalizeCharacterFromWizard function that builds
+//    a complete Character object from wizard form data (creation or level-up).
+//
+// 🧠 REACT CONCEPT: Business Logic Layer
+//    This file is the "brain" of character creation and leveling. It takes
+//    raw form data (draft) and class/background JSON and produces a valid
+//    Character object. Components call these functions in event handlers
+//    (onSubmit, onConfirm) — they don't need to understand the HP formula
+//    or spell slot merge logic themselves.
+//
+//    This separation of concerns (UI in components, logic here) makes the
+//    code testable and reusable. If the level-up rules change in a new
+//    D&D edition, you modify THESE functions, not the 3641-line wizard
+//    component.
+//
+// 🔧 HOW TO ALTER:
+//    - Change HP calculation: modify computeMaxHp or hpGainOnLevelUp
+//    - Change level-up merge: modify applyLevelUp
+//    - Change feature merging: modify mergeFeatures
+//    - Change wizard finalization: modify finalizeCharacterFromWizard
+//    - Change skill normalization: modify normalizeSkillName
+// =============================================================================
+
 import { Character, CharacterFeature, ClassLevel, getClassList } from '../lib/character';
 import { computeResources, computeAllResources } from './classResources';
 import { buildSpellSlots } from './spellcastingEngine';
@@ -18,6 +46,9 @@ export function rollHitDie(faces: number): number {
   return Math.floor(Math.random() * faces) + 1;
 }
 
+// 🧠 computeMaxHp: calculates max HP using the standard formula:
+//    (hit die faces + con mod) for first level + (average/rolled + con mod)
+//    for each additional level.
 export function computeMaxHp(
   classInfo: { hd?: { faces?: number } },
   conMod: number,
@@ -42,6 +73,8 @@ export function hpGainOnLevelUp(
   return Math.max(1, gain);
 }
 
+// 🧠 Skill name normalization — 5eTools uses hyphenated/space-separated names
+//    ("sleight of hand") but the character model uses camelCase ("sleightOfHand").
 const SKILL_NAME_MAP: Record<string, string> = {
   'sleight of hand': 'sleightOfHand',
   'animal handling': 'animalHandling',
@@ -52,6 +85,8 @@ export function normalizeSkillName(name: string): string {
   return SKILL_NAME_MAP[clean] ?? clean.replace(/\s+/g, '');
 }
 
+// 🧠 extractSkillChoices: parses a class's starting proficiency skills
+//    to find the "choose X from Y" options for the wizard UI.
 export function extractSkillChoices(classInfo: any): { from: string[]; count: number } | null {
   const skills = classInfo?.startingProficiencies?.skills;
   if (!skills?.length) return null;
@@ -82,6 +117,8 @@ export function extractBackgroundSkills(backgroundData: any): string[] {
   return result;
 }
 
+// 🧠 mergeFeatures: combines class and subclass features up to a given level,
+//    deduplicating by name. Optionally filters to a single level for level-up.
 export function mergeFeatures(
   classFeatures: any[] | undefined,
   subclassFeatures: any[] | undefined,
@@ -109,6 +146,9 @@ export function mergeFeatures(
   return out;
 }
 
+// 🧠 buildClassLevels: updates the classLevels array for a multiclass character.
+//    If the class already exists, updates its level and subclass.
+//    If it's a new class (multiclass), appends a new entry.
 export function buildClassLevels(
   className: string,
   subclass: string | undefined,
@@ -119,19 +159,18 @@ export function buildClassLevels(
   if (existing.length === 0) {
     return [{ className, level: targetClassLevel, subclass }];
   }
-  // Check if this class already exists
   const idx = existing.findIndex(cl => cl.className === className);
   if (idx >= 0) {
-    // Update existing class entry
     const updated = [...existing];
     updated[idx] = { ...updated[idx], level: targetClassLevel, subclass: subclass ?? updated[idx].subclass };
     return updated;
   } else {
-    // Add new class
     return [...existing, { className, level: targetClassLevel, subclass }];
   }
 }
 
+// 🧠 applyLevelUp: merges partial updates into an existing character,
+//    recalculating totalLevel, class lists, and derived fields.
 export function applyLevelUp(
   existing: Character,
   updates: Partial<Character>
@@ -145,6 +184,15 @@ export function applyLevelUp(
   return merged;
 }
 
+// 🧠 finalizeCharacterFromWizard: THE big one. Takes wizard form data (draft)
+//    and produces a complete Character. Handles both creation and level-up modes.
+//    Key responsibilities:
+//    - Calculate HP (new or cumulative on level-up)
+//    - Merge features (class + subclass)
+//    - Build class levels (multiclass-aware)
+//    - Merge class feature picks (namespaced by class)
+//    - Build spell slots (preserving used slots on level-up)
+//    - Compute resources (rage, ki, etc.)
 export function finalizeCharacterFromWizard(
   draft: Partial<Character> & {
     baseStats: Character['baseStats'];
@@ -170,7 +218,6 @@ export function finalizeCharacterFromWizard(
 
   const prevClassLevels = existingChar?.classLevels || [];
 
-  // Determine the target class's new individual level and the new total level
   const oldTargetClassLevel = prevClassLevels.find(cl => cl.className === className)?.level ?? 0;
   const isNewClass = oldTargetClassLevel === 0;
   const targetClassLevel = isNewClass ? 1 : oldTargetClassLevel + 1;
@@ -244,7 +291,6 @@ export function finalizeCharacterFromWizard(
     spells: existingChar?.spells ?? { cantrips: [], known: [], prepared: [] },
     spellSlots: (() => {
       const fresh = buildSpellSlots(classInfo, targetClassLevel);
-      // On level-up, preserve used slots, update max values
       if (mode === 'levelup' && existingChar?.spellSlots) {
         for (const [lvl, slot] of Object.entries(fresh)) {
           const old = existingChar.spellSlots[Number(lvl)];

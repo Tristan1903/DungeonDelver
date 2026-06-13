@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/quests/page.tsx =====
+// 🎯 PURPOSE: Quest & storyline tracker — CRUD for quests with status, objectives, rewards,
+//   story arc grouping (with color-coded arcs), and a modal editor.
+// 🧠 REACT CONCEPT: Arc-Grouped List + Modal Editor — manages two data types (arcs + quests)
+//   in localStorage, groups quests by their assigned arc, and uses a full-screen modal for
+//   creating/editing quests with inline objective management.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Quest, QuestObjective } from '../../../lib/campaign';

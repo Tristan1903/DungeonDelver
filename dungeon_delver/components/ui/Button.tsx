@@ -1,6 +1,28 @@
+// =============================================================================
+// 📘 FILE: components/ui/button.tsx
+// =============================================================================
+// 🎯 PURPOSE: A reusable button component with multiple variants (default,
+//    outline, secondary, ghost, destructive, link) and sizes (xs through lg,
+//    icon variants). Wraps @base-ui/react's Button primitive.
+//
+// 🧠 REACT CONCEPT: Polymorphic Component + Variants
+//    Uses `cva` (class-variance-authority) to define variant/size classes
+//    as a config object rather than inline conditionals. This pattern is
+//    called a "variant props" component — you pass variant="outline" and
+//    the styling is derived automatically.
+//
+//    The component accepts all native button props plus our custom variants,
+//    merging them with TypeScript intersection types (`ButtonPrimitive.Props
+//    & VariantProps<typeof buttonVariants>`).
+//
+// 🔧 HOW TO ALTER:
+//    - Add a variant: add to the `variants.variant` object
+//    - Add a size: add to the `variants.size` object
+//    - Change base styles: modify the first string argument to cva()
+// =============================================================================
+
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -20,16 +42,13 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+        default: "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
         icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
+        "icon-xs": "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
         "icon-lg": "size-9",
       },
     },
@@ -40,6 +59,9 @@ const buttonVariants = cva(
   }
 )
 
+// 🧠 This component accepts BOTH the native button props (onClick, disabled,
+//    etc.) AND our custom variant/size props. The intersection type `&` merges
+//    them so TypeScript knows about all available props.
 function Button({
   className,
   variant = "default",

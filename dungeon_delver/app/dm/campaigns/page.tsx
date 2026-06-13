@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/campaigns/page.tsx =====
+// 🎯 PURPOSE: Campaign management — CRUD for campaigns with wizard creation, settings editing,
+//   character linking/unlinking, module summary, house rules, and a campaign dashboard view.
+// 🧠 REACT CONCEPT: Complex CRUD with Sub-views — manages campaigns (list/detail/dashboard views),
+//   character linking, race presets, and inline editing. Uses functional updates and lazy state
+//   for the compound `DashboardView` sub-component.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { getActiveCampaign, getCampaigns, setActiveCampaign, renameCampaign, deleteCampaign, type CampaignEntry } from '../../../utils/campaignStorage';

@@ -1,4 +1,16 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/BackgroundDetail.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal overlay that displays background details (skill/tool/
+//    language proficiencies) and renders entries via `renderEntries`.
+//    Used in the Library browser when a user clicks a background row.
+//
+// 🧠 REACT CONCEPT: Inline Modal Pattern
+//    This uses a fixed-position overlay (`inset: 0`) + a centered panel. The
+//    overlay click calls `onClose`, while stopPropagation on the panel prevents
+//    accidental closure. This is a common React "portal-less" modal pattern.
+// =============================================================================
 import { renderEntries } from '../utils/libraryHelpers';
 
 const overlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };

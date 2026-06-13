@@ -1,4 +1,16 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/ItemDetail.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal overlay that displays an item's details (rarity, type,
+//    value, weight, AC, damage, range, and rendered entries). Used in the
+//    Library browser when clicking an item row.
+//
+// 🧠 REACT CONCEPT: Inline Modal with Conditional Sections
+//    Sections like attunement, damage, range are conditionally rendered based
+//    on the item data shape. The pattern `{condition && <JSX />}` is the most
+//    common conditional rendering approach in React.
+// =============================================================================
 import { renderEntries } from '../utils/libraryHelpers';
 
 const overlay: React.CSSProperties = { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 };

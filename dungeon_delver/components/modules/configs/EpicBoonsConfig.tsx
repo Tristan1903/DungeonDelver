@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: EpicBoonsConfig.tsx =====
+// 🎯 PURPOSE: Configuration panel for epic boons — DMs define custom boons with name, description,
+//   and prerequisites. Supports dynamic add/remove of boon entries.
+// 🧠 REACT CONCEPT: Array CRUD Pattern — identical structure to DarkGiftsConfig, reinforcing the
+//   reusable pattern of mapping over an array and emitting immutable updates upward.
+// =====
 export interface EpicBoonsConfigValue { boons: { name: string; description: string; prerequisites: string }[]; }
 export default function EpicBoonsConfig({ value, onChange }: { value: EpicBoonsConfigValue; onChange: (v: EpicBoonsConfigValue) => void }) {
   const add = () => onChange({ ...value, boons: [...value.boons, { name: '', description: '', prerequisites: '' }] });

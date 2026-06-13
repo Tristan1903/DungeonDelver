@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/influence/page.tsx =====
+// 🎯 PURPOSE: Influence & social tracker — manage NPC dispositions with a range slider, reaction
+//   rolls, and group membership management.
+// 🧠 REACT CONCEPT: Controlled Range Slider + Tabbed Views — maps numeric slider values to discrete
+//   disposition levels (hostile→helpful) with color-coded feedback. Groups tab uses checkbox-based
+//   membership toggling with real-time upsert.
+// =====
 import { useState, useEffect } from 'react';
 import {
   SocialNPC, SocialGroup, Disposition, DISPOSITION_ORDER,

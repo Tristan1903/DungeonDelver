@@ -1,4 +1,19 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/CampaignModulesCharacterSheet.tsx
+// =============================================================================
+// 🎯 PURPOSE: Campaign module UI sections displayed on the character sheet.
+//    Each optional rule module (Honor, Piety, Renown, Dark Gifts, Madness, Epic
+//    Boons, Hero Points, Stress/Fear, Transformations, Defiling, Group Patrons,
+//    Ship Morale, Sidekicks, Isekai) renders as an expander card if enabled in
+//    the campaign config. Also includes the CampaignSelector dropdown.
+//
+// 🧠 REACT CONCEPT: Controlled Components + Conditional Rendering
+//    Every section receives `char` + `onCharChange` props, making this a fully
+//    controlled form. `onCharChange` passes a new Character object upward so the
+//    parent can persist it. Sections return `null` when disabled — the simplest
+//    form of conditional rendering in React.
+// =============================================================================
 import { useState, useEffect } from 'react';
 import { Character, ModuleData } from '../lib/character';
 import { getCampaigns, campaignKey, type CampaignEntry } from '../utils/campaignStorage';
@@ -29,9 +44,17 @@ export function getActiveModules(char: Character): { enabledModules: string[]; m
   const cid = char.campaignId || 'default';
   try {
     const raw = typeof window !== 'undefined' ? localStorage.getItem(campaignKey('campaign-config', cid)) : null;
-    if (!raw) return { enabledModules: [], moduleConfig: {} };
-    const config = JSON.parse(raw);
-    return { enabledModules: config.enabledModules || [], moduleConfig: config.moduleConfig || {} };
+    if (raw) {
+      const config = JSON.parse(raw);
+      return { enabledModules: config.enabledModules || [], moduleConfig: config.moduleConfig || {} };
+    }
+    // Fall back to LAN campaign config if no local campaign matches
+    const lanRaw = typeof window !== 'undefined' ? localStorage.getItem('dd-lan-campaign-config') : null;
+    if (lanRaw) {
+      const config = JSON.parse(lanRaw);
+      return { enabledModules: config.enabledModules || [], moduleConfig: config.moduleConfig || {} };
+    }
+    return { enabledModules: [], moduleConfig: {} };
   } catch { return { enabledModules: [], moduleConfig: {} }; }
 }
 

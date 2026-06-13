@@ -1,3 +1,29 @@
+// =============================================================================
+// 📘 FILE: components/ui/dialog.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal dialog component built on @base-ui/react's Dialog
+//    primitive. Provides overlay (backdrop), content panel, header/footer
+//    sections, title, description, and close button. Supports animations
+//    (fade-in, zoom-in on open; fade-out, zoom-out on close).
+//
+// 🧠 REACT CONCEPT: Compound Component + Portal
+//    Dialog is a compound component with multiple sub-components (Dialog,
+//    DialogTrigger, DialogContent, DialogHeader, etc.). The content uses
+//    a PORTAL (`DialogPortal`) to render outside the parent DOM tree —
+//    this ensures the modal appears above all other content.
+//
+//    State is managed by @base-ui/react internally — the Dialog.Root tracks
+//    open/closed state and provides it to all sub-components via React Context.
+//    This is a "headless UI" pattern where the library manages logic and
+//    the developer provides styling.
+//
+// 🔧 HOW TO ALTER:
+//    - Change dialog width: modify the `max-w` classes in DialogContent
+//    - Change animation: adjust the `data-open:animate-in` classes
+//    - Change close button: modify the XIcon or showCloseButton logic
+//    - Change overlay style: modify DialogOverlay className
+// =============================================================================
+
 "use client"
 
 import * as React from "react"
@@ -70,8 +96,7 @@ function DialogContent({
               />
             }
           >
-            <XIcon
-            />
+            <XIcon />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

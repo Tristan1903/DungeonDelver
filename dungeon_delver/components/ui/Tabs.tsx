@@ -1,3 +1,26 @@
+// =============================================================================
+// 📘 FILE: components/ui/tabs.tsx
+// =============================================================================
+// 🎯 PURPOSE: A tabbed navigation component built on @base-ui/react's Tabs
+//    primitive. Supports horizontal/vertical orientation, and two visual
+//    variants (default with background, line with underline indicator).
+//
+// 🧠 REACT CONCEPT: Compound Component + State Machine
+//    Tabs manage which panel is visible via internal state (selected tab).
+//    @base-ui/react handles the state — clicking a TabsTrigger updates
+//    the value, and the corresponding TabsContent becomes visible.
+//
+//    The component uses group selectors for coordination:
+//    `group-data-[variant=line]/tabs-list:data-active:shadow-none` means
+//    "when the parent tabs-list has variant=line, remove shadow on active tab."
+//    This avoids prop drilling between TabsList and TabsTrigger.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a variant: add to `tabsListVariants` and update trigger styles
+//    - Change indicator style: modify the `after:` pseudo-element in TabsTrigger
+//    - Change orientation support: modify the `data-orientation` selectors
+// =============================================================================
+
 "use client"
 
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"

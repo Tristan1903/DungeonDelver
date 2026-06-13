@@ -1,10 +1,18 @@
 'use client';
+// ===== 📘 FILE: app/library/page.tsx =====
+// 🎯 PURPOSE: Bookshelf — lists library books from the data engine with search and links
+//   to book reader pages. Composes with LibrarySidebar.
+// 🧠 REACT CONCEPT: useEffect Data Loading + Search Filter — loads books on mount, filters
+//   them client-side by search query, and renders a list of Link cards.
+// =====
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { DataEngine } from '../../utils/dataLoader';
+import { useIsMobile } from '../../utils/useIsMobile';
 import LibrarySidebar from '../../components/LibrarySidebar';
 
 export default function LibraryPage() {
+  const isMobile = useIsMobile();
   const [books, setBooks] = useState<any[]>([]);
   const [search, setSearch] = useState('');
 
@@ -18,7 +26,7 @@ export default function LibraryPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Bookshelf
         </h1>

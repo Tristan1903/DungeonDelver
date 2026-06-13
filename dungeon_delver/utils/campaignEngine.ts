@@ -1,6 +1,42 @@
-'use client';
-import { campaignKey } from './campaignStorage';
+// =============================================================================
+// 📘 FILE: utils/campaignEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: The DM's campaign configuration system. Defines ALL optional
+//    modules (Piety, Renown, Dark Gifts, etc.), race presets per setting,
+//    pantheon lists, tone themes, transformation trees, and Isekai origin
+//    types. Also provides load/save/merge helpers for campaign config in
+//    localStorage.
+//
+// 🧠 REACT CONCEPT: Configuration as Data
+//    This file is almost entirely data — arrays and objects that define
+//    what the DM can toggle and customize. React components import these
+//    constants and render them as checkboxes, dropdowns, and cards.
+//
+//    The "hot" part (localStorage read/write) is concentrated in just a
+//    few functions at the bottom (loadCampaignConfig, saveCampaignConfig).
+//    Everything above is "cold" static config that never changes at runtime.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new module: add an entry to OPTIONAL_MODULES, create its
+//      config interface, add it to ModuleConfigMap, and provide defaults in
+//      MODULE_CONFIG_DEFAULTS
+//    - Add a race preset: add an entry to CAMPAIGN_RACE_PRESETS
+//    - Add a pantheon: add to CAMPAIGN_PANTHEONS
+//    - Add a tone: add to CAMPAIGN_TONES
+//    - Modify transformation tiers: edit the data inside MODULE_CONFIG_DEFAULTS
+// =============================================================================
 
+'use client';
+import { campaignKey, getCampaigns, getActiveCampaign } from './campaignStorage';
+import type { CampaignEntry } from './campaignStorage';
+import { CHAR_STORAGE_PREFIX } from './storageEngine';
+
+// =============================================================================
+// 📋 OPTIONAL MODULES
+// =============================================================================
+// Every toggleable module the DM can enable/disable for a campaign.
+// Each entry has an id (used in URLs/keys), a display name, and a tooltip.
+// =============================================================================
 export const OPTIONAL_MODULES = [
   { id: 'piety', name: 'Piety (MOoT)', description: 'Devotion to gods unlocks supernatural gifts.' },
   { id: 'renown', name: 'Renown (DMG/GGR)', description: 'Faction standing earns ranks and perks.' },
@@ -21,7 +57,17 @@ export const OPTIONAL_MODULES = [
   { id: 'isekai', name: 'Isekai (Another World)', description: 'Characters transported from another world bypass race restrictions and gain an origin bonus.' },
 ] as const;
 
+// 🧠 `as const` tells TypeScript this is a READONLY tuple — it infers the
+//    literal string types ("piety", "renown", etc.) rather than just `string`.
+//    This lets us derive the exact union type `ModuleId` below.
 export type ModuleId = (typeof OPTIONAL_MODULES)[number]['id'];
+
+// =============================================================================
+// 📋 MODULE CONFIG INTERFACES
+// =============================================================================
+// Each module has its own shape of data stored in campaign config.
+// These interfaces define what the DM can customize per module.
+// =============================================================================
 
 export interface PietyConfig {
   deityName: string;
@@ -81,6 +127,8 @@ export interface HeroPointsConfig {
   resetPerSession: boolean;
 }
 
+// 🧠 Transformations have their own sub-types because they're more complex
+//    (tiers with boons/flaws/features at each level).
 export interface TransformationTier {
   level: number;
   boons: { name: string; description: string }[];
@@ -111,6 +159,9 @@ export interface IsekaiConfig {
   types: IsekaiTypeConfig[];
 }
 
+// 🧠 ModuleConfigMap ties every module ID to its config interface.
+//    This is a "mapped type" — it ensures type safety when accessing
+//    moduleConfig with any ModuleId key.
 export type ModuleConfigMap = {
   piety: PietyConfig;
   renown: RenownConfig;
@@ -131,6 +182,14 @@ export type ModuleConfigMap = {
   isekai: IsekaiConfig;
 };
 
+// =============================================================================
+// 📋 RACE PRESETS
+// =============================================================================
+// Campaigns can restrict available races by setting (Greyhawk, Eberron, etc.).
+// Each preset defines which source books are allowed and whether to include
+// or exclude specific named races.
+// =============================================================================
+
 export type RacePresetId =
   | 'standard'
   | 'phb'
@@ -150,13 +209,9 @@ export interface RacePresetDef {
   id: RacePresetId;
   label: string;
   description: string;
-  /** Only raw entries with these source IDs are kept */
   sources?: string[];
-  /** Race names to always include even if source doesn't match */
   includeRaces?: string[];
-  /** Race names to always exclude even if source matches */
   excludeRaces?: string[];
-  /** If true, include races whose raw entry has lineage: "VRGR" or lineage: true */
   includeLineages?: boolean;
 }
 
@@ -176,6 +231,10 @@ export const CAMPAIGN_RACE_PRESETS: RacePresetDef[] = [
   { id: 'darkSun', label: 'Dark Sun', description: 'Dark Sun-native races only: Humans, Dwarves, Half-Elves, Halflings, Elves. No data loaded for Half-Giants, Muls, Pterrans, or Thri-kreen.', includeRaces: ['Human', 'Dwarf', 'Half-Elf', 'Halfling', 'Elf'] },
 ];
 
+// 🧠 filterRacesByPreset: applies the race preset rules to filter the full
+//    species list down to what's allowed in this campaign. This is a
+//    "selector" function — it takes data in, returns a filtered copy out.
+//    React components can call this to derive the available races list.
 export function filterRacesByPreset(allSpecies: any[], rawSpecies: any[], presetId: RacePresetId): any[] {
   if (presetId === 'standard') return allSpecies;
   const preset = CAMPAIGN_RACE_PRESETS.find(p => p.id === presetId);
@@ -198,6 +257,13 @@ export function filterRacesByPreset(allSpecies: any[], rawSpecies: any[], preset
   return allSpecies.filter(s => allowedNames.has(s.name));
 }
 
+// =============================================================================
+// 📋 DEITIES / PANTHEONS
+// =============================================================================
+// Campaigns choose a pantheon setting (Forgotten Realms, Greyhawk, etc.)
+// which filters the deity list shown in character creation.
+// =============================================================================
+
 export interface SafetyToolsConfig {
   enabled: boolean;
   type: 'lines-veils' | 'x-card' | 'both';
@@ -216,7 +282,6 @@ export interface PantheonPresetDef {
   id: string;
   label: string;
   description: string;
-  /** deity.pantheon values to filter from deities.json */
   pantheons: string[];
 }
 
@@ -235,6 +300,9 @@ export const CAMPAIGN_PANTHEONS: PantheonPresetDef[] = [
   { id: 'homebrew', label: 'Homebrew / Custom', description: 'Your own pantheon — add custom deities below.', pantheons: [] },
 ];
 
+// 🧠 getDeitiesInPantheon: filters an array of all deities to only those
+//    whose `.pantheon` matches one of the selected pantheon IDs.
+//    Deduplicates by name+pantheon to avoid duplicates from merged sources.
 export function getDeitiesInPantheon(pantheons: string[], allDeities: any[]): any[] {
   const seen = new Set<string>();
   return allDeities.filter(d => {
@@ -245,6 +313,12 @@ export function getDeitiesInPantheon(pantheons: string[], allDeities: any[]): an
     return true;
   });
 }
+
+// =============================================================================
+// 📋 CAMPAIGN CONFIG INTERFACE
+// =============================================================================
+// This is the top-level shape of everything stored per campaign.
+// =============================================================================
 
 export interface CampaignConfig {
   name: string;
@@ -263,6 +337,13 @@ export interface CampaignConfig {
   updatedAt: string;
 }
 
+// =============================================================================
+// 📋 TONE PRESETS
+// =============================================================================
+// Tone themes quickly configure a campaign's mood. Each tone pre-selects
+// certain modules and sets the default rest variant.
+// =============================================================================
+
 export interface TonePreset {
   id: string;
   label: string;
@@ -279,6 +360,17 @@ export const CAMPAIGN_TONES: TonePreset[] = [
   { id: 'epic-myth', label: 'Epic Myth', description: 'Gods walk the earth. Heroes become legends.', autoModules: ['epicBoons', 'heroPoints', 'piety'], restVariant: 'standard' },
   { id: 'dark-sun', label: 'Dark Sun', description: 'Defiling magic drains the land. Survival is everything.', autoModules: ['defiling', 'stressFear', 'grittyRealism'], restVariant: 'gritty-realism' },
 ];
+
+// =============================================================================
+// 📋 MODULE CONFIG DEFAULTS
+// =============================================================================
+// 🧠 This is the LARGEST object in the file. It provides a complete default
+//    configuration for every optional module. When the DM enables a module
+//    for the first time, these defaults are used.
+//
+//    Think of this as the "initial state" for each module's settings —
+//    similar to useState(initialValue) for a component's local state.
+// =============================================================================
 
 export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
   piety: {
@@ -396,6 +488,8 @@ export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
     maxPool: 10,
     resetPerSession: true,
   },
+  // 🧠 Transformations are the most complex config — each type has 4 tiers
+  //    with boons, flaws, and features at each level.
   transformations: {
     types: [
       {
@@ -482,6 +576,7 @@ export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
     ],
     activeTransformations: {},
   },
+  // 🧠 Isekai types: alternate-world origin stories. Each gives unique bonuses.
   isekai: {
     types: [
       { id: 'teleport', label: 'Teleported', description: 'You were physically transported from your original world. Your body and mind remain unchanged, but the transition has left you slightly altered.', bonuses: '+1 to any ability score, one skill proficiency of your choice' },
@@ -492,33 +587,45 @@ export const MODULE_CONFIG_DEFAULTS: ModuleConfigMap = {
   },
 };
 
+// =============================================================================
+// 📋 CAMPAIGN CONFIG CRUD (Create, Read, Update, Delete)
+// =============================================================================
+// 🧠 These are the only "live" parts of this file — they read/write
+//    localStorage. Everything above is static config data.
+//
+//    This pattern (separating "data" from "operations on data") is a core
+//    React principle. The data is imported and used directly. The operations
+//    are called by event handlers in components.
+// =============================================================================
+
 const STORAGE_KEY = 'campaign-config';
 
 function storageKey(campaignId?: string) { return campaignKey(STORAGE_KEY, campaignId); }
 
+// 🧠 loadCampaignConfig: reads from localStorage and merges with defaults.
+//    The spread pattern `{ ...defaults, ...parsed }` ensures that new fields
+//    added in future updates still get their default values if the stored
+//    data is older and doesn't have them yet.
 export function loadCampaignConfig(campaignId?: string): CampaignConfig {
   try {
     const raw = localStorage.getItem(storageKey(campaignId));
     if (raw) {
       const parsed = JSON.parse(raw);
-      return {
-        name: 'Default Campaign',
-        description: '',
-        toneTheme: '',
-        enabledModules: [],
-        moduleConfig: {},
-        restVariant: 'standard' as const,
-        startingLevel: 1,
-        startingGold: 'standard',
-        houseRules: '',
-        safetyTools: { enabled: false, type: 'both', notes: '' },
-        pantheonSetting: '',
-        customDeities: [],
-        updatedAt: new Date().toISOString(),
-        ...parsed,
-      };
+      return { ...makeDefaults(), ...parsed };
     }
   } catch { }
+  // Fall back to LAN campaign config (synced from DM)
+  try {
+    const lanRaw = localStorage.getItem('dd-lan-campaign-config');
+    if (lanRaw) {
+      const parsed = JSON.parse(lanRaw);
+      return { ...makeDefaults(), ...parsed };
+    }
+  } catch {}
+  return makeDefaults();
+}
+
+function makeDefaults(): CampaignConfig {
   return {
     name: 'Default Campaign',
     description: '',
@@ -536,15 +643,22 @@ export function loadCampaignConfig(campaignId?: string): CampaignConfig {
   };
 }
 
+// 🧠 saveCampaignConfig: writes the full config back to localStorage.
+//    This is called when the DM clicks "Save" on the campaign settings page.
 export function saveCampaignConfig(config: CampaignConfig, campaignId?: string): void {
   config.updatedAt = new Date().toISOString();
   localStorage.setItem(storageKey(campaignId), JSON.stringify(config));
 }
 
+// 🧠 clearCampaignConfig: removes the config entirely (used when deleting a campaign).
 export function clearCampaignConfig(campaignId?: string): void {
   localStorage.removeItem(storageKey(campaignId));
 }
 
+// 🧠 getModuleConfig: extracts a single module's config with defaults merged.
+//    The `as any` cast is necessary because TypeScript can't prove the
+//    spread merge at runtime, but we know it's safe because we defined
+//    ModuleConfigMap to match.
 export function getModuleConfig<K extends ModuleId>(config: CampaignConfig, moduleId: K): ModuleConfigMap[K] {
   const defaults = MODULE_CONFIG_DEFAULTS[moduleId];
   const stored = config.moduleConfig[moduleId];
@@ -552,6 +666,9 @@ export function getModuleConfig<K extends ModuleId>(config: CampaignConfig, modu
   return { ...defaults, ...(stored as any) } as ModuleConfigMap[K];
 }
 
+// 🧠 updateModuleConfig: merges partial updates into a module's config.
+//    Returns a NEW CampaignConfig object (immutable update pattern —
+//    like setState({ ...prev, field: newValue }) in React).
 export function updateModuleConfig<K extends ModuleId>(config: CampaignConfig, moduleId: K, partial: Partial<ModuleConfigMap[K]>): CampaignConfig {
   const defaults = MODULE_CONFIG_DEFAULTS[moduleId];
   const existing = config.moduleConfig[moduleId] || {};
@@ -564,7 +681,75 @@ export function updateModuleConfig<K extends ModuleId>(config: CampaignConfig, m
   };
 }
 
+// 🧠 getCampaignLinkCandidate: checks if a campaign name matches an existing
+//    campaign config. Used for the Obsidian vault linking flow.
 export function getCampaignLinkCandidate(campaignName: string): { matched: boolean; config: CampaignConfig } {
   const config = loadCampaignConfig();
   return { matched: config.name === campaignName, config };
+}
+
+// =============================================================================
+// 📋 CAMPAIGN OVERVIEW
+// =============================================================================
+// 🧠 CampaignOverview is a "summary" type — it's not stored directly, but
+//    computed from the campaign registry entry + config + character counts.
+//    This is a great example of "derived state" in React: data that's
+//    calculated from other data rather than stored separately.
+// =============================================================================
+
+export interface CampaignOverview {
+  id: string;
+  name: string;
+  createdAt: string;
+  description: string;
+  toneTheme: string;
+  enabledModuleCount: number;
+  restVariant: string;
+  startingLevel: number;
+  updatedAt: string;
+  characterCount: number;
+  isActive: boolean;
+}
+
+// 🧠 scanAllCampaigns: iterates ALL campaigns in the registry and builds
+//    overview objects. This scans localStorage for character entries to
+//    count how many characters belong to each campaign.
+export function scanAllCampaigns(): CampaignOverview[] {
+  const activeId = getActiveCampaign();
+  const entries = getCampaigns();
+
+  // Count characters per campaign by scanning all localStorage keys
+  const charCounts = new Map<string, number>();
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && key.startsWith(CHAR_STORAGE_PREFIX)) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (raw) {
+          const char = JSON.parse(raw);
+          const cid = char.campaignId;
+          if (cid) {
+            charCounts.set(cid, (charCounts.get(cid) || 0) + 1);
+          }
+        }
+      } catch { /* skip unparseable */ }
+    }
+  }
+
+  return entries.map((entry: CampaignEntry) => {
+    const config = loadCampaignConfig(entry.id);
+    return {
+      id: entry.id,
+      name: entry.name,
+      createdAt: entry.createdAt,
+      description: config.description || '',
+      toneTheme: config.toneTheme || '',
+      enabledModuleCount: config.enabledModules?.length || 0,
+      restVariant: config.restVariant || 'standard',
+      startingLevel: config.startingLevel || 1,
+      updatedAt: config.updatedAt || '',
+      characterCount: charCounts.get(entry.id) || 0,
+      isActive: entry.id === activeId,
+    };
+  });
 }

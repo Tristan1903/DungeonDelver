@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: utils/sync/syncBehavior.ts
+// =============================================================================
+// 🎯 PURPOSE: Documentation-only file explaining the synchronization
+//    architecture of the app. Describes the two sync systems (WebSocket
+//    real-time and Supabase persistent), conflict resolution rules, and
+//    offline mode behavior.
+//
+// 🧠 REACT CONCEPT: Documentation as Code
+//    This file has no runtime code — it exports an empty object. But it
+//    serves as a living design document co-located with the sync code.
+//    Developers can read it without leaving the codebase.
+//
+//    The two sync systems illustrate an important architectural pattern:
+//    - WebSocket: ephemeral, real-time, LAN-only
+//    - Supabase: persistent, campaign-scoped, cloud-based
+//    They operate independently and serve different use cases.
+//
+// 🔧 HOW TO ALTER:
+//    - Update conflict rules: edit the table in this file
+//    - Update sync architecture: modify the descriptions
+//    - Add troubleshooting tips: add entries to the Troubleshooting section
+// =============================================================================
+
 /**
  * DungeonDelver Sync Behavior
  *

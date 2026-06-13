@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/DmPasswordPanel.tsx
+// =============================================================================
+// 🎯 PURPOSE: A password management form for the DM area. Allows setting a new
+//    password, changing an existing one, or removing the lock. Stores the
+//    password hash in localStorage and clears the authenticated flag on change.
+//
+// 🧠 REACT CONCEPT: Controlled Form with Validation
+//    Three controlled inputs (currentPw, newPw, confirmPw) drive the form
+//    state. Validation runs on submit — checking current password match, non-
+//    empty new password, and pass confirmation — with inline error/success
+//    messages displayed via a msg/msgType state pair.
+// =============================================================================
 import { useState } from 'react';
 
 export default function DmPasswordPanel() {

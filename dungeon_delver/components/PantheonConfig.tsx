@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/PantheonConfig.tsx
+// =============================================================================
+// 🎯 PURPOSE: The DM Hub pantheon configuration panel. Lets users select a
+//    campaign setting (Forgotten Realms, Greyhawk, etc.), browse all SRD
+//    deities with search, add custom deities, and view a full deity detail
+//    modal with entries rendering.
+//
+// 🧠 REACT CONCEPT: useState for Multi-Step Forms
+//    Multiple useState hooks manage the form state (selected setting, custom
+//    deity fields, browser search/filter, detail modal). The component composes
+//    inline modals, search results, and form inputs into a unified config view.
+// =============================================================================
 import { useState, useEffect } from 'react';
 import { CAMPAIGN_PANTHEONS, getDeitiesInPantheon, CustomDeity } from '../utils/campaignEngine';
 import { DataEngine } from '../utils/dataLoader';

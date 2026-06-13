@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: MadnessConfig.tsx =====
+// 🎯 PURPOSE: Configures Madness variant tables — three separate string arrays for short-term,
+//   long-term, and indefinite madness effects, each with add/remove/update capabilities.
+// 🧠 REACT CONCEPT: Reusable Section Function — uses a closure-based helper function to avoid
+//   repeating the same array CRUD pattern for three tables, demonstrating DRY functional composition.
+// =====
 export interface MadnessConfigValue { shortTermTable: string[]; longTermTable: string[]; indefiniteTable: string[]; }
 export default function MadnessConfig({ value, onChange }: { value: MadnessConfigValue; onChange: (v: MadnessConfigValue) => void }) {
   const section = (label: string, items: string[], key: 'shortTermTable' | 'longTermTable' | 'indefiniteTable') => (

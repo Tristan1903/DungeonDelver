@@ -1,3 +1,28 @@
+// =============================================================================
+// 📘 FILE: utils/markdownEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Converts characters between the app's JSON format and
+//    Obsidian-compatible Markdown with YAML frontmatter. Handles stats,
+//    spells (as [[wiki-links]]), features, and narrative fields.
+//    Also supports parsing Markdown back into character data, extracting
+//    wiki links, and converting between wiki-link and deep-link formats.
+//
+// 🧠 REACT CONCEPT: Serialization / Deserialization
+//    charToMarkdown "serializes" a Character → Markdown (export).
+//    parseCharacterMarkdown "deserializes" Markdown → ParsedCharacterMd (import).
+//    These are pure functions that transform data between formats — no side effects.
+//
+//    The wiki-link ↔ deep-link conversion (wikiLinksToDeepLinks / deepLinksToWikiLinks)
+//    is a "data transformation pipeline" — pass data through one function
+//    to get display format, through the reverse to get storage format.
+//
+// 🔧 HOW TO ALTER:
+//    - Change Markdown output format: modify charToMarkdown
+//    - Change parsing logic: modify parseCharacterMarkdown or parseMarkdownToChar
+//    - Change frontmatter fields: modify FRONTMATTER_KEYS and FrontmatterFields
+//    - Change link format: modify wikiLinksToDeepLinks / deepLinksToWikiLinks
+// =============================================================================
+
 'use client';
 
 import type { Character } from '../lib/character';
@@ -28,6 +53,7 @@ export interface ParsedCharacterMd {
   notesSections: { heading: string; body: string }[];
   rawBody: string;
   wikiLinks: string[];
+  rawFrontmatter: Record<string, string>;
 }
 
 const WIKI_LINK_RE = /\[\[([^\]]+)\]\]/g;
@@ -48,9 +74,19 @@ function statLabel(s: string): string {
   return map[s] || s.toUpperCase();
 }
 
+function fmVal(v: any): string {
+  if (v === null || v === undefined) return '';
+  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);
+  return JSON.stringify(v);
+}
+
+// 🧠 charToMarkdown: converts a Character to Obsidian Markdown with YAML
+//    frontmatter. The output includes stats table, spells as [[wiki-links]],
+//    features list, and narrative fields (personality, ideals, etc.).
 export function charToMarkdown(char: Character, vaultPath?: string): string {
   const ac = extractAc(char);
-  const frontmatter: FrontmatterFields = {
+  const stats = char.baseStats || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+  const frontmatter: Record<string, any> = {
     name: char.name || 'Unnamed',
     class: char.classes?.join('/') || char.class || '',
     level: char.totalLevel || 1,
@@ -63,14 +99,32 @@ export function charToMarkdown(char: Character, vaultPath?: string): string {
     last_sync: new Date().toISOString(),
   };
 
-  const fmLines = Object.entries(frontmatter).map(([k, v]) => `${k}: ${v}`);
+  if (char.race) frontmatter.race = char.race;
+  if (char.background) frontmatter.background = char.background;
+  if (char.xp) frontmatter.xp = char.xp;
+  for (const [k, v] of Object.entries(stats)) frontmatter[k] = v;
+
+  if (char.classLevels?.length) frontmatter.class_levels = char.classLevels;
+  if (char.inventory?.length) frontmatter.inventory = char.inventory;
+  if (char.currency) frontmatter.currency = char.currency;
+  if (char.proficiencies?.length) frontmatter.proficiencies = char.proficiencies;
+  if (char.expertise?.length) frontmatter.expertise = char.expertise;
+  if (char.savingThrowProficiencies?.length) frontmatter.saving_throws = char.savingThrowProficiencies;
+  if (char.attunementSlots !== undefined) frontmatter.attunement_slots = char.attunementSlots;
+  if (char.physical) frontmatter.physical = char.physical;
+  if (char.organizations?.length) frontmatter.organizations = char.organizations;
+  if (char.allies?.length) frontmatter.allies = char.allies;
+  if (char.enemies?.length) frontmatter.enemies = char.enemies;
+  if (char.resources && Object.keys(char.resources).length) frontmatter.resources = char.resources;
+  if (char.spellSlots && Object.keys(char.spellSlots).length) frontmatter.spell_slots = char.spellSlots;
+  if (char.levelingMode) frontmatter.leveling_mode = char.levelingMode;
+
+  const fmLines = Object.entries(frontmatter).map(([k, v]) => `${k}: ${fmVal(v)}`);
   const fm = `---\n${fmLines.join('\n')}\n---`;
 
   const classLine = char.classes?.length ? char.classes.join('/') : char.class || '';
   const bgLine = char.background || '';
   const raceLine = char.race || '';
-
-  const stats = char.baseStats || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
 
   const statsTable = [
     `| ${Object.keys(stats).map(statLabel).join(' | ')} |`,
@@ -134,6 +188,9 @@ export function charToMarkdown(char: Character, vaultPath?: string): string {
   return `${fm}\n\n${sections.join('\n')}`;
 }
 
+// 🧠 parseCharacterMarkdown: the reverse of charToMarkdown. Parses YAML
+//    frontmatter, extracts stats table, wiki-link spells, features, and
+//    narrative sections from the Markdown body. Returns a structured object.
 export function parseCharacterMarkdown(md: string): ParsedCharacterMd {
   const result: ParsedCharacterMd = {
     frontmatter: { name: '', class: '', level: 1, hp_current: 10, hp_max: 10, ac: 10, campaign: '', status: 'alive', version: 1, last_sync: '' },
@@ -143,11 +200,12 @@ export function parseCharacterMarkdown(md: string): ParsedCharacterMd {
     notesSections: [],
     rawBody: md,
     wikiLinks: [],
+    rawFrontmatter: {},
   };
 
   let body = md.trim();
 
-  // Parse frontmatter
+  // Parse frontmatter (YAML between --- delimiters)
   if (body.startsWith('---')) {
     const endIdx = body.indexOf('---', 3);
     if (endIdx !== -1) {
@@ -156,20 +214,34 @@ export function parseCharacterMarkdown(md: string): ParsedCharacterMd {
       for (const line of fmBlock.split('\n')) {
         const colonIdx = line.indexOf(':');
         if (colonIdx === -1) continue;
-        const key = line.slice(0, colonIdx).trim() as keyof FrontmatterFields;
+        const key = line.slice(0, colonIdx).trim();
         const val = line.slice(colonIdx + 1).trim();
+        result.rawFrontmatter[key] = val;
+
+        // Standard DungeonDelver frontmatter keys
         if (key === 'level' || key === 'hp_current' || key === 'hp_max' || key === 'ac' || key === 'version') {
           (result.frontmatter as any)[key] = parseInt(val, 10) || 0;
         } else if (key === 'last_sync') {
           result.frontmatter.last_sync = val;
-        } else if (FRONTMATTER_KEYS.includes(key)) {
+        } else if (FRONTMATTER_KEYS.includes(key as any)) {
           (result.frontmatter as any)[key] = val;
+        }
+
+        // Obsidian vault frontmatter aliases
+        if (key === 'character_name') {
+          result.frontmatter.name = val;
+        }
+        if (key === 'hp') {
+          result.frontmatter.hp_current = parseInt(val, 10) || 10;
+        }
+        if (['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(key)) {
+          result.stats[key as keyof typeof result.stats] = parseInt(val, 10) || 10;
         }
       }
     }
   }
 
-  // Extract wiki links
+  // Extract wiki links ([[link]])
   const wl: string[] = [];
   let m: RegExpExecArray | null;
   const wlRe = new RegExp(WIKI_LINK_RE.source, 'g');
@@ -178,7 +250,7 @@ export function parseCharacterMarkdown(md: string): ParsedCharacterMd {
   }
   result.wikiLinks = wl;
 
-  // Extract spells
+  // Extract spells (lines starting with "- [[")
   const spellLines = body.split('\n').filter(l => l.trim().startsWith('- [['));
   result.spells = spellLines.map(l => l.replace(WIKI_LINK_RE, '$1').replace(/^-\s*/, '').trim());
 
@@ -188,13 +260,13 @@ export function parseCharacterMarkdown(md: string): ParsedCharacterMd {
     result.features = featureSection[1].split('\n').map(l => l.replace(/^-\s*/, '').trim()).filter(Boolean);
   }
 
-  // Extract stats table
+  // Extract stats table (regex matches the markdown table with 6 columns)
   const statMatch = body.match(/\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|\s*(STR|DEX|CON|INT|WIS|CHA)\s*\|[\s\S]*?\n\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|/);
   if (statMatch) {
     result.stats = { str: parseInt(statMatch[7], 10), dex: parseInt(statMatch[8], 10), con: parseInt(statMatch[9], 10), int: parseInt(statMatch[10], 10), wis: parseInt(statMatch[11], 10), cha: parseInt(statMatch[12], 10) };
   }
 
-  // Capture note sections
+  // Capture note sections by heading
   const headings = ['Personality Traits', 'Ideals', 'Bonds', 'Flaws', 'Backstory', 'Adventure Notes'];
   for (const h of headings) {
     const re = new RegExp(`## ${h}\\s*\\n([\\s\\S]*?)(?=\\n## |$)`, '');
@@ -218,7 +290,8 @@ export function extractWikiLinks(md: string): string[] {
   return links;
 }
 
-/** Convert [[wiki-links]] to dd-app:// URLs in markdown text */
+// 🧠 wikiLinksToDeepLinks: converts [[wiki-links]] to dd-app:// URLs
+//    for display in the app's rich text viewer.
 export function wikiLinksToDeepLinks(md: string): string {
   return md.replace(WIKI_LINK_RE, (_m, name: string) => {
     const encoded = encodeURIComponent(name.trim());
@@ -226,23 +299,52 @@ export function wikiLinksToDeepLinks(md: string): string {
   });
 }
 
-/** Convert dd-app:// URLs back to [[wiki-links]] */
+// 🧠 deepLinksToWikiLinks: the reverse — converts dd-app:// URLs back
+//    to [[wiki-links]] for export to Obsidian.
 export function deepLinksToWikiLinks(md: string): string {
   return md.replace(/\[([^\]]+)\]\(dd-app:\/\/[^)]+\)/g, '[[$1]]');
 }
 
+// 🧠 parseMarkdownToChar: full parse → Partial<Character> conversion.
+//    Takes raw Markdown and produces a character object that can be
+//    loaded into the app. Preserves existing character fields via spread.
 export function parseMarkdownToChar(md: string, existingChar?: Partial<Character>): Partial<Character> {
   const parsed = parseCharacterMarkdown(md);
   const fm = parsed.frontmatter;
 
+  const rf = parsed.rawFrontmatter;
+
+  function tryJson<T>(val: string | undefined, fallback: T): T {
+    if (!val) return fallback;
+    try { return JSON.parse(val) as T; } catch { return fallback; }
+  }
+
   const char: Partial<Character> = {
     ...existingChar,
     name: fm.name || existingChar?.name || 'Imported',
+    race: rf.race || existingChar?.race || '',
+    class: (rf.class || '').replace(/ \[2024\]/g, ''),
+    background: rf.background || existingChar?.background || '',
     campaignName: fm.campaign || existingChar?.campaignName,
     totalLevel: fm.level || existingChar?.totalLevel || 1,
     level: fm.level || existingChar?.level || 1,
+    xp: parseInt(rf.xp, 10) || existingChar?.xp || 0,
     hp: { current: fm.hp_current, max: fm.hp_max, temp: existingChar?.hp?.temp || 0 },
     baseStats: { str: parsed.stats.str || 10, dex: parsed.stats.dex || 10, con: parsed.stats.con || 10, int: parsed.stats.int || 10, wis: parsed.stats.wis || 10, cha: parsed.stats.cha || 10 },
+    classLevels: tryJson<any[]>(rf.class_levels, existingChar?.classLevels || [{ className: fm.class || 'Fighter', level: fm.level || 1 }]),
+    inventory: tryJson(rf.inventory, existingChar?.inventory || []),
+    currency: tryJson(rf.currency, existingChar?.currency ?? { pp: 0, gp: 0, ep: 0, sp: 0, cp: 0 }),
+    proficiencies: tryJson(rf.proficiencies, existingChar?.proficiencies || []),
+    expertise: tryJson(rf.expertise, existingChar?.expertise || []),
+    savingThrowProficiencies: tryJson(rf.saving_throws, existingChar?.savingThrowProficiencies || []),
+    attunementSlots: rf.attunement_slots ? parseInt(rf.attunement_slots, 10) : existingChar?.attunementSlots,
+    physical: tryJson(rf.physical, existingChar?.physical),
+    organizations: tryJson(rf.organizations, existingChar?.organizations || []),
+    allies: tryJson(rf.allies, existingChar?.allies || []),
+    enemies: tryJson(rf.enemies, existingChar?.enemies || []),
+    resources: tryJson(rf.resources, existingChar?.resources),
+    spellSlots: tryJson(rf.spell_slots, existingChar?.spellSlots),
+    levelingMode: (rf.leveling_mode as any) || existingChar?.levelingMode || 'milestone',
     spells: { cantrips: [], known: [], prepared: [] },
     features: [],
     notes: '',
@@ -270,12 +372,10 @@ export function parseMarkdownToChar(md: string, existingChar?: Partial<Character
     };
   }
 
-  // Features from markdown
   if (parsed.features.length) {
     char.features = parsed.features.map(f => ({ name: f, level: char.totalLevel || 1, source: 'imported' }));
   }
 
-  // Note fields from sections
   for (const sec of parsed.notesSections) {
     const fieldMap: Record<string, string> = {
       'Personality Traits': 'personalityTraits',

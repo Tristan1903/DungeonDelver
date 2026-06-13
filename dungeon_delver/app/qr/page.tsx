@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/qr/page.tsx =====
+// 🎯 PURPOSE: QR code handout generator — type or select a preset text, generate a styled QR code
+//   using the `qrcode` library, and download as PNG.
+// 🧠 REACT CONCEPT: useRef + Third-Party Library Integration — demonstrates using useRef to
+//   hold a canvas element reference (for the QR library) while primarily rendering via data URL
+//   (toDataURL). Also shows preset selection with auto-generation.
+// =====
 import { useState, useRef } from 'react';
 import QRCode from 'qrcode';
 

@@ -1,3 +1,25 @@
+// =============================================================================
+// 📘 FILE: components/ui/avatar.tsx
+// =============================================================================
+// 🎯 PURPOSE: Avatar component with image, fallback (initials/icon), badge,
+//    and group display. Built on @base-ui/react's Avatar primitive.
+//    Supports sizes: sm, default, lg. The group variant stacks avatars
+//    with negative margin overlap and a count indicator.
+//
+// 🧠 REACT CONCEPT: Compound Component + Group Styling
+//    AvatarGroup uses `-space-x-2` to overlap avatars and `data-[slot=avatar]:ring-2`
+//    to add rings that separate them visually. AvatarGroupCount shows "+N"
+//    for remaining items. Styling coordination uses CSS group selectors:
+//    `group-data-[size=lg]/avatar:size-10` means "when the parent group
+//    has size=lg, this element is 10 units tall."
+//
+// 🔧 HOW TO ALTER:
+//    - Change avatar size: add/modify the `size` variants
+//    - Change group overlap: modify `-space-x-2` in AvatarGroup
+//    - Change badge style: modify AvatarBadge className
+//    - Change fallback style: modify AvatarFallback className
+// =============================================================================
+
 "use client"
 
 import * as React from "react"

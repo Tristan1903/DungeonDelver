@@ -1,4 +1,11 @@
 ﻿'use client';
+// ===== 📘 FILE: app/notes/page.tsx =====
+// 🎯 PURPOSE: Notes and messaging — tabbed interface with private messages (Player↔DM),
+//   personal notes, and session notes. All data persisted to localStorage.
+// 🧠 REACT CONCEPT: Tabbed Interface + localStorage Persistence — demonstrates managing multiple
+//   content types under tabs, with immediate save-to-localStorage on every edit. Messages are
+//   reversed with useMemo for chronological display.
+// =====
 import { useEffect, useMemo, useState } from 'react';
 import { campaignKey } from '../../utils/campaignStorage';
 

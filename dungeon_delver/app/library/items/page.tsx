@@ -1,12 +1,20 @@
 'use client';
+// ===== 📘 FILE: app/library/items/page.tsx =====
+// 🎯 PURPOSE: Items library — searchable, grouped-by-type item browser with homebrew
+//   support and a detail modal via ItemDetail component.
+// 🧠 REACT CONCEPT: Grouped Data Rendering — loads items and groups them by type label,
+//   sorted by type rank, then renders each group with filtered item rows.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { loadHBItems } from '../../../utils/homebrewEngine';
 import { getItemTypeLabel, getItemTypeRank } from '../../../utils/libraryHelpers';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 import ItemDetail from '../../../components/ItemDetail';
 
 export default function ItemsPage() {
+  const isMobile = useIsMobile();
   const [allItems, setAllItems] = useState<any[]>([]);
   const [itemTypeGroups, setItemTypeGroups] = useState<Record<string, any[]>>({});
   const [search, setSearch] = useState('');
@@ -35,7 +43,7 @@ export default function ItemsPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Items
         </h1>

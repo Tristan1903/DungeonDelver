@@ -1,3 +1,29 @@
+// =============================================================================
+// 📘 FILE: utils/deepLinkEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Deep linking system that allows cross-referencing content
+//    within the app via `dd-app://` protocol URLs. Supports targets:
+//    character, spell, item, monster, feature, campaign, library, or
+//    arbitrary page paths. Used by the Obsidian vault integration to
+//    create clickable links back to app content.
+//
+// 🧠 REACT CONCEPT: URL Routing Abstraction
+//    Instead of hard-coding routes everywhere, this file provides a
+//    "routing language" (dd-app:// URLs) that gets parsed and resolved
+//    to actual app routes. This is similar to how React Router uses
+//    path matching — the link target is abstract, and resolveDeepLink
+//    converts it to a concrete URL.
+//
+//    If you change the app's routing structure, you only need to update
+//    resolveDeepLink() — all existing deep links still work.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new link type: add a case to parseDeepLink, buildDeepLink,
+//      and resolveDeepLink
+//    - Change the URL prefix: modify PREFIX constant
+//    - Change route patterns: modify resolveDeepLink
+// =============================================================================
+
 'use client';
 
 export interface DeepLinkTarget {
@@ -10,6 +36,8 @@ export interface DeepLinkTarget {
 
 const PREFIX = 'dd-app://';
 
+// 🧠 parseDeepLink: converts a string like `dd-app://spell/Fireball`
+//    into a structured DeepLinkTarget object. This is "deserialization."
 export function parseDeepLink(url: string): DeepLinkTarget | null {
   if (!url.startsWith(PREFIX)) return null;
 
@@ -38,6 +66,8 @@ export function parseDeepLink(url: string): DeepLinkTarget | null {
   }
 }
 
+// 🧠 buildDeepLink: the reverse — converts a DeepLinkTarget back to a
+//    `dd-app://` URL string. This is "serialization."
 export function buildDeepLink(target: DeepLinkTarget): string {
   switch (target.type) {
     case 'character':
@@ -61,7 +91,8 @@ export function buildDeepLink(target: DeepLinkTarget): string {
   }
 }
 
-/** Resolve a deep link target to an app route */
+// 🧠 resolveDeepLink: converts a DeepLinkTarget to an actual app route.
+//    This is where you map each type to a Next.js App Router path.
 export function resolveDeepLink(target: DeepLinkTarget): string {
   switch (target.type) {
     case 'character':
@@ -85,7 +116,9 @@ export function resolveDeepLink(target: DeepLinkTarget): string {
   }
 }
 
-/** Try to extract a deep link from a line of text */
+// 🧠 extractDeepLinkFromText: scans a line of text for any dd-app:// URL
+//    and returns the first match as a parsed DeepLinkTarget. Used when
+//    rendering note content that may contain inline deep links.
 export function extractDeepLinkFromText(text: string): DeepLinkTarget | null {
   const re = /dd-app:\/\/[^\s)]+/g;
   const m = re.exec(text);

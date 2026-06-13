@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: DarkGiftsConfig.tsx =====
+// 🎯 PURPOSE: Configuration panel for Dark Gifts — allows DMs to define custom dark gifts with
+//   name, description, and mechanical effect. Supports dynamic add/remove of gifts.
+// 🧠 REACT CONCEPT: Array CRUD with Controlled Components — manages a dynamic list of objects using
+//   immutable update patterns (map/filter spread) to add, edit, and remove items while preserving state.
+// =====
 export interface DarkGiftsConfigValue {
   gifts: { name: string; description: string; mechanicalEffect: string }[];
 }

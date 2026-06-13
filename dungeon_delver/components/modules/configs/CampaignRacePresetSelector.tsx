@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: CampaignRacePresetSelector.tsx =====
+// 🎯 PURPOSE: Dropdown selector for campaign-wide race restrictions during character creation.
+//   Reads available presets from campaignEngine and shows the current preset's description.
+// 🧠 REACT CONCEPT: Controlled Select Element — the <select> value is driven by props and changes
+//   are emitted upward via onChange, keeping the parent as the single source of truth.
+// =====
 import { CAMPAIGN_RACE_PRESETS, type RacePresetId } from '../../../utils/campaignEngine';
 
 interface Props {

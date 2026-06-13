@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: RenownConfig.tsx =====
+// 🎯 PURPOSE: Configures faction renown — list of factions, each with a name and an array of
+//   rank thresholds (score + title).
+// 🧠 REACT CONCEPT: Two-Level Nested Array CRUD — demonstrates managing factions (outer array)
+//   each containing ranks (inner array), requiring careful immutable updates at both levels.
+// =====
 export interface RenownConfigValue {
   factions: { name: string; ranks: { score: number; title: string }[] }[];
 }

@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/tables/page.tsx =====
+// 🎯 PURPOSE: Random table engine — browse data tables, roll on them, create custom tables
+//   with roll ranges, and view roll history.
+// 🧠 REACT CONCEPT: Tabbed Browse + Custom Builder — two tabs: "Browse & Roll" shows a searchable
+//   grid of all tables (data + custom) with a selected table detail panel, and "Custom Tables"
+//   provides a table builder with row add/delete and roll history tracking.
+// =====
 import { useState, useEffect } from 'react';
 import {
   NamedTable, CustomTable, TableRow,

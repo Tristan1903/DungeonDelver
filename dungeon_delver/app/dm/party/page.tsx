@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/party/page.tsx =====
+// 🎯 PURPOSE: Party management — load character files, roll/manual-set initiative, push
+//   selected/all characters to the combat tracker via sessionStorage.
+// 🧠 REACT CONCEPT: Character Lobby + SessionStorage Bridge — manages a list of loaded characters
+//   with per-character initiative rolling (auto or manual), selection checkboxes, and pushes
+//   combatant data to sessionStorage for the combat tracker to pick up on navigation.
+// =====
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';

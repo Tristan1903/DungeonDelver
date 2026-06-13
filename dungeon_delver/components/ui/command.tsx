@@ -1,3 +1,27 @@
+// =============================================================================
+// 📘 FILE: components/ui/command.tsx
+// =============================================================================
+// 🎯 PURPOSE: Command palette / search component built on the `cmdk` library.
+//    Provides a search input with grouped/filterable results, keyboard
+//    navigation, and optional dialog mode (CommandDialog). Supports
+//    checkable items and keyboard shortcut hints.
+//
+// 🧠 REACT CONCEPT: Command Palette Pattern + Composition
+//    cmdk handles the search/filter logic internally — typing in the input
+//    automatically filters CommandItem children. CommandDialog wraps cmdk
+//    in a Dialog for full-screen search (⌘K pattern).
+//
+//    The cmdk library uses React Context internally: Command stores the
+//    search state, CommandInput updates it, CommandList/CommandItem react
+//    to it. This is similar to how @base-ui/react components manage state.
+//
+// 🔧 HOW TO ALTER:
+//    - Change search filter: cmdk handles it; no customization needed
+//    - Change dialog title: modify the title prop on CommandDialog
+//    - Change item style: modify CommandItem className
+//    - Change empty state: wrap CommandEmpty with custom content
+// =============================================================================
+
 "use client"
 
 import * as React from "react"

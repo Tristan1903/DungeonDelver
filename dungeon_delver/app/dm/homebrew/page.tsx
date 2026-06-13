@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/homebrew/page.tsx =====
+// 🎯 PURPOSE: Homebrew editor — CRUD for custom items, monsters, and spells stored in localStorage.
+//   Tabbed interface with sidebar list + editor panel, plus JSON import/export.
+// 🧠 REACT CONCEPT: Tabbed CRUD with Shared Pattern — three entity types (items/monsters/spells)
+//   each follow the same list+form pattern via reusable Input/Select/EditorPanel sub-components,
+//   demonstrating DRY component composition.
+// =====
 import { useState, useEffect } from 'react';
 import {
   HomebrewItem, HomebrewMonster, HomebrewSpell,

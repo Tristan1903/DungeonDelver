@@ -1,12 +1,21 @@
 'use client';
+// ===== 📘 FILE: app/library/classes/page.tsx =====
+// 🎯 PURPOSE: Classes library — expandable class cards with class theme colors, icons,
+//   and lazy-loaded feature data.
+// 🧠 REACT CONCEPT: Lazy Data Loading + Expand/Collapse — demonstrates on-demand data fetching:
+//   class features are loaded only when the user clicks to expand a class card, using a
+//   state cache to avoid re-fetching.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { CLASS_LIST } from '../../../utils/libraryHelpers';
 import { CLASS_THEMES } from '../../../utils/classThemes';
 import { classIconPath } from '../../../utils/imgPaths';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 
 export default function ClassesPage() {
+  const isMobile = useIsMobile();
   const [expandedClass, setExpandedClass] = useState<string | null>(null);
   const [classDataCache, setClassDataCache] = useState<Record<string, any>>({});
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -22,7 +31,7 @@ export default function ClassesPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Classes
         </h1>

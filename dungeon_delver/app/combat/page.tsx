@@ -1,4 +1,13 @@
 'use client';
+// ===== 📘 FILE: app/combat/page.tsx =====
+// 🎯 PURPOSE: Full combat tracker — initiative management, monster browser, HP tracking,
+//   condition badges, concentration checks, damage calculator with resistance/immunity/vulnerability,
+//   encounter save/load, and XP award calculation.
+// 🧠 REACT CONCEPT: Complex State Management — uses 20+ useState hooks for UI state,
+//   useEffect for data loading and sessionStorage restoration, and functional updates
+//   (prev => ...) for reliable state transitions. Demonstrates the "CombatantCard" compound
+//   component pattern with deeply nested state callbacks.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../utils/dataLoader';
 import { formatValue, formatEntries, cleanString } from '../../utils/formatters';
@@ -16,6 +25,7 @@ import {
 } from '../../utils/activeEffects';
 import { rollActionSimple } from '../../utils/actionRoller';
 import { concentrationSaveDC } from '../../utils/spellcastingEngine';
+import ProjectionButton from '../../components/ProjectionButton';
 
 export interface Combatant {
   id: number;
@@ -500,6 +510,11 @@ export default function CombatTracker() {
               <button onClick={nextTurn} style={{ padding: '6px 16px', background: '#c9a84c', border: 'none', color: '#000', borderRadius: '6px', cursor: 'pointer', fontSize: '0.75rem', fontWeight: 'bold' }}>Next Turn →</button>
               <button onClick={saveEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Save</button>
               <button onClick={loadEncounter} style={{ padding: '6px 10px', background: 'transparent', border: '1px solid #3d3528', color: '#5a5248', borderRadius: '6px', cursor: 'pointer', fontSize: '0.7rem' }}>Load</button>
+              <ProjectionButton contentType="combat" content={{
+                combatants: initiativeList.map(c => ({ name: c.name, initiative: c.initiative, currentHp: c.currentHp, maxHp: c.maxHp, ac: c.ac, conditions: c.conditions, isPc: c.isPc })),
+                turn: turnIndex + 1,
+                total: initiativeList.length,
+              }} label="📺 Combat" />
             </div>
           </div>
 
@@ -611,7 +626,21 @@ export default function CombatTracker() {
       {selectedMonster && (
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
           <div style={{ background: '#1a1714', color: '#e8dcc8', padding: '24px', borderRadius: 'var(--dungeon-radius-md)', width: '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #c9a84c' }}>
-            <h2 style={{ color: '#c9a84c', marginBottom: '4px' }}>{selectedMonster.name}</h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <h2 style={{ color: '#c9a84c', marginBottom: '4px' }}>{selectedMonster.name}</h2>
+              <ProjectionButton contentType="monster" content={{
+                name: selectedMonster.name,
+                type: selectedMonster.type,
+                ac: selectedMonster.ac,
+                hp: selectedMonster.hp,
+                speed: selectedMonster.speed,
+                str: selectedMonster.str, dex: selectedMonster.dex, con: selectedMonster.con,
+                int: selectedMonster.int, wis: selectedMonster.wis, cha: selectedMonster.cha,
+                traits: selectedMonster.trait?.map((t: any) => ({ name: t.name, text: t.entries?.slice(0, 2) })),
+                actions: selectedMonster.action?.map((a: any) => ({ name: a.name })),
+                cr: selectedMonster.cr,
+              }} label="📺 Show Players" />
+            </div>
             <p style={{ fontStyle: 'italic', fontSize: '0.85rem', color: '#5a5248', marginBottom: '12px' }}>
               {selectedMonster.size?.[0] || ''} {(() => { const t = selectedMonster.type; return typeof t === 'string' ? t : t?.type || ''; })()}
               {(() => { const a = selectedMonster.alignment; if (!a) return ''; return `, ${Array.isArray(a) ? a.join(', ') : a}`; })()}

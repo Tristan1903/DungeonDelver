@@ -1,3 +1,32 @@
+// =============================================================================
+// 📘 FILE: components/ui/sheet.tsx
+// =============================================================================
+// 🎯 PURPOSE: A slide-out panel (also known as a "drawer") that appears from
+//    any of the 4 sides (top/right/bottom/left). Built on @base-ui/react's
+//    Dialog primitive (same as dialog.tsx, but styled as a sliding panel).
+//    Includes backdrop overlay, close button, header/footer slots, and
+//    animated entrance/exit via CSS transitions.
+//
+// 🧠 REACT CONCEPT: Portal + Transition States — Same Primitive, Different Look
+//    Like the Dialog component, this uses DialogPrimitive (Portal, Backdrop,
+//    Popup). The key difference is that the Popup is positioned at the edge
+//    (data-[side=right]:right-0) and slides in via translate-Y/translate-X.
+//    @base-ui/react adds `data-starting-style` / `data-ending-style` data
+//    attributes during mount/unmount for CSS transition-based animations
+//    (no JS animation library needed).
+//
+//    The `render` prop on SheetPrimitive.Close shows how @base-ui/react
+//    lets you swap the rendered HTML tag: instead of a default <button>,
+//    it renders our custom <Button> component while keeping its own close
+//    event handler attached.
+//
+// 🔧 HOW TO ALTER:
+//    - Change slide distance: modify translate-[2.5rem] values per side
+//    - Change sheet width: modify `w-3/4` / `sm:max-w-sm` per breakpoint
+//    - Change overlay opacity/animation: modify bg-black/10 + opacity classes
+//    - Remove close button: set showCloseButton={false}
+// =============================================================================
+
 "use client"
 
 import * as React from "react"
@@ -70,8 +99,7 @@ function SheetContent({
               />
             }
           >
-            <XIcon
-            />
+            <XIcon />
             <span className="sr-only">Close</span>
           </SheetPrimitive.Close>
         )}
@@ -104,10 +132,7 @@ function SheetTitle({ className, ...props }: SheetPrimitive.Title.Props) {
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn(
-        "font-heading text-base font-medium text-foreground",
-        className
-      )}
+      className={cn("font-heading text-base font-medium text-foreground", className)}
       {...props}
     />
   )

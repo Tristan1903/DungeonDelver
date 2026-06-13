@@ -1,4 +1,17 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/MonsterDetail.tsx
+// =============================================================================
+// 🎯 PURPOSE: A modal overlay that renders a full monster statblock: size/type/
+//    alignment, AC/HP/speed, ability scores with modifiers, saving throws,
+//    skills, resistances/immunities, senses, languages, CR, traits, actions,
+//    reactions, and legendary actions. Used in the Library monster browser.
+//
+// 🧠 REACT CONCEPT: Data-Driven Conditional Rendering
+//    Sections like traits, actions, reactions, and legendary actions are mapped
+//    from arrays with `?.length > 0` guards. Helper functions (getTypeLabel,
+//    formatCR, etc.) centralize data formatting logic outside the JSX.
+// =============================================================================
 import { ABILITY_KEYS, ABILITY_LABELS, getTypeLabel, formatCR, formatSpeed, formatAC, renderEntries } from '../utils/libraryHelpers';
 import { formatEntries, cleanString } from '../utils/formatters';
 

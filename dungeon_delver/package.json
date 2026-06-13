@@ -8,7 +8,9 @@
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 next build",
     "start": "next start",
     "lint": "eslint",
-    "sync-server": "node server/sync-server.js"
+    "sync-server": "node server/sync-server.js",
+    "game-server": "node server/game-server.js",
+    "game-server:dev": "cross-env DEV_PROXY=http://localhost:3000 node server/game-server.js"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",

@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: SupernaturalRegionsConfig.tsx =====
+// 🎯 PURPOSE: Configures supernatural regions — each region has a name, type (magical/cursed/hallowed),
+//   and a textarea for effects description.
+// 🧠 REACT CONCEPT: Select + Textarea in Array CRUD — demonstrates a controlled dropdown and textarea
+//   within dynamic list items, updating immutably via map+spread.
+// =====
 export interface SupernaturalRegionsConfigValue {
   regions: { name: string; type: string; effects: string }[];
 }

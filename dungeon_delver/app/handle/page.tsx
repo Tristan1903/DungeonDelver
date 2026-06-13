@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/handle/page.tsx =====
+// 🎯 PURPOSE: Deep link handler — receives an Obsidian-style `url` param, parses it, and
+//   redirects to the appropriate internal route.
+// 🧠 REACT CONCEPT: Suspense + useSearchParams — demonstrates the Next.js pattern for accessing
+//   search params in client components: wrap the consuming component in <Suspense> because
+//   useSearchParams() triggers client-side rendering that needs a fallback boundary.
+// =====
 import { Suspense } from 'react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';

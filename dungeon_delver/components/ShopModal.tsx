@@ -1,4 +1,22 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/ShopModal.tsx
+// =============================================================================
+// 🎯 PURPOSE: A full equipment shop modal with category tabs, text search,
+//    item grid, cart management with quantity controls, and a checkout flow.
+//    Filters out magic/rare items and sorts by name.
+//
+// 🧠 REACT CONCEPT: useMemo for Filtered & Sorted Lists
+//    `mundaneItems` and `filteredItems` are computed with `useMemo` so they are
+//    only recalculated when their dependencies (allItems, category, search)
+//    change. `cartTotal` is also memoized. This avoids recomputing the entire
+//    filtered list on every render — especially important for large item arrays.
+//
+// 🧠 REACT CONCEPT: Lifting State Up (onPurchase callback)
+//    The shop doesn't own the gold or inventory — it receives `goldAvailable`
+//    and calls `onPurchase` with the final cart. The parent (e.g. character
+//    sheet or DM hub) handles deducting gold and adding items to inventory.
+// =============================================================================
 import { useState, useMemo, useEffect } from 'react';
 import { InventoryItem } from '../lib/character';
 

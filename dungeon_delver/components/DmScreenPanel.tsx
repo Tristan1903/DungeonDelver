@@ -1,8 +1,36 @@
+// =============================================================================
+// 📘 FILE: components/DmScreenPanel.tsx
+// =============================================================================
+// 🎯 PURPOSE: The DM Screen — a quick reference panel with conditions, DCs,
+//    cover rules, light/vision, exhaustion, travel pace, and DM password mgmt.
+//
+// 🧠 REACT CONCEPT: Tabbed Content (Simple State-Driven Tabs)
+//    This component implements tabs WITHOUT a library — just a `useState` for
+//    the active section ID, and conditional rendering (if/else chain) to show
+//    the right content. This is the simplest and most educational way to do tabs.
+//
+//    The sections array defines all available tabs, and the buttons map over it.
+//    Clicking a button sets activeSection, which re-renders to show the right content.
+//
+// 🧠 REACT CONCEPT: Async Data Loading with useEffect
+//    Conditions are loaded from a JSON file via DataEngine.getConditions().
+//    The useEffect runs once on mount, fetches the data, and stores it in state.
+//    While loading, it shows "Loading conditions..." as a placeholder.
+//
+// 🔧 HOW TO ALTER:
+//    - Add a new section: add an entry to the sections array + a conditional
+//      render block (if activeSection === 'yourId') with your content
+//    - Add more DCs / Cover rules: modify the DC_TABLE / COVER_RULES arrays
+//    - Change the styling: modify the inline style objects
+//    - Use Tailwind instead: replace style={} with className=""
+// =============================================================================
+
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../utils/dataLoader';
 import { cleanString } from '../utils/formatters';
 import DmPasswordPanel from './DmPasswordPanel';
 
+// 🧠 Static data tables (no state needed — they never change)
 const DC_TABLE = [
   { task: 'Very Easy', dc: 5 },
   { task: 'Easy', dc: 10 },
@@ -48,6 +76,8 @@ const SKILL_DCS = [
   { dc: 30, task: 'Nearly impossible' },
 ];
 
+// 🧠 Section definitions — SOURCE OF TRUTH for the tab navigation.
+//    Adding an entry here creates a new tab button.
 const sections = [
   { id: 'conditions', label: 'Conditions' },
   { id: 'dcs', label: 'Common DCs' },
@@ -59,9 +89,11 @@ const sections = [
 ];
 
 export default function DmScreenPanel({ compact }: { compact?: boolean }) {
+  // 🧠 State: the data (loaded async) and the active tab
   const [conditions, setConditions] = useState<any[]>([]);
   const [activeSection, setActiveSection] = useState<string>('conditions');
 
+  // 🧠 Load conditions data on mount (async fetch from JSON files)
   useEffect(() => {
     DataEngine.getConditions().then(setConditions);
   }, []);
@@ -72,7 +104,7 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         <h2 style={{ color: 'var(--dungeon-gold, #b8860b)', fontFamily: 'serif', margin: '0 0 16px' }}>DM Screen</h2>
       )}
 
-      {/* Section nav */}
+      {/* 🧠 Tab navigation buttons — map over sections array */}
       <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginBottom: '16px' }}>
         {sections.map(s => (
           <button key={s.id} onClick={() => setActiveSection(s.id)}
@@ -82,7 +114,8 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         ))}
       </div>
 
-      {/* Conditions */}
+      {/* 🧠 Conditional rendering: only ONE section shows at a time.
+           Each `if` checks activeSection and renders different content. */}
       {activeSection === 'conditions' && (
         <div>
           {conditions.length === 0 && <p style={{ color: '#718096' }}>Loading conditions...</p>}
@@ -97,7 +130,6 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* Common DCs */}
       {activeSection === 'dcs' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px' }}>
@@ -119,7 +151,6 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* Cover */}
       {activeSection === 'cover' && (
         <div>
           {COVER_RULES.map(c => (
@@ -134,7 +165,6 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* Light & Vision */}
       {activeSection === 'light' && (
         <div>
           {LIGHT_RULES.map(l => (
@@ -152,7 +182,6 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* Exhaustion */}
       {activeSection === 'exhaustion' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: '30px 1fr', gap: '4px 12px' }}>
@@ -166,12 +195,10 @@ export default function DmScreenPanel({ compact }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* DM Password */}
       {activeSection === 'password' && (
         <DmPasswordPanel />
       )}
 
-      {/* Travel Pace */}
       {activeSection === 'travel' && (
         <div>
           <div style={{ display: 'grid', gridTemplateColumns: '60px 60px 60px 50px 1fr', gap: '4px 8px', fontSize: '0.75rem' }}>

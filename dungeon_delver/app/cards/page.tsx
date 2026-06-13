@@ -1,11 +1,24 @@
 'use client';
-import { useState, useMemo } from 'react';
+// ===== 📘 FILE: app/cards/page.tsx =====
+// 🎯 PURPOSE: Animated cards browser — filters and displays spell cards and Deck of Many Things
+//   cards with preview GIFs and PDF download links.
+// 🧠 REACT CONCEPT: useMemo + Controlled Filters — demonstrates memoizing filtered results based
+//   on filter state (type, level, text query) to avoid re-computation on every render.
+// =====
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { getAllCards, getFilteredCards, CardEntry } from '../../utils/cardEngine';
 
 const LEVEL_LABELS: Record<number, string> = { 0: 'Cantrip', 1: 'Level 1', 2: 'Level 2', 3: 'Level 3' };
 
 export default function CardsPage() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   const [filterType, setFilterType] = useState<'spell' | 'deck-of-many-things' | null>(null);
   const [filterLevel, setFilterLevel] = useState<number | null>(null);
   const [query, setQuery] = useState('');
@@ -20,14 +33,16 @@ export default function CardsPage() {
   }, [allCards, filterType, filterLevel, query]);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', color: '#e2e8f0' }}>
-      <aside style={{ width: '180px', flexShrink: 0, background: '#0f1419', borderRight: '1px solid #4a5568', padding: '20px 0' }}>
-        <div style={{ padding: '0 16px 16px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600 }}>Type</div>
+    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', minHeight: '100vh', color: '#e2e8f0' }}>
+      <aside style={{ width: isMobile ? '100%' : '180px', flexShrink: 0, background: '#0f1419', borderRight: isMobile ? 'none' : '1px solid #4a5568', borderBottom: isMobile ? '1px solid #4a5568' : 'none', padding: isMobile ? '10px' : '20px 0', display: 'flex', flexDirection: isMobile ? 'row' : 'column', gap: '6px', overflowX: isMobile ? 'auto' : 'visible', alignItems: isMobile ? 'center' : undefined, flexWrap: isMobile ? 'nowrap' : undefined }}>
+        {isMobile && <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600, whiteSpace: 'nowrap' }}>Type</div>}
+        {!isMobile && <div style={{ padding: '0 16px 16px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600 }}>Type</div>}
         <FilterButton label="All Cards" active={filterType === null && filterLevel === null} onClick={() => { setFilterType(null); setFilterLevel(null); }} />
         <FilterButton label="Spells" active={filterType === 'spell'} onClick={() => setFilterType(filterType === 'spell' ? null : 'spell')} />
         <FilterButton label="Deck of Many" active={filterType === 'deck-of-many-things'} onClick={() => setFilterType(filterType === 'deck-of-many-things' ? null : 'deck-of-many-things')} />
 
-        <div style={{ padding: '20px 16px 8px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600, marginTop: '8px', borderTop: '1px solid #2d3748' }}>Spell Level</div>
+        {isMobile && <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600, whiteSpace: 'nowrap' }}>Level</div>}
+        {!isMobile && <div style={{ padding: '20px 16px 8px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: '#718096', fontWeight: 600, marginTop: '8px', borderTop: '1px solid #2d3748' }}>Spell Level</div>}
         {[0, 1, 2, 3].map(lvl => (
           <FilterButton
             key={lvl}
@@ -37,27 +52,26 @@ export default function CardsPage() {
           />
         ))}
 
-        <div style={{ padding: '0 16px', marginTop: '16px' }}>
+        <div style={isMobile ? { flexShrink: 0 } : { padding: '0 16px', marginTop: '16px' }}>
           <input
             type="text"
-            placeholder="Search cards..."
+            placeholder={isMobile ? "Search..." : "Search cards..."}
             value={query}
             onChange={e => setQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '8px 10px',
-              background: '#2d3748',
-              border: '1px solid #4a5568',
-              borderRadius: '4px',
-              color: '#e2e8f0',
-              fontSize: '0.8rem',
-              boxSizing: 'border-box',
+            style={isMobile ? {
+              width: '120px', padding: '6px 8px', background: '#2d3748',
+              border: '1px solid #4a5568', borderRadius: '4px', color: '#e2e8f0',
+              fontSize: '0.75rem', flexShrink: 0,
+            } : {
+              width: '100%', padding: '8px 10px', background: '#2d3748',
+              border: '1px solid #4a5568', borderRadius: '4px', color: '#e2e8f0',
+              fontSize: '0.8rem', boxSizing: 'border-box',
             }}
           />
         </div>
       </aside>
 
-      <main style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
+      <main style={{ flex: 1, padding: isMobile ? '12px' : '24px', overflowY: 'auto' }}>
         <h1 style={{ fontFamily: 'serif', color: 'var(--dungeon-gold, #b8860b)', fontSize: '1.5rem', marginBottom: '4px' }}>Animated Cards</h1>
         <p style={{ color: '#718096', fontSize: '0.85rem', marginBottom: '20px' }}>{filtered.length} cards</p>
 

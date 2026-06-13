@@ -1,8 +1,21 @@
 'use client';
+// ===== 📘 FILE: app/dm/obsidian/page.tsx =====
+// 🎯 PURPOSE: Obsidian vault sync — bidirectional character sync between Dungeon Delver and
+//   Obsidian vault files, with version tracking, conflict detection/diff/merge, vault scanner
+//   for discovering characters/journal entries, and wiki-link import.
+// 🧠 REACT CONCEPT: Async File I/O + Version-Based Sync — integrates with Tauri's file system
+//   APIs for reading/writing markdown files. Uses a version number in frontmatter to determine
+//   sync direction and detect conflicts, with diff visualization and merge resolution.
+// =====
 import { useState, useEffect, useCallback } from 'react';
 import { charToMarkdown, parseMarkdownToChar, wikiLinksToDeepLinks } from '../../../utils/markdownEngine';
 import { computeDiff, createBackup, mergeLocalWins, mergeObsidianWins } from '../../../utils/conflictEngine';
 import { loadCharFromLocal, saveCharToLocal } from '../../../utils/storageEngine';
+import { campaignKey } from '../../../utils/campaignStorage';
+
+function normalizePath(p: string): string {
+  return p.replace(/\\/g, '/').replace(/\/\/+/g, '/');
+}
 
 interface SyncState {
   charId: string;
@@ -91,7 +104,7 @@ export default function ObsidianSyncPage() {
   const [activeTab, setActiveTab] = useState<'sync' | 'scan'>('sync');
   const [scanResults, setScanResults] = useState<{
     total: number; characters: { path: string; name: string }[];
-    journal: { path: string; title: string; type: string }[];
+    journal: { path: string; title: string; type: string; tags: string[] }[];
     unknown: { path: string }[];
     totalLinks: number;
   }>({ total: 0, characters: [], journal: [], unknown: [], totalLinks: 0 });
@@ -114,13 +127,15 @@ export default function ObsidianSyncPage() {
   }, [vaultPath]);
 
   const saveVaultPath = useCallback((path: string) => {
-    setVaultPath(path);
-    try { localStorage.setItem('dd-obsidian-vault', path); } catch { /* noop */ }
+    const normalized = normalizePath(path.trim());
+    setVaultPath(normalized);
+    try { localStorage.setItem('dd-obsidian-vault', normalized); } catch { /* noop */ }
   }, []);
 
   const saveCharDir = useCallback((dir: string) => {
-    setCharDir(dir);
-    try { localStorage.setItem('dd-obsidian-char-dir', dir); } catch { /* noop */ }
+    const normalized = normalizePath(dir.trim());
+    setCharDir(normalized);
+    try { localStorage.setItem('dd-obsidian-char-dir', normalized); } catch { /* noop */ }
   }, []);
 
   async function handlePickVault() {
@@ -200,7 +215,7 @@ export default function ObsidianSyncPage() {
       if (!content) continue;
       const fmMatch = content.match(/---[\s\S]*?---/);
       if (!fmMatch) continue;
-      const nameMatch = fmMatch[0].match(/name:\s*(.+)/);
+      const nameMatch = fmMatch[0].match(/name:\s*(.+)/) || fmMatch[0].match(/character_name:\s*(.+)/);
       const name = nameMatch ? nameMatch[1].trim() : file.replace('.md', '');
       const vMatch = fmMatch[0].match(/version:\s*(\d+)/);
       const mdVersion = vMatch ? parseInt(vMatch[1], 10) : 0;
@@ -287,7 +302,7 @@ export default function ObsidianSyncPage() {
     setIsScanning(true);
     setScanMsg('Scanning vault...');
     const characters: { path: string; name: string }[] = [];
-    const journal: { path: string; title: string; type: string }[] = [];
+    const journal: { path: string; title: string; type: string; tags: string[] }[] = [];
     const unknown: { path: string }[] = [];
     let totalLinks = 0;
 
@@ -305,23 +320,33 @@ export default function ObsidianSyncPage() {
             const linkCount = (content.match(/\[\[([^\]]+)\]\]/g) || []).length;
             totalLinks += linkCount;
             const fmMatch = content.match(/---[\s\S]*?---/);
+            const tags = content.match(/#[\w\/-]+/g) || [];
+            const h1Match = content.match(/^#\s+(.+)/m);
+            const inferredTitle = h1Match
+              ? h1Match[1].trim()
+              : entry.name!.replace('.md', '');
+
             if (fmMatch) {
               const fm = fmMatch[0];
               const hasClass = /^class:\s/m.test(fm);
               const hasLevel = /^level:\s/m.test(fm);
-              const hasName = /^name:\s/m.test(fm);
+              const hasName = /^name:\s/m.test(fm) || /^character_name:\s/m.test(fm);
               const hasType = /^type:\s/m.test(fm);
               const hasTitle = /^title:\s/m.test(fm);
               if ((hasClass || hasLevel) && hasName) {
-                const nMatch = fm.match(/^name:\s*(.+)/m);
-                characters.push({ path: fullPath, name: nMatch ? nMatch[1].trim() : entry.name!.replace('.md', '') });
+                const nMatch = fm.match(/^name:\s*(.+)/m) || fm.match(/^character_name:\s*(.+)/m);
+                characters.push({ path: fullPath, name: nMatch ? nMatch[1].trim() : inferredTitle });
               } else if (hasType || hasTitle) {
                 const tMatch = fm.match(/^type:\s*(.+)/m);
                 const tiMatch = fm.match(/^title:\s*"?(.+?)"?$/m);
-                journal.push({ path: fullPath, title: tiMatch ? tiMatch[1].trim() : entry.name!.replace('.md', ''), type: tMatch ? tMatch[1].trim() : 'note' });
+                journal.push({ path: fullPath, title: tiMatch ? tiMatch[1].trim() : inferredTitle, type: tMatch ? tMatch[1].trim() : 'note', tags });
+              } else if (tags.length > 0 || h1Match) {
+                journal.push({ path: fullPath, title: inferredTitle, type: 'note', tags });
               } else {
                 unknown.push({ path: fullPath });
               }
+            } else if (tags.length > 0 || h1Match) {
+              journal.push({ path: fullPath, title: inferredTitle, type: 'note', tags });
             } else {
               unknown.push({ path: fullPath });
             }
@@ -369,28 +394,40 @@ export default function ObsidianSyncPage() {
     scanSyncStates();
   }
 
-  async function importDiscoveredJournal() {
+  function journalInSubdir(subdir: string): number {
+    return scanResults.journal.filter(e => {
+      const rel = e.path.replace(vaultPath, '').replace(/^[/\\]/, '');
+      return rel.startsWith(subdir);
+    }).length;
+  }
+
+  async function importDiscoveredJournal(subdir?: string) {
+    const key = campaignKey('journal-entries');
+    const entries: any[] = JSON.parse(localStorage.getItem(key) || '[]');
+    let imported = 0;
     for (const e of scanResults.journal) {
+      const relPath = e.path.replace(vaultPath, '').replace(/^[/\\]/, '');
+      if (subdir && !relPath.startsWith(subdir)) continue;
+      const exists = entries.find((x: any) => x.title === e.title);
+      if (exists) continue;
       const content = await readMdFile(e.path);
       if (!content) continue;
       const fmMatch = content.match(/---[\s\S]*?---\n*/);
       const body = fmMatch ? content.slice(fmMatch[0].length) : content;
-      try {
-        const entries: any[] = JSON.parse(localStorage.getItem('dd-journal-entries') || '[]');
-        const exists = entries.find((x: any) => x.title === e.title);
-        if (exists) continue;
-        entries.push({
-          id: `entry-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-          type: e.type || 'note',
-          title: e.title,
-          content: body.trim(),
-          tags: [],
-          linkedEntries: [], createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-        });
-        localStorage.setItem('dd-journal-entries', JSON.stringify(entries));
-      } catch { /* noop */ }
+      entries.push({
+        id: `entry-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: e.type || 'note',
+        title: e.title,
+        content: body.trim(),
+        tags: e.tags || [],
+        linkedEntries: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+      imported++;
     }
-    setScanMsg(`Imported ${scanResults.journal.length} journal entries into Lore & Journal.`);
+    localStorage.setItem(key, JSON.stringify(entries));
+    setScanMsg(`Imported ${imported} journal entries into Lore & Journal.${subdir ? ` (from ${subdir})` : ''}`);
   }
 
   function statusLabel(status: SyncState['status']): { text: string; color: string } {
@@ -476,10 +513,20 @@ export default function ObsidianSyncPage() {
                   </button>
                 )}
                 {scanResults.journal.length > 0 && (
-                  <button onClick={importDiscoveredJournal} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8' }}>
-                    Import {scanResults.journal.length} Journal Entries
+                  <button onClick={() => importDiscoveredJournal()} style={{ ...styles.btn, background: '#8a7e6a', color: '#e8dcc8' }}>
+                    Import All ({scanResults.journal.length})
                   </button>
                 )}
+                {(() => {
+                  const wc = journalInSubdir('01 - World Almanac');
+                  const cc = journalInSubdir('02 - Campaign Management');
+                  const mc = journalInSubdir('03 - Mechanics');
+                  return (<>
+                    {wc > 0 && <button onClick={() => importDiscoveredJournal('01 - World Almanac')} style={{ ...styles.btn, background: '#5a5248', color: '#e8dcc8', fontSize: '0.8rem' }}>World Almanac ({wc})</button>}
+                    {cc > 0 && <button onClick={() => importDiscoveredJournal('02 - Campaign Management')} style={{ ...styles.btn, background: '#5a5248', color: '#e8dcc8', fontSize: '0.8rem' }}>Campaign Mgmt ({cc})</button>}
+                    {mc > 0 && <button onClick={() => importDiscoveredJournal('03 - Mechanics')} style={{ ...styles.btn, background: '#5a5248', color: '#e8dcc8', fontSize: '0.8rem' }}>Mechanics ({mc})</button>}
+                  </>);
+                })()}
               </div>
               {scanMsg && <p style={{ color: '#8a7e6a', fontSize: '0.85rem', marginBottom: '1rem' }}>{scanMsg}</p>}
               {scanResults.total === 0 && !isScanning && <p style={{ color: '#5a5248' }}>Click "Scan Vault" to discover files.</p>}
@@ -499,9 +546,19 @@ export default function ObsidianSyncPage() {
                 <div style={{ marginBottom: '1rem' }}>
                   <h3 style={{ color: '#8a7e6a', fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', margin: '0 0 0.5rem', fontSize: '1rem' }}>Journal Entries ({scanResults.journal.length})</h3>
                   {scanResults.journal.slice(0, 15).map((e, i) => (
-                    <div key={i} style={{ ...styles.card, padding: '0.5rem 1rem', display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ color: '#e8dcc8', fontSize: '0.85rem' }}>{e.title}</span>
-                      <span style={{ color: '#5a5248', fontSize: '0.75rem' }}>{e.type}</span>
+                    <div key={i} style={{ ...styles.card, padding: '0.5rem 1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: '#e8dcc8', fontSize: '0.85rem' }}>{e.title}</span>
+                        <span style={{ color: '#5a5248', fontSize: '0.75rem' }}>{e.type}</span>
+                      </div>
+                      {e.tags.length > 0 && (
+                        <div style={{ marginTop: '4px', display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                          {e.tags.slice(0, 5).map((t, ti) => (
+                            <span key={ti} style={{ color: '#8a7e6a', fontSize: '0.7rem', background: '#1a1714', padding: '1px 6px', borderRadius: '3px' }}>{t}</span>
+                          ))}
+                          {e.tags.length > 5 && <span style={{ color: '#5a5248', fontSize: '0.7rem' }}>+{e.tags.length - 5}</span>}
+                        </div>
+                      )}
                     </div>
                   ))}
                   {scanResults.journal.length > 15 && <p style={{ color: '#5a5248', fontSize: '0.8rem' }}>...and {scanResults.journal.length - 15} more</p>}

@@ -1,3 +1,31 @@
+// =============================================================================
+// 📘 FILE: utils/cardEngine.ts
+// =============================================================================
+// 🎯 PURPOSE: Spell card and Deck of Many Things card system. Maps animated
+//    GIF files and printable PDFs to spell/deck entries. Provides fuzzy
+//    name matching (pascalCase → readable names), filtering, and GIF path
+//    lookup with caching.
+//
+// 🧠 REACT CONCEPT: Derived Data with Caching
+//    getAllCards() builds the full card list from hardcoded file lists —
+//    this is "derived data" computed once. getSpellGifPath uses an
+//    in-memory cache (`_gifCache`) so repeated lookups don't rebuild the
+//    entire card list. This is a manual caching pattern similar to
+//    useMemo in React — compute once, reuse until dependencies change.
+//
+//    getFilteredCards is a "selector" — it takes raw data + filters and
+//    returns a subset. In React terms: const visible = useMemo(
+//      () => getFilteredCards(cards, filters), [cards, filters]
+//    );
+//
+// 🔧 HOW TO ALTER:
+//    - Add new spell GIFs: add file names to SPELL_GIFS arrays
+//    - Add new card PDFs: add paths to the PDF lists in getAllCards
+//    - Add name overrides: add entries to FILENAME_OVERRIDES
+//    - Add Deck of Many Things cards: add names to THINGS_GIFS
+//    - Change pascal case conversion: modify pascalToName
+// =============================================================================
+
 export interface CardEntry {
   id: string;
   name: string;
@@ -8,6 +36,8 @@ export interface CardEntry {
   spellName?: string;
 }
 
+// 🧠 FILENAME_OVERRIDES: fixes names that don't convert well from PascalCase.
+//    "AcidArrow" → "Melf's Acid Arrow", "FloatingDisk" → "Tenser's Floating Disk"
 const FILENAME_OVERRIDES: Record<string, string> = {
   'AcidArrow': "Melf's Acid Arrow",
   'AnimalMessenger': 'Animal Messenger',
@@ -105,6 +135,8 @@ const SPELL_LEVELS: { dir: string; level: number; gifSubdir: string }[] = [
 
 interface GifFile { name: string; path: string; }
 
+// 🧠 SPELL_GIFS: the actual lists of spell names with their GIF file paths.
+//    Organized by level directory for easy maintenance.
 const SPELL_GIFS: Record<string, GifFile[]> = {
   'Animated Spells - Cantrips': [
     'AcidSplash', 'Chilltouch', 'DancingLights', 'Druidcraft', 'Eldritchblast',
@@ -159,6 +191,10 @@ const THINGS_GIFS: GifFile[] = [
   path: `${BASE}/Animated Cards- Deck of Many Things/TheDeckofManyAnimatedThings/Things Gifs/${n}.gif`,
 }));
 
+// 🧠 pascalToName: converts a PascalCase filename to a human-readable name.
+//    "AcidArrow" → "Acid Arrow", "GlyphofWarding1" → "Glyph of Warding"
+//    Uses regex lookahead/lookbehind to split at case boundaries,
+//    then lowercases known short words (of, the, and, etc.).
 function pascalToName(filename: string): string {
   if (FILENAME_OVERRIDES[filename]) return FILENAME_OVERRIDES[filename];
   const words = filename.split(/(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])/);
@@ -166,6 +202,9 @@ function pascalToName(filename: string): string {
   return words.map((w, i) => i > 0 && lower.has(w.toLowerCase()) ? w.toLowerCase() : w).join(' ');
 }
 
+// 🧠 getAllCards: builds the complete card list from all GIFs + PDFs.
+//    Called once on mount or when the card browser opens.
+//    Returns flat array of CardEntry objects.
 export function getAllCards(): CardEntry[] {
   const cards: CardEntry[] = [];
 
@@ -220,6 +259,9 @@ export function getAllCards(): CardEntry[] {
 
 let _gifCache: Map<string, string> | null = null;
 
+// 🧠 getSpellGifPath: looks up a GIF path by spell name (case-insensitive).
+//    Uses a lazy-built cache — built on first call, reused thereafter.
+//    Returns undefined if no GIF exists for the given spell name.
 export function getSpellGifPath(spellName: string): string | undefined {
   if (!_gifCache) {
     _gifCache = new Map();
@@ -232,6 +274,8 @@ export function getSpellGifPath(spellName: string): string | undefined {
   return _gifCache.get(spellName.toLowerCase());
 }
 
+// 🧠 getFilteredCards: a "selector" function that filters cards by type,
+//    level, and text query. Returns a new array (doesn't mutate the original).
 export function getFilteredCards(
   cards: CardEntry[],
   filters: { type?: 'spell' | 'deck-of-many-things'; level?: number; query?: string }

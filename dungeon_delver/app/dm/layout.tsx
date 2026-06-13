@@ -1,4 +1,11 @@
 'use client';
+// ===== 📘 FILE: app/dm/layout.tsx =====
+// 🎯 PURPOSE: DM section layout — wraps all /dm/* pages with an auth gate, a GM overlay toggle,
+//   and a floating DM Screen button that opens a slide-out DmScreenPanel.
+// 🧠 REACT CONCEPT: Layout Component + Portal-like Overlay — demonstrates a client-component layout
+//   that provides persistent UI (auth gate, screen toggle) across all sub-routes via `children`.
+//   The DM Screen panel is conditionally rendered at the layout level, not inside the page.
+// =====
 import { useState } from 'react';
 import DmScreenPanel from '../../components/DmScreenPanel';
 import GmOverlayToggle from '../../components/GmOverlayToggle';

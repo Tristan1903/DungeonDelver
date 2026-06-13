@@ -1,13 +1,21 @@
 'use client';
+// ===== 📘 FILE: app/library/monsters/page.tsx =====
+// 🎯 PURPOSE: Bestiary browser — searchable monster grid with type-based colors, CR badges,
+//   monster images, and a full statblock detail modal via MonsterDetail component.
+// 🧠 REACT CONCEPT: Rich List + Detail Modal — renders a searchable grid with conditional
+//   image display (fallback to emoji on error), color-coded type badges, and a modal overlay.
+// =====
 import { useState, useEffect } from 'react';
 import { DataEngine } from '../../../utils/dataLoader';
 import { loadHBMonsters } from '../../../utils/homebrewEngine';
 import { getTypeLabel, getMonsterTypeColor, getMonsterTypeEmoji, formatCR, formatAC } from '../../../utils/libraryHelpers';
 import { monsterImgPath } from '../../../utils/imgPaths';
+import { useIsMobile } from '../../../utils/useIsMobile';
 import LibrarySidebar from '../../../components/LibrarySidebar';
 import MonsterDetail from '../../../components/MonsterDetail';
 
 export default function MonstersPage() {
+  const isMobile = useIsMobile();
   const [allMonsters, setAllMonsters] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -25,7 +33,7 @@ export default function MonstersPage() {
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#0c0e14' }}>
       <LibrarySidebar />
-      <div style={{ marginLeft: '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
+      <div style={{ marginLeft: isMobile ? '0' : '200px', flex: 1, maxWidth: '960px', padding: '24px 32px 80px' }}>
         <h1 style={{ fontFamily: '"MedievalSharp", "Palatino Linotype", "Book Antiqua", Palatino, serif', color: '#c9a84c', fontSize: '1.6rem', marginBottom: '8px' }}>
           Monsters — Bestiary
         </h1>

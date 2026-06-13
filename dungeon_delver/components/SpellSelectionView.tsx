@@ -1,4 +1,27 @@
 'use client';
+// =============================================================================
+// 📘 FILE: components/SpellSelectionView.tsx
+// =============================================================================
+// 🎯 PURPOSE: The spell selection wizard used during character creation and
+//    level-up. Manages cantrip picks (up to known max) and prepared/known spells
+//    (up to class maximums). Supports search, sort-by, new-level filtering,
+//    existing spell highlighting, and inline spell detail modals.
+//
+// 🧠 REACT CONCEPT #1: useMemo for Filtered Spell List
+//    `filtered` memoizes the spell list filtering/sorting by tab (cantrip/spell),
+//    search query, class restriction, and new-level filters. This prevents
+//    re-filtering on every keystroke or selection change.
+//
+// 🧠 REACT CONCEPT #2: Controlled Toggle Pattern
+//    `toggle()` receives the current list and setter as arguments, adding or
+//    removing the spell name while respecting the max count. This abstracts the
+//    "select up to N" logic into a reusable function.
+//
+// 🧠 REACT CONCEPT #3: Props Drilling + Composition
+//    The component receives all data via props (classInfo, level, baseStats,
+//    initialSpells, onConfirm/onBack) rather than context. This makes it fully
+//    controlled by its parent (create/level-up wizard) and easy to test.
+// =============================================================================
 import { useState, useEffect, useMemo } from 'react';
 import { DataEngine } from '../utils/dataLoader';
 import {
@@ -48,6 +71,13 @@ export default function SpellSelectionView({
   const [viewingSpell, setViewingSpell] = useState<any | null>(null);
   const [sortBy, setSortBy] = useState<'name' | 'level'>('level');
   const [showNewOnly, setShowNewOnly] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   const maxCantrips = getCantripsKnown(classInfo, level);
   const maxKnown = getSpellsKnownAtLevel(classInfo, level);
@@ -138,7 +168,7 @@ export default function SpellSelectionView({
       : (initialSpells?.known || []);
 
   return (
-    <div style={{ flex: 1, padding: '40px', color: 'white', overflow: 'auto' }}>
+    <div style={{ flex: 1, padding: isMobile ? '16px' : '40px', color: 'white', overflow: 'auto' }}>
       <button onClick={onBack} style={{ marginBottom: '20px', background: 'none', border: 'none', color: '#718096', cursor: 'pointer' }}>← Back</button>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
@@ -265,7 +295,7 @@ export default function SpellSelectionView({
 
       {viewingSpell && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300 }}>
-          <div style={{ background: '#1a1a1a', padding: '30px', borderRadius: '8px', width: '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
+          <div style={{ background: '#1a1a1a', padding: isMobile ? '16px' : '30px', borderRadius: '8px', width: isMobile ? '95vw' : '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
             <h2 style={{ color: '#b8860b' }}>{viewingSpell.name}</h2>
             <p style={{ color: '#a0aec0' }}>
               {viewingSpell.level === 0 ? 'Cantrip' : `Level ${viewingSpell.level}`} · {viewingSpell.school} · {viewingSpell.source}
@@ -285,9 +315,16 @@ export default function SpellSelectionView({
 
 export function SpellDetailModal({ spell, onClose }: { spell: any; onClose: () => void }) {
   if (!spell) return null;
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 300 }}>
-      <div style={{ background: '#1a1a1a', padding: '30px', borderRadius: '8px', width: '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
+      <div style={{ background: '#1a1a1a', padding: isMobile ? '16px' : '30px', borderRadius: '8px', width: isMobile ? '95vw' : '500px', maxHeight: '80vh', overflowY: 'auto', border: '2px solid #b8860b', color: 'white' }}>
         <h2 style={{ color: '#b8860b' }}>{spell.name}</h2>
         <p style={{ color: '#a0aec0' }}>
           {spell.level === 0 ? 'Cantrip' : `Level ${spell.level}`} · {spell.school} · {spell.source}

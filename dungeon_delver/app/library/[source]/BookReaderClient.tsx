@@ -1,4 +1,12 @@
 'use client';
+// ===== 📘 FILE: app/library/[source]/BookReaderClient.tsx =====
+// 🎯 PURPOSE: Book reader — loads book data by source from the URL params, renders a
+//   navigation sidebar with scroll-spy highlighting, and renders book content with
+//   support for tables, lists, images, quotes, insets, and wiki-style entries.
+// 🧠 REACT CONCEPT: IntersectionObserver Scroll-Spy — uses useRef + IntersectionObserver to
+//   track which section is currently visible and highlight it in the sidebar nav. Also
+//   demonstrates recursive renderBookEntries for deeply nested 5e data structures.
+// =====
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';

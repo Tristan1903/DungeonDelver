@@ -1,4 +1,10 @@
 'use client';
+// ===== 📘 FILE: SidekicksConfig.tsx =====
+// 🎯 PURPOSE: Configures sidekick stat blocks — each has name, type (warrior/spellcaster/expert),
+//   and numeric bonuses (HP, attack, save).
+// 🧠 REACT CONCEPT: Select + Number Inputs in Array — demonstrates a controlled <select> dropdown
+//   alongside numeric inputs within a dynamic list, all emitting immutable updates.
+// =====
 export interface SidekicksConfigValue {
   statBlocks: { name: string; type: string; hpBonus: number; attackBonus: number; saveBonus: number }[];
 }

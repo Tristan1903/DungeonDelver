@@ -9,6 +9,14 @@
     "dialog:default",
     "fs:allow-exists",
     {
+      "identifier": "fs:allow-read-dir",
+      "allow": [{ "path": "$HOME/**" }]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [{ "path": "$HOME/**" }]
+    },
+    {
       "identifier": "fs:allow-write-text-file",
       "allow": [{ "path": "$HOME/**" }]
     },
