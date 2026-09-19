@@ -115,9 +115,35 @@ export function renameCampaign(id: string, name: string): void {
 //    data (quests, notes, etc.) stays in localStorage — it's orphaned.
 //    A cleanup function would be needed to fully delete a campaign.
 export function deleteCampaign(id: string): void {
+  // Remove campaign from registry
   const list = getCampaigns().filter(c => c.id !== id);
   saveCampaigns(list);
+
+  // If deleting the active campaign, switch to first or default
   if (getActiveCampaign() === id) {
     setActiveCampaign(list.length > 0 ? list[0].id : 'default');
   }
+
+  // Clean up associated data
+  try {
+    // Remove campaign config
+    localStorage.removeItem(campaignKey('campaign-config', id));
+    // Remove party data
+    localStorage.removeItem(`dd-${id}-party`);
+    // Unlink all characters associated with this campaign
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith('dd-char-')) continue;
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const char = JSON.parse(raw);
+        if (char.campaignId === id) {
+          delete char.campaignId;
+          delete char.campaignName;
+          localStorage.setItem(key, JSON.stringify(char));
+        }
+      } catch { continue; }
+    }
+  } catch { /* best-effort cleanup */ }
 }

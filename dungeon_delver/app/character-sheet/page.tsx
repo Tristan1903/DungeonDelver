@@ -27,6 +27,7 @@ import { getMastery } from '../../utils/weaponMasteries';
 import { getObscuredForCharacter } from '../../utils/obscuredItemsEngine';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import SpellCastAnimation from '../../components/SpellCastAnimation';
+import { deleteCharacter } from '../../utils/characterEngine';
 
 interface CharRegistryEntry {
     path: string;
@@ -413,25 +414,104 @@ useEffect(() => {
         setChar({ ...char, level: clamped, totalLevel: classLevels.reduce((sum: number, cl: any) => sum + cl.level, 0), classLevels, classes: classList });
     };
 
-    const saveChar = async (exportFile?: boolean, overrideChar?: Character) => {
-        const toSave = overrideChar || char;
-        try {
-            const localKey = saveCharToLocal(toSave);
-            setCharPath(localKey);
-            addToRegistry(localKey, toSave);
-            if (exportFile) {
-                const { save } = await import('@tauri-apps/plugin-dialog');
-                const { writeTextFile } = await import('@tauri-apps/plugin-fs');
-                const path = await save({
-                    filters: [{ name: 'JSON', extensions: ['json'] }],
-                    defaultPath: `${toSave.name}.json`
-                });
-                if (path) {
-                    await writeTextFile(path, JSON.stringify(toSave, null, 2));
-                }
+const saveChar = async (exportFile?: boolean, overrideChar?: Character) => {
+    const toSave = overrideChar || char;
+    try {
+        const localKey = saveCharToLocal(toSave);
+        setCharPath(localKey);
+        addToRegistry(localKey, toSave);
+        if (exportFile) {
+            const { save } = await import('@tauri-apps/plugin-dialog');
+            const { writeTextFile } = await import('@tauri-apps/plugin-fs');
+            const path = await save({
+                filters: [{ name: 'JSON', extensions: ['json'] }],
+                defaultPath: `${toSave.name}.json`
+            });
+            if (path) {
+                await writeTextFile(path, JSON.stringify(toSave, null, 2));
             }
-        } catch (err) { console.error(err); }
-    };
+        }
+    } catch (err) { console.error(err); }
+};
+
+const handleDeleteCharacter = () => {
+    const linked = !!(char.campaignId || char.campaignName);
+    if (linked) {
+        const confirmed = window.confirm(
+          'This character is linked to a campaign.\n' +
+          'This will unlink the character (remove campaign linkage) rather than delete it.\n' +
+          'Continue with unlinking?'
+        );
+        if (confirmed) {
+          // Unlink character from campaign
+          const key = `${CHAR_STORAGE_PREFIX}${char.id}`;
+          const raw = localStorage.getItem(key);
+          if (raw) {
+            const ch = JSON.parse(raw);
+            delete ch.campaignId;
+            delete ch.campaignName;
+            localStorage.setItem(key, JSON.stringify(ch));
+          }
+          setChar((prev) => ({ ...prev, campaignId: undefined, campaignName: undefined }));
+          alert('Character unlinked from campaign.');
+        }
+    } else {
+      const confirmed = window.confirm(
+        'This will permanently delete your character.\n' +
+        'This action cannot be undone. Export data first?'
+      );
+      if (confirmed) {
+        // Export before delete
+        const exportConfirmed = window.confirm(
+          'Export character data as JSON before deleting?'
+        );
+        if (exportConfirmed) {
+          const blob = new Blob([JSON.stringify(char, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${char.name || 'character'}-${new Date().toISOString()}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+        // Delete from localStorage
+        const syncUrl = localStorage.getItem('dd-sync-url') || undefined;
+        const syncRoom = localStorage.getItem('dd-sync-room') || undefined;
+        deleteCharacter(char.id, {
+          sync: !!syncUrl && !!syncRoom,
+          serverUrl: syncUrl,
+          room: syncRoom,
+        });
+        // Also remove from registry
+        const key = getStorageKey(char);
+        deleteCharFromLocal(key);
+        setCharPath(null);
+        setShowSelect(true);
+        setChar({ ...DEFAULT_CHARACTER, proficiencies: ['athletics', 'perception'] });
+        alert('Character deleted.');
+      }
+    }
+};
+
+const handleLeaveCampaign = () => {
+    const confirmed = window.confirm(
+      'This will unlink your character from the current campaign.\n' +
+      'The character will remain in your local storage and can be re-linked later.\n' +
+      'This cannot be undone via the UI, but the character data is preserved.'
+    );
+    if (confirmed) {
+      const key = `${CHAR_STORAGE_PREFIX}${char.id}`;
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        const ch = JSON.parse(raw);
+        delete ch.campaignId;
+        delete ch.campaignName;
+        localStorage.setItem(key, JSON.stringify(ch));
+      }
+      setChar((prev) => ({ ...prev, campaignId: undefined, campaignName: undefined }));
+      alert('Character unlinked from campaign.');
+    }
+};
 
     const generateItemFallbackDescription = (item: any, libItem?: any): string[] => {
         const src = libItem || item;
@@ -1202,11 +1282,23 @@ useEffect(() => {
                             <div style={{ textAlign: 'right', display: 'flex', flexDirection: isMobile ? 'row' : 'column', alignItems: isMobile ? 'center' : 'flex-end', gap: isMobile ? '8px' : '6px', flexWrap: 'wrap' }}>
                                 <div style={{ fontWeight: 'bold', color: '#c9a84c', fontSize: isMobile ? '0.9rem' : '1.1rem' }}>LV {char.totalLevel || char.level || 1}</div>
                                 {char.xp !== undefined && <div style={{ fontSize: '0.8rem', color: '#5a5248' }}>{char.xp} XP</div>}
-                                <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
-                                    <button onClick={() => saveChar(false)} style={{ background: '#c9a84c', border: 'none', color: 'white', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
-                                    <button onClick={() => saveChar(true)} style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer' }}>Export</button>
-                                    <button onClick={() => { window.location.href = `/character-sheet/level-up?id=${char.id || ''}`; }} style={{ background: '#c9a84c', border: 'none', color: 'black', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Level Up</button>
-                                </div>
+<div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                                <button onClick={() => saveChar(false)} style={{ background: '#c9a84c', border: 'none', color: 'white', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Save</button>
+                                <button onClick={() => saveChar(true)} style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer' }}>Export</button>
+                                <button onClick={() => { window.location.href = `/character-sheet/level-up?id=${char.id || ''}`; }} style={{ background: '#c9a84c', border: 'none', color: 'black', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>Level Up</button>
+                                {char.campaignId && (
+                                  <button onClick={handleLeaveCampaign}
+                                    style={{ background: 'transparent', border: '1px solid #3d3528', color: '#8a7e6a', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer' }}>
+                                    Leave Campaign
+                                  </button>
+                                )}
+                                {!char.campaignId && (
+                                  <button onClick={handleDeleteCharacter}
+                                    style={{ background: '#5c1a1a', border: 'none', color: '#e8dcc8', padding: '4px 12px', borderRadius: 'var(--dungeon-radius-sm, 4px)', fontSize: '0.7rem', cursor: 'pointer', fontWeight: 'bold' }}>
+                                    Delete Character
+                                  </button>
+                                )}
+                            </div>
                             </div>
                         </div>
                         <div style={{ marginTop: isMobile ? '10px' : '16px', display: 'flex', gap: isMobile ? '12px' : '24px', alignItems: 'flex-start', flexWrap: 'wrap' }}>

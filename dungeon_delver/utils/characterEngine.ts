@@ -21,6 +21,7 @@
 // =============================================================================
 
 import { Character, ClassLevel } from '../lib/character';
+import { CHAR_STORAGE_PREFIX } from './storageEngine';
 
 // 🧠 Proficiency Bonus = ceil(level / 4) + 1
 //    At level 1: ceil(1/4)+1 = 1+1 = 2 ✓
@@ -177,3 +178,34 @@ export const SKILL_MAP: Record<string, string> = {
     stealth: 'dex',
     survival: 'wis',
 };
+
+export function deleteCharacter(id: string, options?: { sync?: boolean; serverUrl?: string; room?: string }): void {
+  try {
+    // 1. Delete from localStorage
+    localStorage.removeItem(`${CHAR_STORAGE_PREFIX}${id}`);
+    // Also unlink from any campaign
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key || !key.startsWith(CHAR_STORAGE_PREFIX)) continue;
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const char = JSON.parse(raw);
+        if (char.id === id) {
+          delete char.campaignId;
+          delete char.campaignName;
+          localStorage.setItem(key, JSON.stringify(char));
+        }
+      } catch { continue; }
+    }
+
+    // 2. If sync is enabled with all required params, also delete from server
+    if (options?.sync && options.serverUrl && options.room) {
+      import('./syncManager').then(mod => {
+        mod.deleteCloudCharacter(options.serverUrl!, options.room!, id).catch(() => {
+          // Best-effort — sync failure doesn't undo local deletion
+        });
+      }).catch(() => {});
+    }
+  } catch { /* best-effort */ }
+}

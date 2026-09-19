@@ -34,18 +34,63 @@ const tools = [
   { href: '/dm/npcs', label: 'NPC Generator' },
   { href: '/dm/influence', label: 'Influence Tracker' },
   { href: '/dm/zone-combat', label: 'Zone Combat' },
+  { href: '/dm/clear-unused', label: 'Clear Unused Characters', desc: 'Delete characters not linked to any campaign' },
 ];
 
 export default function DMHub() {
   const [activeModules, setActiveModules] = useState<string[]>([]);
   const [sessionSummary, setSessionSummary] = useState<SessionSummary>({ sessions: [], activeSessionId: null });
   const [questSummary, setQuestSummary] = useState<QuestSummary[]>([]);
+  const [clearConfirm, setClearConfirm] = useState<string | null>(null);
 
   useEffect(() => {
     try { const cfg = loadCampaignConfig(); setActiveModules(cfg.enabledModules || []); } catch { setActiveModules([]); }
     try { const rawSessions = localStorage.getItem('dd-sessions'); if (rawSessions) setSessionSummary(JSON.parse(rawSessions)); } catch { setSessionSummary({ sessions: [], activeSessionId: null }); }
     try { const rawQuests = localStorage.getItem('dd-quests'); if (rawQuests) setQuestSummary(JSON.parse(rawQuests)); } catch { setQuestSummary([]); }
+    // Count unused characters (not linked to any campaign)
+    let unusedCount = 0;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith('dd-char-')) continue;
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) continue;
+          const char = JSON.parse(raw);
+          if (!(char.campaignId || 'default')) unusedCount++;
+        } catch { continue; }
+      }
+    } catch { }
+    // Store for potential use in clear confirmation
   }, []);
+
+  const clearUnusedCharacters = () => {
+    const confirmed = window.confirm(
+      'This will permanently delete all characters that are not linked to any campaign.\n' +
+      'This action cannot be undone. Continue?'
+    );
+    if (confirmed) {
+      let deleted = 0;
+      try {
+        for (let i = localStorage.length - 1; i >= 0; i--) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith('dd-char-')) continue;
+          try {
+            const raw = localStorage.getItem(key);
+            if (!raw) continue;
+            const char = JSON.parse(raw);
+            if (!(char.campaignId || 'default')) {
+              localStorage.removeItem(key);
+              deleted++;
+            }
+          } catch { continue; }
+        }
+      } catch { }
+      setClearConfirm(null);
+      window.location.reload();
+      alert(`Deleted ${deleted} unused character(s).`);
+    }
+  };
 
   const activeSession = useMemo(() => sessionSummary.sessions.find((s) => s.id === sessionSummary.activeSessionId) || null, [sessionSummary]);
   const moduleNames = useMemo(() => OPTIONAL_MODULES.filter((m) => activeModules.includes(m.id)).map((m) => m.name), [activeModules]);
@@ -91,9 +136,26 @@ export default function DMHub() {
         <div style={{ ...cardStyle, padding: '14px' }}>
           <h2 style={{ margin: '0 0 12px', fontSize: '1rem', color: '#c9a84c' }}>Toolbox</h2>
           <div style={{ display: 'grid', gap: '8px' }}>
-            {tools.map((tool) => (
-              <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none', color: '#e8dcc8', padding: '9px 10px', borderRadius: '6px', border: '1px solid #3d3528', background: '#0c0e14', fontSize: '0.85rem' }}>{tool.label}</Link>
-            ))}
+            {tools.map((tool) => {
+              if (tool.href === '/dm/clear-unused') {
+                return (
+                  <Link
+                    key={tool.href}
+                    href={tool.href}
+                    style={{ textDecoration: 'none', color: '#e8dcc8', padding: '9px 10px', borderRadius: '6px', border: '1px solid #3d3528', background: '#0c0e14', fontSize: '0.85rem' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      clearUnusedCharacters();
+                    }}
+                  >
+                    {tool.label}
+                  </Link>
+                );
+              }
+              return (
+                <Link key={tool.href} href={tool.href} style={{ textDecoration: 'none', color: '#e8dcc8', padding: '9px 10px', borderRadius: '6px', border: '1px solid #3d3528', background: '#0c0e14', fontSize: '0.85rem' }}>{tool.label}</Link>
+              );
+            })}
           </div>
         </div>
       </section>

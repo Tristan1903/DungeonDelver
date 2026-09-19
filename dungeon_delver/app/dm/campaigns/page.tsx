@@ -118,7 +118,28 @@ export default function CampaignsPage() {
     renameCampaign(id, editName.trim()); setEditingNameId(null); refresh();
   };
 
-  const handleDelete = (id: string) => { deleteCampaign(id); setDeleteConfirm(null); if (activeId === id) window.location.reload(); else refresh(); };
+  const getCharsToDelete = (id: string): number => {
+    let count = 0;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith(CHAR_STORAGE_PREFIX)) continue;
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) continue;
+          const char = JSON.parse(raw);
+          if (char.campaignId === id) count++;
+        } catch { continue; }
+      }
+    } catch { }
+    return count;
+  };
+
+  const handleDelete = (id: string) => {
+    deleteCampaign(id);
+    setDeleteConfirm(null);
+    if (activeId === id) window.location.reload(); else refresh();
+  };
 
   const handleRacePresetChange = (campaignId: string, value: string) => {
     const c = loadCampaignConfig(campaignId);
@@ -282,11 +303,11 @@ export default function CampaignsPage() {
                   ) : (
                     <button onClick={() => { setEditingNameId(c.id); setEditName(c.name); }} style={btnGhost}>✎</button>
                   )}
-                  {deleteConfirm === c.id ? (
-                    <><span style={{ fontSize: '0.7rem', color: '#8a7e6a' }}>Confirm?</span><button onClick={() => handleDelete(c.id)} style={btnDanger}>Delete</button><button onClick={() => setDeleteConfirm(null)} style={btnGhost}>No</button></>
-                  ) : (
-                    <button onClick={() => setDeleteConfirm(c.id)} style={btnGhost}>🗑</button>
-                  )}
+{deleteConfirm === c.id ? (
+    <><span style={{ fontSize: '0.7rem', color: '#e0a0a0' }}>{deleteConfirm === c.id ? 'Are you sure? This will remove the campaign and all associated data (characters, sessions, config, party).' : ''}</span><button onClick={() => handleDelete(c.id)} style={btnDanger}>Delete</button><button onClick={() => setDeleteConfirm(null)} style={btnGhost}>No</button></>
+) : (
+    <button onClick={() => setDeleteConfirm(c.id)} style={btnGhost}>🗑</button>
+)}
                   <span style={{ fontSize: '0.7rem', color: '#5a5248', marginLeft: '4px' }}>{expanded ? '▲' : '▼'}</span>
                 </div>
               </div>
